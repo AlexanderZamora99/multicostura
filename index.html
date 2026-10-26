@@ -91,6 +91,9 @@
     .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: linear-gradient(180deg, var(--bg-2), #fff); }
     .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .model .pic svg { width: 62%; }
+    .model .price { font-weight: 700; }
+    .model .price.ask { color: var(--muted); font-weight: 600; }
+    .reco-title { margin: 2rem 0 -.4rem; font-size: 1.5rem; }
     .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .65rem; border-radius: 999px; }
     .model .info { padding: 1rem 1.1rem 1.2rem; display: grid; gap: .35rem; flex: 1; }
     .model .info p { color: var(--muted); font-size: .88rem; flex: 1; }
@@ -98,7 +101,8 @@
     .model .row button { background: var(--bg-2); color: var(--mag-2); border: 0; border-radius: 999px; padding: .5rem 1rem; font-weight: 600; font-size: .86rem; }
     .model .row button:hover { background: var(--mag); color: #fff; }
     .swatches { display: flex; gap: .3rem; flex-wrap: wrap; }
-    .swatches i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); }
+    .swatches i, .swatches button { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); padding: 0; }
+    .swatches button.on { outline: 2px solid var(--mag); outline-offset: 1px; }
     .swatches small { font-size: .72rem; color: var(--muted); align-self: center; }
     .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
     .tipos div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; display: grid; gap: .3rem; }
@@ -112,7 +116,11 @@
     @media (max-width: 880px) { .studio { grid-template-columns: minmax(0, 1fr); } }
     .preview { position: sticky; top: 90px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; display: grid; place-items: center; gap: .8rem; }
     @media (max-width: 880px) { .preview { position: static; } }
-    .preview svg { width: min(100%, 340px); }
+    .pvbox { position: relative; width: min(100%, 340px); }
+    .pvbox svg { width: 100%; display: block; }
+    .pvbox img { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+    .pvbox.has-photo img { display: block; }
+    .pvbox.has-photo svg { visibility: hidden; }
     .preview .cap { font-size: .85rem; color: var(--muted); text-align: center; }
     .panel { display: grid; gap: 1.2rem; }
     .field > span { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .45rem; }
@@ -183,6 +191,8 @@
     .measure ol { display: grid; gap: .8rem; padding-left: 1.2rem; }
     .measure li b { display: block; }
     .measure li span { color: var(--muted); font-size: .92rem; }
+    .guia { margin-top: 2rem; }
+    .guia img { width: min(100%, 760px); margin-inline: auto; border-radius: var(--radius); border: 1px solid var(--line); }
     .measure svg { width: min(100%, 300px); margin-inline: auto; }
 
     /* Empresas y bono */
@@ -280,6 +290,10 @@
       <span class="eyebrow">Catálogo 2026</span>
       <h2>Encuentra tu próximo uniforme</h2>
       <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch, línea de blancos, batas y pantalones.</p>
+      <div id="reco" class="hidden">
+        <h3 class="reco-title">Recomendados</h3>
+        <div class="models" id="recomendados"></div>
+      </div>
       <div class="profs" id="profs"></div>
       <div class="models" id="models"></div>
       <h3 class="tipos-title">Modalidades y precios</h3>
@@ -302,11 +316,14 @@
       <p class="lead">Elige modelo, color y bordado. Mira cómo queda y luego agenda tu toma de medidas: tu diseño se guarda con la cita.</p>
       <div class="studio">
         <div class="preview">
-          <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
-            <use href="#scrub"/>
-            <text id="pv-name" x="125" y="62" font-family="Poppins, Inter, sans-serif" font-weight="600" font-size="9" text-anchor="middle"></text>
-            <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
-          </svg>
+          <div class="pvbox" id="pv-box">
+            <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
+              <use href="#scrub"/>
+              <text id="pv-name" x="125" y="62" font-family="Poppins, Inter, sans-serif" font-weight="600" font-size="9" text-anchor="middle"></text>
+              <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
+            </svg>
+            <img id="pv-photo" alt="Foto del modelo en el color elegido">
+          </div>
           <span class="cap" id="pv-cap"></span>
         </div>
         <div class="panel">
@@ -411,6 +428,7 @@
           </g>
         </svg>
       </div>
+      <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
     </div>
   </section>
 
@@ -519,8 +537,13 @@
       bordado: { nombre: 12000, profesion: 6000 },
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
-      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones"],
+      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
+      // Ids de los modelos de la fila "Recomendados" (confirmar con la dueña)
+      recomendados: ["kaill", "paris", "violet", "alondra"],
+      // Imagen de la guía de tallas (confirmar con la dueña)
+      guiaTallas: "img/guia-tallas.jpg",
       // Sin "colores" = todos los colores de la lista de arriba
+      // precio: null = se consulta por WhatsApp (no se diseña). fotos: { Color: "ruta" } = foto por color (opcional)
       modelos: [
         { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.jpg" },
         { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.jpg" },
@@ -538,6 +561,8 @@
         { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.jpg" },
         { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.jpg" },
         { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], desc: "Bata de manga larga.", foto: "img/bata.jpg" },
+        { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico en antifluido, en varios estampados y colores. Consulta precio y disponibilidad.", colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Negro"], foto: "img/gorro-quirurgico.jpg" }, // confirmar con la dueña
+        { id: "medias-compresion", nombre: "Medias de compresión", precio: null, cat: ["Medias de compresión"], desc: "Medias de compresión para jornadas largas de pie. Consulta tallas, precio y disponibilidad.", colores: ["Blanco", "Negro", "Café"], foto: "img/medias-compresion.jpg" }, // confirmar con la dueña
         { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.jpg" },
       ],
       proceso: [
@@ -626,26 +651,42 @@
         $("profs").appendChild(b);
       });
     }
+    // Foto del modelo para un color: la del color si existe, si no la general, y si no el uniforme en SVG
+    const fotoDe = (m, color) => (m.fotos && m.fotos[color]) || m.foto;
+    const diseñable = m => m.precio != null;
+    function modelCard(m) {
+      const el = document.createElement("article");
+      el.className = "model";
+      const extra = m.colores.length - 8;
+      const lista = diseñable(m);
+      el.innerHTML = `
+        <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(fotoDe(m, m.colores[0]), C(m.colores[0]))}</div>
+        <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
+          <div class="swatches">${m.colores.slice(0, 8).map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="background:${C(c)}" title="${c}" aria-label="Color ${c}"></button>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
+          <div class="row"><strong class="price${lista ? "" : " ask"}">${lista ? pesos(m.precio) : "Consultar"}</strong><button type="button" class="go">${lista ? "Diseñar" : "Preguntar"}</button></div>
+        </div>`;
+      el.querySelectorAll(".swatches button").forEach(b => b.onclick = () => {
+        el.querySelectorAll(".swatches button").forEach(x => x.classList.toggle("on", x === b));
+        el.querySelector(".pic").innerHTML = (m.tag ? `<span class="tag">${m.tag}</span>` : "") + photoOr(fotoDe(m, b.dataset.color), C(b.dataset.color));
+      });
+      el.querySelector(".go").onclick = lista
+        ? () => { $("s-model").value = m.id; design.color = (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); }
+        : () => openWa(`Hola Multicostura 💗 quiero consultar el precio y la disponibilidad de: ${m.nombre}`);
+      return el;
+    }
     function renderModels() {
       $("models").innerHTML = "";
-      NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => {
-        const el = document.createElement("article");
-        el.className = "model";
-        const extra = m.colores.length - 8;
-        el.innerHTML = `
-          <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
-          <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
-            <div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
-            <div class="row"><strong>${pesos(m.precio)}</strong><button type="button">Diseñar</button></div>
-          </div>`;
-        el.querySelector("button").onclick = () => { $("s-model").value = m.id; design.color = m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
-        $("models").appendChild(el);
-      });
+      NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => $("models").appendChild(modelCard(m)));
+    }
+    function renderRecomendados() {
+      const lista = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean);
+      $("reco").classList.toggle("hidden", !lista.length);
+      lista.forEach(m => $("recomendados").appendChild(modelCard(m)));
     }
 
     // ---------- Modalidades y precios ----------
-    const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
-    const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
+    const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
+    const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
     $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
 
     // ---------- Personalizador ----------
@@ -653,8 +694,10 @@
     const model = () => NEGOCIO.modelos.find(m => m.id === $("s-model").value);
     const tipo = () => NEGOCIO.tipos.find(t => t.id === design.tipo);
     const precio = (m, t) => (t.precio && !m.precioFijo ? t.precio : m.precio);
-    NEGOCIO.modelos.forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id)));
+    NEGOCIO.modelos.filter(diseñable).forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id)));
     const tipoNombre = id => NEGOCIO.tipos.find(t => t.id === id).t;
+    $("pv-photo").onload = () => $("pv-box").classList.add("has-photo");
+    $("pv-photo").onerror = () => { $("pv-box").classList.remove("has-photo"); $("pv-photo").removeAttribute("src"); };
     $("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
 
     function optButtons(box, items, current, onPick, swatch, label = it => it) {
@@ -696,6 +739,10 @@
       $("s-color-name").textContent = design.color;
       $("q").textContent = design.qty;
 
+      // Foto real del color elegido (si hay): se muestra sin el nombre bordado encima
+      const foto = (m.fotos || {})[design.color], box = $("pv-box"), img = $("pv-photo");
+      if (!foto) { box.classList.remove("has-photo"); img.removeAttribute("src"); }
+      else if (img.getAttribute("src") !== foto) { box.classList.remove("has-photo"); img.src = foto; }
       const fill = C(design.color);
       const use = $("pv").querySelector("use");
       use.style.fill = fill;
@@ -972,7 +1019,12 @@
     $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
 
     design.color = model().colores[0];
-    renderProfs(); renderModels(); renderDesign(); renderBono();
+    if (NEGOCIO.guiaTallas) {
+      const g = $("guia-img");
+      g.onload = () => ($("guia").hidden = false); // si no carga, la guía queda oculta
+      g.src = NEGOCIO.guiaTallas;
+    }
+    renderProfs(); renderModels(); renderRecomendados(); renderDesign(); renderBono();
     loadBusy().then(renderAgenda);
   </script>
 </body>
