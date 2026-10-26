@@ -17,10 +17,10 @@ test("lower page order: testimonials, FAQ, photo grid, then footer", () => {
   assert.ok(at('id="clientas"') < at('<footer'));
 });
 
-test("testimonials: one card per NEGOCIO.testimonios, placeholders are marked, arrows are labelled", () => {
+// changed: example entries are no longer shown or marked, the whole section stays hidden until a real one exists (see honesto.test.mjs)
+test("testimonials: one card per real NEGOCIO.testimonios entry, arrows are labelled", () => {
   const s = section(dom, "testimonios");
-  assert.ok(count(s, 'class="quote-card"') >= 3);
-  assert.ok(s.includes("Texto de ejemplo"), "placeholder entries must be marked");
+  assert.equal(count(s, 'class="quote-card"'), 0);
   assert.match(s, /aria-label="Testimonios anteriores"/);
   assert.match(s, /aria-label="Testimonios siguientes"/);
   const html = strip(render({ inject: 'NEGOCIO.testimonios = [{ nombre: "Ana", oficio: "Odontóloga", texto: "Me quedó perfecto" }]; renderTestimonios();' }).html);
@@ -41,13 +41,12 @@ test("FAQ accordion has one item per NEGOCIO.faq with its answer", () => {
   assert.ok(s2.includes("$12.345"), "answers stay driven by NEGOCIO");
 });
 
-test("photo grid shows every NEGOCIO.clientas entry and keeps captions when photos fail", () => {
-  const s = section(dom, "clientas");
-  assert.equal(count(s, "<figure"), 4);
-  const html = strip(render({ inject: 'document.querySelectorAll("#clients img").forEach(i => i.dispatchEvent(new Event("error")));' }).html);
-  const s2 = section(html, "clientas");
-  assert.doesNotMatch(s2, /<img/);
-  for (const t of ["Odontóloga", "Enfermera jefe", "Esteticista", "Médica general"]) assert.ok(s2.includes(t), t);
+// changed: tiles whose photo does not load are no longer rendered with a grey caption box
+test("photo grid shows an entry per NEGOCIO.clientas photo that loads and links to Instagram", () => {
+  const html = strip(render({ inject: 'NEGOCIO.clientas = [{ foto: "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E", texto: "Odontóloga" }, { foto: "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E", texto: "Enfermera jefe" }]; renderClientas();' }).html);
+  const s = section(html, "clientas");
+  assert.equal(count(s, "<figure"), 2);
+  for (const t of ["Odontóloga", "Enfermera jefe"]) assert.ok(s.includes(t), t);
   assert.match(s, /href="https:\/\/www\.instagram\.com\/multicostura_uniformes\/"/);
 });
 

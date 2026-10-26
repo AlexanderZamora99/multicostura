@@ -13,7 +13,7 @@ test("the home opens with a full-width banner carousel instead of static picture
 });
 
 test("one slide per portada item and exactly one is active", () => {
-  assert.equal((dom.match(/class="slide( is-active)?"/g) || []).length, PORTADA);
+  assert.equal((dom.match(/class="slide( is-active)?( no-photo)?"/g) || []).length, PORTADA);
   assert.equal(count(dom, 'class="slide is-active'), 1);
 });
 

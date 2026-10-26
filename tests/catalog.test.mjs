@@ -11,9 +11,11 @@ test("category chips include surgical caps and compression stockings", () => {
   assert.match(dom, />Medias de compresión<\/button>/);
 });
 
-test("recommended row renders one card per NEGOCIO.recomendados id", () => {
+// changed: cards render only with a loaded photo, so the test supplies photos
+test("recommended row renders one card per NEGOCIO.recomendados id with a photo", () => {
   assert.ok(dom.includes('id="recomendados"'));
-  const row = between('id="recomendados"', 'id="profs"');
+  const html = render({ inject: 'NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E")); renderRecomendados();' }).html.replace(/<script[\s\S]*?<\/script>/g, "");
+  const row = html.slice(html.indexOf('id="recomendados"'), html.indexOf('id="profs"'));
   assert.equal(count(row, '<article class="model"'), 4);
 });
 

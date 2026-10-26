@@ -109,6 +109,8 @@
     .banner { position: relative; padding: 0; background: #eceef0; overflow: hidden; }
     .b-track { display: flex; transition: transform .8s var(--ease); }
     .slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); min-height: clamp(400px, 40vw, 600px); background: linear-gradient(100deg, #f4f5f6 35%, #e3e5e8); }
+    .slide.no-photo { grid-template-columns: minmax(0, 1fr); }
+    .slide.no-photo picture { display: none; }
     .slide picture { grid-column: 2; grid-row: 1; position: relative; display: block; }
     .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 18%; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24%); mask-image: linear-gradient(90deg, transparent, #000 24%); }
     .slide-copy { grid-column: 1; grid-row: 1; align-self: center; padding: 2rem 1rem 3.4rem max(16px, calc(50vw - 575px)); max-width: 640px; position: relative; z-index: 1; }
@@ -202,15 +204,21 @@
     .profs button.on { background: var(--text); border-color: var(--text); color: #fff; }
     .models { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
     .model { background: transparent; display: flex; flex-direction: column; min-width: 0; }
-    .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: var(--bg-2); border-radius: var(--radius); overflow: hidden; }
+    .model .pic { aspect-ratio: 5/4; position: relative; display: grid; place-items: center; background: var(--bg-2); border-radius: var(--radius); overflow: hidden; }
     .model .pic .swap { opacity: 0; transition: opacity .45s var(--ease); }
     .model .pic:hover .swap, .model:focus-within .pic .swap { opacity: 1; }
     .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .model .pic svg { width: 62%; }
+    .model .pic svg { width: 40%; opacity: .75; }
     .model .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
     .model .pic .ph svg { width: 44px; height: 44px; }
     .model .price { font-weight: 700; }
     .model .price.ask { color: var(--muted); font-weight: 600; }
+    @media (max-width: 640px) {
+      .models { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem .8rem; }
+      .model .pic { aspect-ratio: 1 / 1; }
+      .model .info b { font-size: 1rem; }
+      .model .info p { font-size: .85rem; }
+    }
     @media (max-width: 640px) { #recomendados { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: .8rem; padding-bottom: .6rem; } #recomendados .model { flex: 0 0 75%; scroll-snap-align: start; } }
         .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .78rem; font-weight: 600; padding: .2rem .65rem; border-radius: 999px; }
     .model .info { padding: .9rem .1rem 0; display: grid; gap: .35rem; flex: 1; align-content: start; }
@@ -723,7 +731,7 @@
     </div>
   </section>
 
-  <section id="testimonios">
+  <section id="testimonios" class="hidden">
     <div class="wrap">
       <div class="sec-head"><h2>Lo que dicen nuestras clientas</h2></div>
       <div class="rail-wrap">
@@ -741,7 +749,7 @@
     </div>
   </section>
 
-  <section id="clientas">
+  <section id="clientas" class="hidden">
     <div class="wrap">
       <div class="sec-head"><h2>Ellas ya visten Multicostura</h2></div>
       <div class="clients" id="clients"></div>
@@ -761,7 +769,7 @@
     <div class="wrap foot-grid">
       <div>
         <h3>Multicostura Uniformes</h3>
-        <p>Uniformes médicos para mujer, hechos en nuestro taller de Tuluá y enviados a toda Colombia.</p>
+        <p>Uniformes médicos para mujer, hechos en nuestro taller y enviados a toda Colombia.</p>
         <div class="socials">
           <a id="f-ig" target="_blank" rel="noopener" aria-label="Instagram de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r=".6"/></svg></a>
           <a id="f-tt" target="_blank" rel="noopener" aria-label="TikTok de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500M14 3c.4 2.800 2 4.400 5 4.600"/></svg></a>
@@ -874,7 +882,7 @@
       // Círculos de "Explora nuestras colecciones". cat = categoría del catálogo que filtran.
       // placeholder: replace with the client's photos (sin img = icono neutro)
       categoriasCirculos: [
-        { t: "Uniformes", cat: "Conjuntos", ico: "hanger", img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+        { t: "Uniformes", cat: "Conjuntos", ico: "hanger" },
         { t: "Línea blancos", cat: "Línea blancos", ico: "coat", img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
         { t: "Gorros quirúrgicos", cat: "Gorros quirúrgicos", ico: "cap" },
         { t: "Medias de compresión", cat: "Medias de compresión", ico: "sock" },
@@ -883,15 +891,15 @@
       // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
       // placeholder: replace with the client's photos
       perfiles: [
-        { tipo: "tienda", cta: "Ver disponibles en tienda", img: "https://images.unsplash.com/photo-1761234852472-85aeea9c3eac?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
-        { tipo: "pedido", cta: "Elegir mi modelo", img: "https://images.unsplash.com/photo-1666887360921-85952a86894f?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
-        { tipo: "medida", cta: "Agendar mis medidas", img: "https://images.unsplash.com/photo-1770134223774-13b735e29201?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
+        { tipo: "tienda", cta: "Ver disponibles en tienda" },
+        { tipo: "pedido", cta: "Elegir mi modelo" },
+        { tipo: "medida", cta: "Agendar mis medidas" },
       ],
       // Franja de confianza (ico = nombre en ICONO)
       confianza: [
         { ico: "calendar", t: "Más de 10 años", d: "confeccionando uniformes médicos" },
         { ico: "truck", t: "Envíos a toda Colombia", d: "El envío se cotiza según el destino" },
-        { ico: "scissors", t: "Taller propio en Tuluá", d: "Fabricamos y vendemos en el mismo lugar" },
+        { ico: "scissors", t: "Taller propio", d: "Fabricamos y vendemos en el mismo lugar" },
         { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
       ],
       // Imagen de la guía de tallas (confirmar con la dueña)
@@ -957,7 +965,7 @@
         { foto: "img/clienta-3.jpg", texto: "Esteticista" },
         { foto: "img/clienta-4.jpg", texto: "Médica general" },
       ],
-      // Testimonios. placeholder: texts below are examples, replace with real ones from the client's customers and remove "ejemplo: true"
+      // Testimonios. placeholder: texts below are examples (ejemplo: true) and stay hidden; replace with real ones from the client's customers and remove "ejemplo: true"
       testimonios: [
         { nombre: "Nombre de la clienta", oficio: "Enfermera jefe", texto: "Me tomaron las medidas en el taller y el uniforme me quedó como lo pedí.", ejemplo: true },
         { nombre: "Nombre de la clienta", oficio: "Odontóloga", texto: "Pedí mi color y mi talla, y llegó en el tiempo que me dijeron.", ejemplo: true },
@@ -970,17 +978,16 @@
         "Más de 10 años confeccionando uniformes médicos para mujer",
         "Agenda tu toma de medidas en el taller, a domicilio o desde casa",
       ],
-      // Banner principal. placeholder: replace with the client's photos (img = escritorio, imgMovil = celular).
+      // Banner principal. placeholder: replace with the client's photos (img = escritorio, imgMovil = celular). Fotos de ejemplo revisadas: sin logos, bordados ni marcas visibles.
       portada: [
-        { img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
-          imgMovil: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
-          titulo: "Uniformes médicos hechos en Tuluá", texto: "Conjuntos de pantalón y blusa en antifluido, cómodos para toda la jornada.", cta: "Ver catálogo", href: "#modelos" },
-        { img: "https://images.unsplash.com/photo-1736289189363-4af449f7e6fc?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
-          imgMovil: "https://images.unsplash.com/photo-1736289189363-4af449f7e6fc?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
+        { img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
+          imgMovil: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
+          titulo: "Uniformes médicos hechos con cuidado", texto: "Conjuntos de pantalón y blusa en antifluido, cómodos para toda la jornada.", cta: "Ver catálogo", href: "#modelos" },
+        { img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
+          imgMovil: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
           titulo: "Hechos a tu medida", texto: "Agenda la toma de medidas en el taller, a domicilio o desde tu casa.", cta: "Agendar medidas", href: "#agenda" },
-        { img: "https://images.unsplash.com/photo-1761234852472-85aeea9c3eac?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
-          imgMovil: "https://images.unsplash.com/photo-1761234852472-85aeea9c3eac?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
-          titulo: "Diseña tu uniforme", texto: "Elige modelo y color, y agrega tu nombre bordado.", cta: "Diseñar ahora", href: "#personaliza" },
+        // Sin img: la diapositiva se muestra solo con texto hasta tener una foto propia
+        { titulo: "Diseña tu uniforme", texto: "Elige modelo y color, y agrega tu nombre bordado.", cta: "Diseñar ahora", href: "#personaliza" },
       ],
     };
     // ==========================================================
@@ -1046,14 +1053,14 @@
 
     // ---------- Banner a todo el ancho ----------
     // Cada imagen que falla se quita y el banner queda con su texto sobre un fondo neutro.
-    const dropImg = `onerror="this.remove()"`;
+    const dropImg = `onerror="this.closest('.slide').classList.add('no-photo'); this.remove()"`;
     let bannerCtl = null;
     function renderPortada() {
       if (bannerCtl) bannerCtl.stop();
       const track = $("banner-track"), dots = $("hero-dots");
       track.innerHTML = NEGOCIO.portada.map((p, i) => `
-        <div class="slide${i === 0 ? " is-active" : ""}" role="group" aria-roledescription="diapositiva" aria-label="${i + 1} de ${NEGOCIO.portada.length}">
-          <picture>${p.imgMovil ? `<source media="(max-width: 760px)" srcset="${p.imgMovil}">` : ""}<img src="${p.img}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} ${dropImg}></picture>
+        <div class="slide${i === 0 ? " is-active" : ""}${p.img ? "" : " no-photo"}" role="group" aria-roledescription="diapositiva" aria-label="${i + 1} de ${NEGOCIO.portada.length}">
+          ${p.img ? `<picture>${p.imgMovil ? `<source media="(max-width: 760px)" srcset="${p.imgMovil}">` : ""}<img src="${p.img}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} ${dropImg}></picture>` : ""}
           <div class="slide-copy"><p class="slide-title">${p.titulo}</p><p class="slide-text">${p.texto}</p><a class="btn btn-mag" href="${p.href}">${p.cta}</a></div>
         </div>`).join("");
       dots.innerHTML = NEGOCIO.portada.map((p, i) => `<button type="button" class="dot" aria-label="Ir al banner ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
@@ -1130,10 +1137,23 @@
       $("models").innerHTML = "";
       NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => $("models").appendChild(modelCard(m)));
     }
-    function renderRecomendados() {
-      const lista = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean);
-      $("reco").classList.toggle("hidden", !lista.length);
+    // true si la foto carga: las secciones que dependen de fotos solo muestran las que existen
+    const fotosCargadas = new Map();
+    const fotoCarga = src => {
+      if (!src) return Promise.resolve(false);
+      if (!fotosCargadas.has(src)) fotosCargadas.set(src, new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; }));
+      return fotosCargadas.get(src);
+    };
+    let recoRonda = 0;
+    async function renderRecomendados() {
+      const ronda = ++recoRonda;
+      const candidatos = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean);
+      $("reco").classList.add("hidden");
       $("recomendados").innerHTML = "";
+      const ok = await Promise.all(candidatos.map(m => fotoCarga(fotoDe(m, m.colores[0]))));
+      if (ronda !== recoRonda) return;
+      const lista = candidatos.filter((m, i) => ok[i]);
+      $("reco").classList.toggle("hidden", !lista.length);
       lista.forEach((m, i) => { const c = modelCard(m); c.setAttribute("role", "group"); c.setAttribute("aria-roledescription", "diapositiva"); c.setAttribute("aria-label", `${i + 1} de ${lista.length}`); $("recomendados").appendChild(c); });
     }
     // Flechas de los carruseles de desplazamiento (recomendados, testimonios)
@@ -1526,18 +1546,29 @@
     });
 
     // ---------- Clientas e info ----------
-    function renderClientas() {
-      $("clients").innerHTML = NEGOCIO.clientas.map(c => `<figure><img src="${c.foto}" alt="Clienta con su uniforme Multicostura" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`).join("");
+    let clientasRonda = 0;
+    async function renderClientas() {
+      const ronda = ++clientasRonda;
+      $("clientas").classList.add("hidden");
+      $("clients").innerHTML = "";
+      const ok = await Promise.all(NEGOCIO.clientas.map(c => fotoCarga(c.foto)));
+      if (ronda !== clientasRonda) return;
+      const lista = NEGOCIO.clientas.filter((c, i) => ok[i]);
+      $("clients").innerHTML = lista.map(c => `<figure><img src="${c.foto}" alt="Clienta con su uniforme Multicostura" loading="lazy"><figcaption>${c.texto}</figcaption></figure>`).join("");
+      $("clientas").classList.toggle("hidden", !lista.length);
     }
     renderClientas();
+    // Los testimonios de ejemplo (ejemplo: true) nunca se muestran: la sección aparece cuando hay uno real
     function renderTestimonios() {
-      $("testi").innerHTML = NEGOCIO.testimonios.map(t => `<figure class="quote-card" role="group" aria-roledescription="diapositiva"><blockquote>${t.texto}</blockquote><figcaption><b>${t.nombre}</b><span>${t.oficio}</span>${t.ejemplo ? '<span class="ejemplo">Texto de ejemplo</span>' : ""}</figcaption></figure>`).join("");
+      const reales = NEGOCIO.testimonios.filter(t => !t.ejemplo);
+      $("testimonios").classList.toggle("hidden", !reales.length);
+      $("testi").innerHTML = reales.map(t => `<figure class="quote-card" role="group" aria-roledescription="diapositiva"><blockquote>${t.texto}</blockquote><figcaption><b>${t.nombre}</b><span>${t.oficio}</span></figcaption></figure>`).join("");
     }
     renderTestimonios();
     function renderFooter() {
       $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
       $("f-horario").textContent = NEGOCIO.horarioTexto;
-      $("f-copy").textContent = `© ${new Date().getFullYear()} Multicostura. Uniformes médicos para mujer, hechos en ${NEGOCIO.ciudad}.`;
+      $("f-copy").textContent = `© ${new Date().getFullYear()} Multicostura. Todos los derechos reservados.`;
     }
     renderFooter();
     function renderMapa() {

@@ -46,8 +46,10 @@ test("the store tile links to Mecodes when tiendaOnline is set", () => {
   assert.match(section(html, "perfiles"), /href="https:\/\/tienda\.example\/mecodes"/);
 });
 
+const ALL_PHOTOS = `NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E")); renderRecomendados();`;
+// changed: cards render only with a loaded photo, so the test supplies photos
 test("recommended carousel has labelled arrows, one card per id and scroll-snap", () => {
-  const s = section(dom, "reco");
+  const s = section(strip(render({ inject: ALL_PHOTOS }).html), "reco");
   assert.ok(s.includes("Nuestros recomendados"));
   assert.match(s, /aria-label="Recomendados anteriores"/);
   assert.match(s, /aria-label="Recomendados siguientes"/);
@@ -56,7 +58,7 @@ test("recommended carousel has labelled arrows, one card per id and scroll-snap"
 });
 
 test("a product with a second photo swaps it in on hover", () => {
-  const html = strip(render({ inject: 'NEGOCIO.modelos.find(m => m.id === "kaill").foto2 = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E"; document.getElementById("recomendados").innerHTML = ""; renderRecomendados();' }).html);
+  const html = strip(render({ inject: 'NEGOCIO.modelos.find(m => m.id === "kaill").foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E"; NEGOCIO.modelos.find(m => m.id === "kaill").foto2 = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E"; renderRecomendados();' }).html);
   assert.match(section(html, "reco"), /class="swap"/);
   assert.match(source, /\.pic:hover \.swap/);
   assert.doesNotMatch(section(dom, "reco"), /class="swap"/);
