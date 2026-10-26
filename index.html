@@ -69,11 +69,18 @@
     .stats { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2.2rem; }
     .stats strong { font-family: "Poppins", "Inter", sans-serif; font-size: 1.9rem; font-weight: 700; color: var(--text); display: block; line-height: 1.1; }
     .stats small { color: var(--muted); }
-    .hero-pics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; align-items: end; }
-    .hero-pics figure { border-radius: 999px 999px 22px 22px; overflow: hidden; aspect-ratio: 9/16; position: relative; display: grid; place-items: end center; padding-bottom: 1rem; }
-    .hero-pics figure:nth-child(2) { aspect-ratio: 9/18; }
-    .hero-pics img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .hero-pics svg { width: 78%; }
+    .carousel { position: relative; width: min(100%, 440px); margin-inline: auto; }
+    .slides { position: relative; aspect-ratio: 4/5; border-radius: 28px; overflow: hidden; background: var(--bg-2); }
+    .slide { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; opacity: 0; visibility: hidden; transition: opacity .6s, visibility .6s; }
+    .slide.is-active { opacity: 1; visibility: visible; }
+    .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .slide svg { width: 62%; }
+    .slide figcaption { position: absolute; inset: auto 0 0; padding: 2rem 1rem .9rem; background: linear-gradient(transparent, rgba(28,28,33,.65)); color: #fff; font-weight: 600; text-align: center; }
+    .dots { display: flex; justify-content: center; gap: .1rem; margin-top: .6rem; }
+    .dot { width: 28px; height: 28px; border: 0; background: transparent; display: grid; place-items: center; }
+    .dot::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #cfcfd6; transition: background .2s, transform .2s; }
+    .dot[aria-current="true"]::after { background: var(--mag); transform: scale(1.25); }
+    @media (prefers-reduced-motion: reduce) { .slide, .dot::after { transition: none; } }
 
     /* Modelos */
     .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
@@ -261,7 +268,10 @@
           <div><strong>Envíos</strong><small>a toda Colombia</small></div>
         </div>
       </div>
-      <div class="hero-pics" id="hero-pics"></div>
+      <div class="carousel" id="hero-carousel" role="region" aria-roledescription="carrusel" aria-label="Uniformes destacados">
+        <div class="slides" id="hero-slides"></div>
+        <div class="dots" id="hero-dots"></div>
+      </div>
     </div>
   </section>
 
@@ -576,9 +586,34 @@
     const scrub = color => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub" style="fill:${color}"/></svg>`;
     const photoOr = (foto, color) => `${scrub(color)}<img src="${foto}" alt="" loading="lazy" onerror="this.remove()">`;
 
-    // ---------- Portada ----------
-    NEGOCIO.portada.forEach(p => $("hero-pics").insertAdjacentHTML("beforeend",
-      `<figure style="background:linear-gradient(180deg, #fff, ${C(p.color)}33)">${photoOr(p.foto, C(p.color))}</figure>`));
+    // ---------- Portada (carrusel) ----------
+    NEGOCIO.portada.forEach((p, i) => {
+      $("hero-slides").insertAdjacentHTML("beforeend",
+        `<figure class="slide${i === 0 ? " is-active" : ""}" aria-hidden="${i !== 0}" style="background:linear-gradient(180deg, #fff, ${C(p.color)}33)">${photoOr(p.foto, C(p.color))}${p.titulo ? `<figcaption>${p.titulo}</figcaption>` : ""}</figure>`);
+      $("hero-dots").insertAdjacentHTML("beforeend",
+        `<button type="button" class="dot" aria-label="Ir a la imagen ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`);
+    });
+    (() => {
+      const slides = [...document.querySelectorAll("#hero-slides .slide")];
+      const dots = [...document.querySelectorAll("#hero-dots .dot")];
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      let now = 0, timer = null;
+      const show = i => {
+        now = (i + slides.length) % slides.length;
+        slides.forEach((el, k) => { el.classList.toggle("is-active", k === now); el.setAttribute("aria-hidden", k !== now); });
+        dots.forEach((el, k) => (k === now ? el.setAttribute("aria-current", "true") : el.removeAttribute("aria-current")));
+      };
+      const stop = () => { clearInterval(timer); timer = null; };
+      const play = () => { stop(); if (!reduce.matches && slides.length > 1) timer = setInterval(() => show(now + 1), 5000); };
+      dots.forEach((d, i) => d.addEventListener("click", () => { show(i); play(); }));
+      const box = $("hero-carousel");
+      box.addEventListener("mouseenter", stop);
+      box.addEventListener("mouseleave", play);
+      box.addEventListener("focusin", stop);
+      box.addEventListener("focusout", play);
+      reduce.addEventListener("change", play);
+      play();
+    })();
 
     // ---------- Modelos ----------
     let cat = "Todos";
