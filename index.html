@@ -210,6 +210,13 @@
     .measure ol { display: grid; gap: .8rem; padding-left: 1.2rem; }
     .measure li b { display: block; }
     .measure li span { color: var(--muted); font-size: .92rem; }
+    .measure-inline { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 240px); gap: 1rem; align-items: start; }
+    @media (max-width: 720px) { .measure-inline { grid-template-columns: minmax(0, 1fr); } }
+    .guia-inline { background: var(--bg-2); border-radius: 12px; padding: .8rem; display: grid; gap: .6rem; }
+    .guia-inline[hidden] { display: none; }
+    .guia-inline svg { width: min(100%, 130px); margin-inline: auto; }
+    .guia-inline ol { padding-left: 1.1rem; display: grid; gap: .3rem; font-size: .8rem; }
+    .guia-inline li span { color: var(--muted); }
     .guia { margin-top: 2rem; }
     .guia img { width: min(100%, 760px); margin-inline: auto; border-radius: var(--radius); border: 1px solid var(--line); }
     .measure svg { width: min(100%, 300px); margin-inline: auto; }
@@ -279,6 +286,15 @@
         <path class="pants" d="M52 156 L148 156 L156 292 L114 292 L100 196 L86 292 L44 292 Z"/>
         <path d="M60 162 L140 162" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
         <path d="M96 164 Q92 176 98 180 M104 164 Q108 176 102 180" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
+      </symbol>
+      <symbol id="medidas-diagrama" viewBox="0 0 200 300">
+        <use href="#scrub" style="fill:#f4b6d2"/>
+        <g stroke="#ad1765" stroke-width="2" stroke-dasharray="5 4" fill="none">
+          <path d="M52 80 L148 80"/><path d="M50 120 L150 120"/><path d="M48 176 L152 176"/><path d="M24 44 L10 98"/><path d="M150 156 L156 292"/><path d="M62 20 L138 20"/>
+        </g>
+        <g font-family="Inter" font-size="10" font-weight="700" fill="#ad1765">
+          <text x="155" y="83">1</text><text x="155" y="123">2</text><text x="158" y="179">3</text><text x="2" y="70">4</text><text x="162" y="230">5</text><text x="142" y="16">6</text>
+        </g>
       </symbol>
     </defs>
   </svg>
@@ -402,6 +418,27 @@
     </div>
   </section>
 
+  <section id="proceso" class="alt">
+    <div class="wrap">
+      <span class="eyebrow">Cómo funciona</span>
+      <h2>De la idea a tus manos</h2>
+      <div class="steps-row" id="process"></div>
+    </div>
+  </section>
+
+  <section id="medidas">
+    <div class="wrap">
+      <span class="eyebrow">¿Estás en otra ciudad?</span>
+      <h2>Cómo tomar tus medidas en casa</h2>
+      <p class="lead">Usa un metro de costura, sin apretar, y pide ayuda a alguien. Envíanos las medidas en centímetros desde la agenda (opción "Me mido en casa").</p>
+      <div class="measure">
+        <ol id="measures"></ol>
+        <svg viewBox="0 0 200 300" aria-hidden="true"><use href="#medidas-diagrama"/></svg>
+      </div>
+      <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
+    </div>
+  </section>
+
   <!-- ===== AGENDA DE TOMA DE MEDIDAS ===== -->
   <section id="agenda" class="agenda">
     <div class="wrap">
@@ -433,8 +470,14 @@
             <label id="f-addr-wrap">Dirección y barrio<input id="f-addr" maxlength="120" autocomplete="street-address" placeholder="Ej: Cra 25 # 30-10, Sajonia"></label>
             <label id="f-city-wrap" class="hidden">Ciudad<input id="f-city" maxlength="40" autocomplete="address-level2" placeholder="Ej: Cali"></label>
             <div id="self-measures" class="hidden">
-              <p class="empty" style="margin-bottom:.6rem">Mídete con un metro de costura, sin apretar (mira la guía más abajo). Todo en centímetros.</p>
-              <div class="mgrid" id="mgrid"></div>
+              <p class="empty" style="margin-bottom:.6rem">Mídete con un metro de costura, sin apretar (mira la guía junto a los campos). Todo en centímetros.</p>
+              <div class="measure-inline">
+                <div class="mgrid" id="mgrid"></div>
+                <aside id="guia-inline" class="guia-inline" hidden aria-label="Guía rápida para medirte">
+                  <svg viewBox="0 0 200 300" aria-hidden="true"><use href="#medidas-diagrama"/></svg>
+                  <ol id="measures-short"></ol>
+                </aside>
+              </div>
             </div>
             <label>Notas (opcional)<textarea id="f-notes" maxlength="300" placeholder="Ej: quiero el pantalón un poco más largo, bolsillo extra para el celular"></textarea></label>
             <p class="err hidden" id="f-error"></p>
@@ -452,35 +495,6 @@
       </div>
 
       <p class="demo-note hidden" id="demo-note">Modo demostración: las citas se guardan solo en este navegador. Cuando conectes la hoja de Google (ver INSTRUCCIONES.md), quedan en la agenda real.</p>
-    </div>
-  </section>
-
-  <section class="alt">
-    <div class="wrap">
-      <span class="eyebrow">Cómo funciona</span>
-      <h2>De la idea a tus manos</h2>
-      <div class="steps-row" id="process"></div>
-    </div>
-  </section>
-
-  <section id="medidas">
-    <div class="wrap">
-      <span class="eyebrow">¿Estás en otra ciudad?</span>
-      <h2>Cómo tomar tus medidas en casa</h2>
-      <p class="lead">Usa un metro de costura, sin apretar, y pide ayuda a alguien. Envíanos las medidas en centímetros desde la agenda (opción "Me mido en casa").</p>
-      <div class="measure">
-        <ol id="measures"></ol>
-        <svg viewBox="0 0 200 300" aria-hidden="true">
-          <use href="#scrub" style="fill:#f4b6d2"/>
-          <g stroke="#ad1765" stroke-width="2" stroke-dasharray="5 4" fill="none">
-            <path d="M52 80 L148 80"/><path d="M50 120 L150 120"/><path d="M48 176 L152 176"/><path d="M24 44 L10 98"/><path d="M150 156 L156 292"/><path d="M62 20 L138 20"/>
-          </g>
-          <g font-family="Inter" font-size="10" font-weight="700" fill="#ad1765">
-            <text x="155" y="83">1</text><text x="155" y="123">2</text><text x="158" y="179">3</text><text x="2" y="70">4</text><text x="162" y="230">5</text><text x="142" y="16">6</text>
-          </g>
-        </svg>
-      </div>
-      <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
     </div>
   </section>
 
@@ -997,6 +1011,7 @@
       $("f-city-wrap").classList.toggle("hidden", ag.modo !== "casa");
       $("f-city").required = ag.modo === "casa";
       $("self-measures").classList.toggle("hidden", ag.modo !== "casa");
+      $("guia-inline").hidden = ag.modo !== "casa";
       $("mgrid").querySelectorAll("input").forEach(i => (i.required = ag.modo === "casa"));
       $("f-submit").textContent = ag.modo === "casa" ? "Enviar mis medidas por WhatsApp" : "Agendar mi cita";
       renderSummary();
@@ -1070,6 +1085,7 @@
 
     // ---------- Proceso y guía de medidas ----------
     $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
+    $("measures-short").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b> <span>${d}</span></li>`).join("");
     $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
 
     // ---------- Empresas ----------
