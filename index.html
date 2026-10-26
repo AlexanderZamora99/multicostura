@@ -120,10 +120,11 @@
     .tipos-title { margin-top: 3rem; font-size: 1.5rem; }
 
     .stock { margin-top: 1.2rem; }
-    .about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; }
-    @media (max-width: 780px) { .about { grid-template-columns: minmax(0, 1fr); } }
-    .about .addr { margin-top: 1rem; font-weight: 600; }
-    .map iframe { width: 100%; height: 320px; border: 0; border-radius: var(--radius); background: var(--line); }
+    .about-text { max-width: 760px; }
+    .about-text .addr { margin-top: 1rem; font-weight: 600; }
+    .map { margin-top: 2rem; }
+    .map iframe { width: 100%; height: 480px; border: 0; border-radius: var(--radius); background: var(--line); display: block; }
+    @media (max-width: 640px) { .map iframe { height: 360px; } }
     .vids { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin-top: 1.6rem; }
     .vids figure { display: grid; gap: .5rem; }
     .vids video, .vids iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: var(--radius); background: #000; }
@@ -349,8 +350,8 @@
   </section>
 
   <section id="nosotros" class="alt">
-    <div class="wrap about">
-      <div>
+    <div class="wrap">
+      <div class="about-text">
         <span class="eyebrow">Quiénes somos</span>
         <h2>Empresa Multicostura</h2>
         <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
@@ -556,6 +557,9 @@
       instagram: "https://www.instagram.com/multicostura_uniformes/",
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
+      // Ubicación del pin en el mapa: "lat,lng" o el nombre exacto del negocio en Google Maps.
+      // Vacío = se busca la dirección, y Google la está ubicando mal. Confirmar con la dueña.
+      mapa: "",
       ciudad: "Tuluá",
       // Tienda en línea de Mecodes (confirmar con la dueña). Vacío = el botón abre WhatsApp.
       tiendaOnline: "",
@@ -1102,7 +1106,11 @@
     NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
       `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
     $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
-    $("map").innerHTML = `<iframe title="Mapa del taller Multicostura" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.direccionTaller)}&output=embed"></iframe>`;
+    function renderMapa() {
+      const q = NEGOCIO.mapa || NEGOCIO.direccionTaller;
+      $("map").innerHTML = `<iframe title="Mapa del taller Multicostura" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed"></iframe>`;
+    }
+    renderMapa();
     $("stock-btn").href = NEGOCIO.tiendaOnline || waLink("Hola Multicostura 💗 quiero saber qué modelos hay disponibles en la tienda física");
     if (NEGOCIO.videos.length) {
       $("videos").classList.remove("hidden");

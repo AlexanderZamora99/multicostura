@@ -40,3 +40,16 @@ test("each price tier shows its delivery time", () => {
 test("content additions run without uncaught errors", () => {
   assert.doesNotMatch(stderr, /Uncaught/);
 });
+
+test("map sits full width below the Nosotros text and is tall", () => {
+  const section = dom.slice(dom.indexOf('id="nosotros"'), dom.indexOf('id="personaliza"'));
+  assert.ok(section.indexOf('id="n-address"') < section.indexOf('id="map"'), "map must come after the text");
+  assert.doesNotMatch(section, /class="wrap about"/, "text and map must not share a two-column grid");
+  const css = dom.match(/\.map iframe \{[^}]*height: (\d+)px/);
+  assert.ok(css && Number(css[1]) >= 440, "map iframe must be at least 440px tall on desktop");
+});
+
+test("map pin comes from NEGOCIO.mapa when set", () => {
+  const { html } = render({ inject: 'NEGOCIO.mapa = "4.0847,-76.1954"; renderMapa();' });
+  assert.match(html, /maps\?q=4\.0847%2C-76\.1954&amp;output=embed|maps\?q=4\.0847%2C-76\.1954&output=embed/);
+});
