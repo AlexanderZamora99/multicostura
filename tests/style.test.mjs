@@ -27,6 +27,7 @@ test("backgrounds are neutral (no pink washes)", () => {
   assert.doesNotMatch(rule(".box.pinkbox"), /#fbd3e5|#f7a9cc/);
 });
 
-test("stats numbers are near-black, not fuchsia", () => {
-  assert.doesNotMatch(rule(".stats strong"), /var\(--mag\)/);
+test("trust strip is black with white text, not fuchsia", () => {
+  assert.match(rule(".trust"), /background:\s*var\(--ink\)/);
+  assert.doesNotMatch(rule(".trust strong"), /var\(--mag\)/);
 });

@@ -124,35 +124,83 @@
       .slide.is-active .slide-copy > * { animation: none; }
     }
 
-    /* Franja de datos */
-    .stats-band { background: var(--ink); color: #fff; padding: 1.4rem 0; }
-    .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 3.5rem; }
-    .stats > div { text-align: center; }
-    .stats strong { font-family: "Jost", sans-serif; font-size: 1.7rem; font-weight: 500; color: #fff; display: block; line-height: 1.1; }
-    .stats small { color: #c4c4cc; }
+    /* Colecciones (círculos) */
+    .colecciones { padding: 56px 0 24px; }
+    .cats { display: flex; justify-content: center; gap: 2.2rem; flex-wrap: wrap; }
+    .cat { display: grid; justify-items: center; gap: .8rem; width: 128px; background: none; border: 0; text-align: center; }
+    .cat-disc { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; position: relative; background: var(--bg-2); display: grid; place-items: center; border: 2px solid transparent; outline: 2px solid var(--line); outline-offset: 3px; transition: outline-color .2s, transform .15s var(--ease); }
+    .cat:hover .cat-disc { outline-color: var(--mag); }
+    .cat:active .cat-disc { transform: scale(.96); }
+    .cat-disc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .cat-disc .ico { width: 42%; height: 42%; color: #9a9aa3; }
+    .cat-name { font-weight: 600; font-size: .95rem; line-height: 1.25; }
+    @media (max-width: 640px) {
+      .cats { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 1.2rem; padding: 6px 4px 10px; scroll-snap-type: x proximity; }
+      .cat { flex: none; width: 104px; scroll-snap-align: start; }
+      .cat-disc { width: 96px; height: 96px; }
+    }
+
+    /* Perfiles: tres fotos */
+    .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .tile { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius); background: linear-gradient(160deg, #55555d, #2b2b31); color: #fff; display: flex; align-items: flex-end; transition: transform .15s var(--ease); }
+    .tile:active { transform: scale(.985); }
+    .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .tile-body { position: relative; width: 100%; padding: 4rem 1.3rem 1.3rem; background: linear-gradient(transparent, rgba(0,0,0,.78)); display: grid; gap: .25rem; }
+    .tile-body h3 { font-size: 1.5rem; }
+    .tile-body strong { font-family: "Jost", sans-serif; font-weight: 500; font-size: 1.15rem; }
+    .tile-body small { color: #dcdce2; font-size: .88rem; }
+    .tile-cta { justify-self: start; margin-top: .6rem; padding: .55rem 1.1rem; border-radius: 999px; background: #fff; color: var(--text); font-weight: 600; font-size: .88rem; }
+    @media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile { aspect-ratio: 1 / 1.1; } }
+
+    /* Recomendados: carrusel */
+    .rail-wrap { position: relative; }
+    .rail { display: flex; gap: 1.1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: .4rem; }
+    .rail::-webkit-scrollbar { display: none; }
+    .rail .model { flex: 0 0 calc((100% - 3.3rem) / 4); scroll-snap-align: start; }
+    .rail .model p { display: none; }
+    .rail-btn { position: absolute; top: 38%; translate: 0 -50%; z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; transition: transform .15s var(--ease); }
+    .rail-btn:active { transform: scale(.92); }
+    .rail-btn svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .rail-btn.prev { left: -14px; }
+    .rail-btn.next { right: -14px; }
+    @media (max-width: 1000px) { .rail .model { flex-basis: calc((100% - 2.2rem) / 3); } }
+    @media (max-width: 640px) { .rail-btn { display: none; } }
+
+    /* Confianza */
+    .trust { background: var(--ink); color: #fff; padding: 2rem 0; }
+    .trust .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .trust-item { display: flex; align-items: center; gap: 1rem; padding: .4rem 1.6rem; }
+    .trust-item + .trust-item { border-left: 1px solid rgba(255,255,255,.22); }
+    .trust-item svg { width: 38px; height: 38px; flex: none; fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+    .trust strong { display: block; font-family: "Jost", sans-serif; font-weight: 500; font-size: 1.05rem; line-height: 1.2; }
+    .trust small { color: #c4c4cc; font-size: .86rem; line-height: 1.35; display: block; margin-top: .15rem; }
+    @media (max-width: 900px) { .trust .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.2rem; } .trust-item:nth-child(3) { border-left: 0; } }
+    @media (max-width: 640px) { .trust-item { padding: .3rem .8rem; gap: .7rem; } .trust-item svg { width: 30px; height: 30px; } }
 
     /* Modelos */
     .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
     .profs button { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: .5rem 1rem; font-size: .9rem; }
     .profs button.on { background: var(--text); border-color: var(--text); color: #fff; }
     .models { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
-    .model { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
-    .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: linear-gradient(180deg, var(--bg-2), #fff); }
+    .model { background: transparent; display: flex; flex-direction: column; min-width: 0; }
+    .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: var(--bg-2); border-radius: var(--radius); overflow: hidden; }
+    .model .pic .swap { opacity: 0; transition: opacity .45s var(--ease); }
+    .model .pic:hover .swap, .model:focus-within .pic .swap { opacity: 1; }
     .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .model .pic svg { width: 62%; }
     .model .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
     .model .pic .ph svg { width: 44px; height: 44px; }
     .model .price { font-weight: 700; }
     .model .price.ask { color: var(--muted); font-weight: 600; }
-    @media (max-width: 480px) { .stats { flex-wrap: nowrap; gap: 1rem; } .stats strong { font-size: 1.3rem; } .stats small { font-size: .72rem; display: block; line-height: 1.25; } }
     @media (max-width: 640px) { #recomendados { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: .8rem; padding-bottom: .6rem; } #recomendados .model { flex: 0 0 75%; scroll-snap-align: start; } }
-    .reco-title { margin: 2rem 0 -.4rem; font-size: 1.5rem; }
-    .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .65rem; border-radius: 999px; }
-    .model .info { padding: 1rem 1.1rem 1.2rem; display: grid; gap: .35rem; flex: 1; }
-    .model .info p { color: var(--muted); font-size: .88rem; flex: 1; }
-    .model .row { display: flex; justify-content: space-between; align-items: center; margin-top: .4rem; gap: .5rem; }
-    .model .row button { background: var(--bg-2); color: var(--mag-2); border: 0; border-radius: 999px; padding: .5rem 1rem; font-weight: 600; font-size: .86rem; }
-    .model .row button:hover { background: var(--mag); color: #fff; }
+        .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .78rem; font-weight: 600; padding: .2rem .65rem; border-radius: 999px; }
+    .model .info { padding: .9rem .1rem 0; display: grid; gap: .35rem; flex: 1; align-content: start; }
+    .model .info b { font-family: "Jost", sans-serif; font-weight: 500; font-size: 1.1rem; }
+    .model .info p { color: var(--muted); font-size: .88rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .model .row { display: grid; gap: .6rem; margin-top: .4rem; }
+    .model .row button { background: transparent; color: var(--text); border: 1.5px solid var(--text); border-radius: 999px; padding: .55rem 1rem; font-weight: 600; font-size: .88rem; transition: transform .15s var(--ease), background .15s, color .15s; }
+    .model .row button:hover { background: var(--text); color: #fff; }
+    .model .row button:active { transform: scale(.97); }
     .swatches { display: flex; gap: .3rem; flex-wrap: wrap; }
     .swatches { gap: .6rem; }
     .swatches i, .swatches button { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); padding: 0; }
@@ -160,13 +208,6 @@
     .swatches button::after { content: ""; position: absolute; inset: -5px; } /* área táctil de 24px */
     .swatches button.on { outline: 2px solid var(--mag); outline-offset: 1px; }
     .swatches small { font-size: .72rem; color: var(--muted); align-self: center; }
-    .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
-    .tipos div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; display: grid; gap: .3rem; }
-    .tipos b { text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
-    .tipos strong { font-family: "Jost", sans-serif; font-size: 1.5rem; color: var(--mag); line-height: 1.2; }
-    .tipos p { color: var(--muted); font-size: .9rem; }
-    .tipos .tiempo { color: var(--text); font-size: .85rem; font-weight: 600; }
-    .tipos-title { margin-top: 3rem; font-size: 1.5rem; }
 
     .stock { margin-top: 1.2rem; }
     .about-text { max-width: 760px; }
@@ -381,13 +422,37 @@
     <div class="dots" id="hero-dots"></div>
   </section>
 
-  <div class="stats-band">
-    <div class="wrap stats">
-      <div><strong>+10 años</strong><small>vistiendo profesionalismo</small></div>
-      <div><strong>14</strong><small>modelos en catálogo</small></div>
-      <div><strong>Envíos</strong><small>a toda Colombia</small></div>
+  <section class="colecciones" id="colecciones">
+    <div class="wrap">
+      <div class="sec-head"><h2>Explora nuestras colecciones</h2></div>
+      <div class="cats" id="cats"></div>
     </div>
-  </div>
+  </section>
+
+  <section id="perfiles">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>¿Cuál es el uniforme para ti?</h2>
+        <p class="lead">Elige según cuándo lo necesitas y cuánto quieres personalizarlo.</p>
+      </div>
+      <div class="tiles" id="tiles"></div>
+    </div>
+  </section>
+
+  <section id="reco" class="alt hidden">
+    <div class="wrap">
+      <div class="sec-head"><h2>Nuestros recomendados</h2></div>
+      <div class="rail-wrap">
+        <button type="button" class="rail-btn prev" id="reco-prev" aria-label="Recomendados anteriores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+        <div class="rail" id="recomendados"></div>
+        <button type="button" class="rail-btn next" id="reco-next" aria-label="Recomendados siguientes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust" id="confianza" aria-label="Por qué Multicostura">
+    <div class="wrap" id="trust"></div>
+  </section>
 
   <section id="modelos">
     <div class="wrap">
@@ -396,14 +461,8 @@
         <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch, línea de blancos, batas y pantalones.</p>
       </div>
       <div class="stock"><a class="btn btn-ghost" id="stock-btn" target="_blank" rel="noopener">Ver disponibles en tienda física</a></div>
-      <div id="reco" class="hidden">
-        <h3 class="reco-title">Recomendados</h3>
-        <div class="models" id="recomendados"></div>
-      </div>
       <div class="profs" id="profs"></div>
       <div class="models" id="models"></div>
-      <h3 class="tipos-title">Modalidades y precios</h3>
-      <div class="tipos" id="tipos"></div>
     </div>
   </section>
 
@@ -676,6 +735,29 @@
       // Categorías que no son uniformes: sin foto muestran un recuadro neutro, no el uniforme en SVG
       categoriasNoUniforme: ["Gorros quirúrgicos", "Medias de compresión"],
       recomendados: ["kaill", "paris", "violet", "alondra"],
+      // Círculos de "Explora nuestras colecciones". cat = categoría del catálogo que filtran.
+      // placeholder: replace with the client's photos (sin img = icono neutro)
+      categoriasCirculos: [
+        { t: "Uniformes", cat: "Conjuntos", ico: "hanger", img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+        { t: "Línea blancos", cat: "Línea blancos", ico: "coat", img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+        { t: "Gorros quirúrgicos", cat: "Gorros quirúrgicos", ico: "cap" },
+        { t: "Medias de compresión", cat: "Medias de compresión", ico: "sock" },
+        { t: "Batas y pantalones", cat: "Batas y pantalones", ico: "coat", img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+      ],
+      // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
+      // placeholder: replace with the client's photos
+      perfiles: [
+        { tipo: "tienda", cta: "Ver disponibles en tienda", img: "https://images.unsplash.com/photo-1761234852472-85aeea9c3eac?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
+        { tipo: "pedido", cta: "Elegir mi modelo", img: "https://images.unsplash.com/photo-1666887360921-85952a86894f?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
+        { tipo: "medida", cta: "Agendar mis medidas", img: "https://images.unsplash.com/photo-1770134223774-13b735e29201?auto=format&fit=crop&w=700&h=875&crop=top&q=70" },
+      ],
+      // Franja de confianza (ico = nombre en ICONO)
+      confianza: [
+        { ico: "calendar", t: "Más de 10 años", d: "confeccionando uniformes médicos" },
+        { ico: "truck", t: "Envíos a toda Colombia", d: "El envío se cotiza según el destino" },
+        { ico: "scissors", t: "Taller propio en Tuluá", d: "Fabricamos y vendemos en el mismo lugar" },
+        { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
+      ],
       // Imagen de la guía de tallas (confirmar con la dueña)
       guiaTallas: "img/guia-tallas.jpg",
       // Sin "colores" = todos los colores de la lista de arriba
@@ -763,6 +845,13 @@
     const ICONO = {
       store: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.500 5.500 4h13L20 9.500M4 9.500h16M4 9.500V20h16V9.500M9 20v-5h6v5"/></svg>',
       home: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7M5.500 9.500V20h13V9.500M10 20v-5h4v5"/></svg>',
+      truck: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h11v11H2zM13 9.500h4l4 4V17h-8"/><circle cx="6.500" cy="18" r="1.800"/><circle cx="17" cy="18" r="1.800"/></svg>',
+      scissors: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6.500" r="2.500"/><circle cx="6" cy="17.500" r="2.500"/><path d="m8 8 12 10M8 16 20 6"/></svg>',
+      calendar: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4m-8 9 3 3 5-5"/></svg>',
+      hanger: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V6.500a2 2 0 1 1 2 2M12 8 3 15a1.500 1.500 0 0 0 1 2.700h16A1.500 1.500 0 0 0 21 15l-9-7Z"/></svg>',
+      cap: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15a8 8 0 0 1 16 0v2H4zM4 17c0 2 3 3 8 3s8-1 8-3"/></svg>',
+      sock: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h7v9l4 4a3 3 0 0 1-4 4l-6-5a4 4 0 0 1-1-3z"/></svg>',
+      coat: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0zM12 7v14"/></svg>',
       ruler: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1.500"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4"/></svg>',
     };
     const $ = id => document.getElementById(id);
@@ -854,8 +943,9 @@
     const fotoDe = (m, color) => (m.fotos && m.fotos[color]) || m.foto;
     const diseñable = m => m.precio != null;
     const esUniforme = m => !m.cat.every(c => NEGOCIO.categoriasNoUniforme.includes(c));
-    const fotoCard = (m, color) => esUniforme(m) ? photoOr(fotoDe(m, color), C(color))
-      : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="" loading="lazy" onerror="this.remove()">`;
+    const swap = m => (m.foto2 ? `<img class="swap" src="${m.foto2}" alt="" loading="lazy" onerror="this.remove()">` : "");
+    const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color))
+      : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="" loading="lazy" onerror="this.remove()">`) + swap(m);
     function modelCard(m) {
       const el = document.createElement("article");
       el.className = "model";
@@ -883,13 +973,40 @@
     function renderRecomendados() {
       const lista = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean);
       $("reco").classList.toggle("hidden", !lista.length);
+      $("recomendados").innerHTML = "";
       lista.forEach(m => $("recomendados").appendChild(modelCard(m)));
     }
+    const pasoRail = dir => $("recomendados").scrollBy({ left: dir * $("recomendados").clientWidth * .85, behavior: reduceMotion.matches ? "auto" : "smooth" });
+    $("reco-prev").onclick = () => pasoRail(-1);
+    $("reco-next").onclick = () => pasoRail(1);
 
-    // ---------- Modalidades y precios ----------
+    // ---------- Colecciones (círculos) ----------
+    function renderCirculos() {
+      $("cats").innerHTML = NEGOCIO.categoriasCirculos.map((c, i) => `<button type="button" class="cat"><span class="cat-disc">${ICONO[c.ico] || ""}${c.img ? `<img src="${c.img}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span><span class="cat-name">${c.t}</span></button>`).join("");
+      [...$("cats").children].forEach((b, i) => (b.onclick = () => {
+        cat = NEGOCIO.categoriasCirculos[i].cat; renderProfs(); renderModels(); $("modelos").scrollIntoView();
+      }));
+    }
+
+    // ---------- Perfiles: "¿Cuál es el uniforme para ti?" ----------
+    const tiendaHref = () => NEGOCIO.tiendaOnline || waLink("Hola Multicostura 💗 quiero saber qué modelos hay disponibles en la tienda física");
+    // Precio y destino de cada modalidad (el precio tienda es un rango, calculado del catálogo)
     const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
     const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
-    $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p><small class="tiempo">${t.tiempo}</small></div>`).join("");
+    function renderPerfiles() {
+      const destino = { tienda: () => ({ href: tiendaHref(), ext: true }), pedido: () => ({ href: "#personaliza" }), medida: () => ({ href: "#agenda" }) };
+      $("tiles").innerHTML = NEGOCIO.perfiles.map(p => {
+        const t = NEGOCIO.tipos.find(x => x.id === p.tipo), d = destino[p.tipo]();
+        return `<a class="tile" data-tipo="${p.tipo}" href="${d.href}"${d.ext ? ' target="_blank" rel="noopener"' : ""}>${p.img ? `<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">` : ""}
+          <span class="tile-body"><h3>${t.t}</h3><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} a ${pesos(maxTienda)}`}</strong><small>${t.d}</small><small>${t.tiempo}</small><span class="tile-cta">${p.cta}</span></span></a>`;
+      }).join("");
+      $("tiles").querySelectorAll(".tile").forEach(a => (a.onclick = () => {
+        if (a.dataset.tipo !== "tienda") { design.tipo = a.dataset.tipo; renderDesign(); }
+      }));
+    }
+
+    // ---------- Franja de confianza ----------
+    $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<div><strong>${c.t}</strong><small>${c.d}</small></div></div>`).join("");
 
     // ---------- Personalizador ----------
     const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
@@ -1223,7 +1340,7 @@
       $("map").innerHTML = `<iframe title="Mapa del taller Multicostura" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed"></iframe>`;
     }
     renderMapa();
-    $("stock-btn").href = NEGOCIO.tiendaOnline || waLink("Hola Multicostura 💗 quiero saber qué modelos hay disponibles en la tienda física");
+    $("stock-btn").href = tiendaHref();
     if (NEGOCIO.videos.length) {
       $("videos").classList.remove("hidden");
       $("vids").innerHTML = NEGOCIO.videos.map(v => `<figure>${v.youtube
@@ -1296,7 +1413,7 @@
       g.onload = () => ($("guia").hidden = false); // si no carga, la guía queda oculta
       g.src = NEGOCIO.guiaTallas;
     }
-    renderProfs(); renderModels(); renderRecomendados(); renderDesign(); renderBono();
+    renderProfs(); renderModels(); renderRecomendados(); renderCirculos(); renderDesign(); renderPerfiles(); renderBono();
     loadBusy().then(renderAgenda);
   </script>
 </body>

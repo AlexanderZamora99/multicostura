@@ -21,10 +21,6 @@ test("non-uniform products show a neutral placeholder, not the scrub mock-up", (
   assert.ok(!cardOf("Kaill").includes("Foto próximamente"));
 });
 
-test("hero stats stay on one row on phones", () => {
-  assert.match(media("max-width: 480px"), /\.stats[^}]*flex-wrap:\s*nowrap/);
-});
-
 test("recommended row is a horizontal scroll-snap row on phones", () => {
   const m = media("max-width: 640px");
   assert.match(m, /#recomendados[^}]*scroll-snap-type/);
