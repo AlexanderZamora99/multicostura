@@ -25,13 +25,13 @@ test("inline guide stays hidden until 'Me mido en casa' is selected", () => {
   assert.match(m[0], /hidden/);
 });
 
-test("'Me mido en casa' shows the compact guide next to the measure fields, from NEGOCIO.medidas", () => {
+test("'Me mido en casa' shows the numbered diagram next to the measure fields, from NEGOCIO.medidas", () => {
   const d = strip(render({ inject: casa }).html);
   const box = d.slice(d.indexOf('id="self-measures"'), d.indexOf('id="f-notes"'));
   const guide = box.match(/<[^>]*id="guia-inline"[^>]*>/);
   assert.ok(guide, "guide not inside the measures block");
   assert.doesNotMatch(guide[0], /hidden/);
   assert.match(box, /id="mgrid"/);
-  assert.ok(box.includes("#medidas-diagrama"), "diagram must reuse the shared symbol");
+  assert.equal((box.match(/<text /g) || []).length, 7, "diagram numbers every measure"); // was: reused the #medidas-diagrama symbol, now generated so its numbers can be measured
   assert.ok(box.includes("Cintura"));
 });
