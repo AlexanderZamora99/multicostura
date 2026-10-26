@@ -309,7 +309,7 @@
     .guia-inline[hidden] { display: none; }
     .guia-inline svg { width: min(100%, 130px); margin-inline: auto; }
     .guia-inline ol { padding-left: 1.1rem; display: grid; gap: .3rem; font-size: .8rem; }
-    .guia-inline li span { color: var(--muted); }
+    .guia-inline li span { display: none; } /* the full descriptions are in the guide above */
     .guia { margin-top: 2rem; }
     .guia img { width: min(100%, 760px); margin-inline: auto; border-radius: var(--radius); border: 1px solid var(--line); }
     .measure svg { width: min(100%, 300px); margin-inline: auto; }
@@ -329,17 +329,50 @@
     .amounts button { border: 1.5px solid rgba(0,0,0,.1); background: rgba(255,255,255,.8); border-radius: 999px; padding: .45rem .9rem; font-weight: 600; font-size: .9rem; }
     .amounts button.on { background: var(--mag); color: #fff; border-color: var(--mag); }
 
-    /* Clientas */
-    .clients { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); margin-top: 2rem; }
-    .clients figure { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #f6f6f7, #e6e6ea); display: grid; place-items: center; font-size: 2.4rem; }
-    .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(28,28,33,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
+    /* Testimonios */
+    .quote-card { flex: 0 0 calc((100% - 2.2rem) / 3); scroll-snap-align: start; background: var(--bg-2); border-radius: var(--radius); padding: 1.6rem 2.4rem; display: grid; gap: 1rem; align-content: space-between; min-width: 0; }
+    .quote-card blockquote { font-family: "Jost", sans-serif; font-size: 1.2rem; line-height: 1.4; }
+    .quote-card figcaption { font-size: .88rem; color: var(--muted); display: grid; gap: .15rem; }
+    .quote-card figcaption b { color: var(--text); }
+    .quote-card .ejemplo { justify-self: start; font-size: .75rem; color: var(--muted); border: 1px dashed var(--muted); border-radius: 4px; padding: .1rem .5rem; }
+    #testimonios .rail-btn { top: 50%; }
+    @media (max-width: 1000px) { .quote-card { flex-basis: calc((100% - 1.1rem) / 2); } }
+    @media (max-width: 640px) { .quote-card { flex-basis: 85%; } }
 
-    footer.site { background: var(--ink); color: #c9c9d1; padding: 40px 0 100px; font-size: .9rem; }
-    footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
-    footer.site b { color: #fff; display: block; margin-bottom: .4rem; }
-    footer.site a { display: block; }
-    footer.site a:hover { color: #fff; }
+    /* Preguntas frecuentes */
+    .faq { max-width: 760px; margin-inline: auto; border-top: 1px solid var(--line); }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem .2rem; font-weight: 600; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: ""; width: 10px; height: 10px; border-right: 2px solid var(--text); border-bottom: 2px solid var(--text); rotate: 45deg; translate: 0 -3px; transition: rotate .3s var(--ease); flex: none; }
+    .faq-item[open] summary::after { rotate: -135deg; translate: 0 3px; }
+    .faq-item p { padding: 0 .2rem 1.2rem; color: var(--muted); max-width: 64ch; }
+
+    /* Fotos de clientas */
+    .clients { display: grid; gap: .8rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .clients figure { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #f6f6f7, #e4e4e8); }
+    .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; font-size: .88rem; font-weight: 600; }
+    @media (max-width: 640px) { .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .clients-cta { text-align: center; margin-top: 1.6rem; }
+
+    /* Banda de contacto y pie */
+    .band { background: var(--bg-2); padding: 3rem 0; }
+    .band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; }
+    .band h2 { font-size: 1.6rem; margin: 0; }
+    .band p { color: var(--muted); }
+    footer.site { background: var(--ink); color: #c4c4cc; padding: 3rem 0 0; font-size: .92rem; }
+    .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 2.4rem; padding-bottom: 2.4rem; }
+    @media (max-width: 760px) { .foot-grid { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; } }
+    footer.site h3 { color: #fff; font-size: 1.1rem; margin-bottom: .8rem; }
+    footer.site ul { list-style: none; display: grid; gap: .45rem; }
+    footer.site a:hover { color: #fff; text-decoration: underline; }
+    .foot-grid p + p { margin-top: .5rem; }
+    .socials { display: flex; gap: .6rem; margin-top: 1rem; }
+    .socials a { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); display: grid; place-items: center; color: #fff; }
+    .socials a:hover { background: #fff; color: var(--ink); text-decoration: none; }
+    .socials svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .foot-bottom { border-top: 1px solid rgba(255,255,255,.18); padding: 1.1rem 0 6rem; font-size: .84rem; color: #9c9ca6; }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
 
@@ -477,7 +510,8 @@
     <div class="wrap">
       <div class="about-text">
         <h2>Quiénes somos</h2>
-        <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+        <p class="lead">Multicostura es un taller de Tuluá que confecciona uniformes médicos para mujer hace más de 10 años. Cortamos, cosemos y bordamos en el taller, y enviamos a toda Colombia.</p>
+        <p class="lead" style="margin-top:.8rem">Puedes llevarte en la tienda un modelo ya hecho, pedirlo en otro color o talla, o encargarlo a tu medida.</p>
         <p class="addr"><svg class="ico-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.500"/></svg><span id="n-address"></span></p>
       </div>
       <div class="map" id="map"></div>
@@ -611,7 +645,7 @@
     <div class="wrap duo">
       <form class="box dark" id="biz">
         <h2 style="color:#fff">Uniformes para tu equipo</h2>
-        <p class="lead">Vamos a tu clínica a tomar medidas a todo el personal. Logo bordado y precio especial por cantidad.</p>
+        <p class="lead">Para clínicas, consultorios y spas: vamos a tu lugar de trabajo a tomar las medidas de todo el equipo. Bordamos el logo y damos precio especial por cantidad.</p>
         <label>Empresa o consultorio<input id="b-company" required maxlength="80" placeholder="Ej: Clínica Dental Sonríe"></label>
         <div class="two">
           <label>Personas<input id="b-qty" type="number" min="3" max="999" required value="10"></label>
@@ -624,7 +658,7 @@
 
       <form class="box pinkbox" id="bono">
         <h2>Regala un uniforme</h2>
-        <p class="lead">Ideal para grados, cumpleaños o el día de la enfermera. Ella agenda sus medidas y elige el modelo que más le guste.</p>
+        <p class="lead">Para un grado, un cumpleaños o el día de la enfermera. Quien lo recibe agenda sus medidas y elige el modelo que prefiera.</p>
         <div class="amounts" id="amounts"></div>
         <div class="two">
           <label>Para<input id="g-to" required maxlength="40" placeholder="Ej: Valentina"></label>
@@ -636,20 +670,68 @@
     </div>
   </section>
 
+  <section id="testimonios">
+    <div class="wrap">
+      <div class="sec-head"><h2>Lo que dicen nuestras clientas</h2></div>
+      <div class="rail-wrap">
+        <button type="button" class="rail-btn prev" id="testi-prev" aria-label="Testimonios anteriores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+        <div class="rail" id="testi"></div>
+        <button type="button" class="rail-btn next" id="testi-next" aria-label="Testimonios siguientes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
+    <div class="wrap">
+      <div class="sec-head"><h2>Preguntas frecuentes</h2><p class="lead">Lo que más nos preguntan sobre pagos, entregas y medidas.</p></div>
+      <div class="faq" id="faq-list"></div>
+    </div>
+  </section>
+
   <section id="clientas">
     <div class="wrap">
       <div class="sec-head"><h2>Ellas ya visten Multicostura</h2></div>
       <div class="clients" id="clients"></div>
+      <div class="clients-cta"><a class="btn btn-ghost" id="ig-btn" target="_blank" rel="noopener">Ver más en Instagram</a></div>
+    </div>
+  </section>
+
+  <section class="band" id="contacto-band">
+    <div class="wrap">
+      <div><h2>¿Tienes dudas sobre tu uniforme?</h2><p>Escríbenos y te ayudamos a elegir modelo, color y talla.</p></div>
+      <a class="btn btn-wa" id="band-wa" target="_blank" rel="noopener">Escribir por WhatsApp</a>
     </div>
   </section>
 
   <footer class="site">
-    <div class="wrap">
-      <div><b>Multicostura Uniformes</b>Diseño, comodidad y calidad.<br>Envíos a toda Colombia.</div>
-      <div><b>Taller</b><span id="f-address"></span></div>
-      <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
-      <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></div>
+    <div class="wrap foot-grid">
+      <div>
+        <h3>Multicostura Uniformes</h3>
+        <p>Uniformes médicos para mujer, hechos en nuestro taller de Tuluá y enviados a toda Colombia.</p>
+        <div class="socials">
+          <a id="f-ig" target="_blank" rel="noopener" aria-label="Instagram de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r=".6"/></svg></a>
+          <a id="f-tt" target="_blank" rel="noopener" aria-label="TikTok de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500M14 3c.4 2.800 2 4.400 5 4.600"/></svg></a>
+          <a id="f-wa" target="_blank" rel="noopener" aria-label="WhatsApp de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.700 13.600L3 21l4.500-1.200A9 9 0 1 0 12 3Z"/><path d="M9 8.500c0 3.500 3 6.500 6.500 6.500l1-1.500-2-1-1 .8c-1-.4-1.900-1.300-2.300-2.300l.8-1-1-2Z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h3>Navegación</h3>
+        <ul>
+          <li><a href="#modelos">Catálogo</a></li>
+          <li><a href="#personaliza">Diseña tu uniforme</a></li>
+          <li><a href="#agenda">Agenda medidas</a></li>
+          <li><a href="#empresas">Empresas</a></li>
+          <li><a href="#bono">Bonos regalo</a></li>
+          <li><a href="#nosotros">Quiénes somos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Taller y contacto</h3>
+        <p id="f-address"></p>
+        <p id="f-horario"></p>
+      </div>
     </div>
+    <div class="wrap foot-bottom" id="f-copy"></div>
   </footer>
 
   <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
@@ -810,15 +892,23 @@
         { q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Mira la guía en la sección \"Cómo tomar tus medidas en casa\" o agenda tu cita.", claves: ["medida", "medidas", "medir", "medirme", "talla", "tallas", "metro", "cinta"] }, // confirmar con la dueña
         { q: "¿Tienen bonos de regalo?", a: n => `Sí, bonos de ${n.bonos.map(pesos).join(", ")}. Pídelo en la sección "Bono de regalo".`, claves: ["bono", "bonos", "regalo", "regalar", "obsequio", "cumpleanos", "grado"] }, // confirmar con la dueña
         { q: "¿Hacen uniformes para empresas?", a: "Sí. Vamos a tu clínica o consultorio a tomar medidas a todo el personal, con logo bordado y precio especial por cantidad. Llena el formulario de la sección Empresas.", claves: ["empresa", "empresas", "clinica", "equipo", "logo", "personal", "spa", "mayor"] }, // confirmar con la dueña
-        { q: "¿Dónde están y qué horario tienen?", a: n => `Estamos en ${n.direccionTaller}. Atendemos de lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m., y los sábados de 8:00 a. m. a 1:00 p. m.`, claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
+        { q: "¿Dónde están y qué horario tienen?", a: n => `Estamos en ${n.direccionTaller}. Atendemos ${n.horarioTexto.charAt(0).toLowerCase() + n.horarioTexto.slice(1)}`, claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
       ],
       bonos: [100000, 150000, 200000, 300000],
+      // Fotos de clientas. placeholder: replace with the client's photos (los dos primeros son fotos de ejemplo, el resto usa img/ y queda en gris si falta)
       clientas: [
-        { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
-        { foto: "img/clienta-2.jpg", texto: "Enfermera jefe" },
+        { foto: "https://images.unsplash.com/photo-1659353888906-adb3e0041693?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Odontóloga" },
+        { foto: "https://images.unsplash.com/photo-1674049406176-021807a2802e?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Enfermera jefe" },
         { foto: "img/clienta-3.jpg", texto: "Esteticista" },
         { foto: "img/clienta-4.jpg", texto: "Médica general" },
       ],
+      // Testimonios. placeholder: texts below are examples, replace with real ones from the client's customers and remove "ejemplo: true"
+      testimonios: [
+        { nombre: "Nombre de la clienta", oficio: "Enfermera jefe", texto: "Me tomaron las medidas en el taller y el uniforme me quedó como lo pedí.", ejemplo: true },
+        { nombre: "Nombre de la clienta", oficio: "Odontóloga", texto: "Pedí mi color y mi talla, y llegó en el tiempo que me dijeron.", ejemplo: true },
+        { nombre: "Nombre de la clienta", oficio: "Médica general", texto: "Me midí en casa con la guía y el pantalón quedó del largo justo.", ejemplo: true },
+      ],
+      horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
       // Anuncios que rotan en la barra superior
       anuncios: [
         "Envíos a toda Colombia",
@@ -976,9 +1066,14 @@
       $("recomendados").innerHTML = "";
       lista.forEach(m => $("recomendados").appendChild(modelCard(m)));
     }
-    const pasoRail = dir => $("recomendados").scrollBy({ left: dir * $("recomendados").clientWidth * .85, behavior: reduceMotion.matches ? "auto" : "smooth" });
-    $("reco-prev").onclick = () => pasoRail(-1);
-    $("reco-next").onclick = () => pasoRail(1);
+    // Flechas de los carruseles de desplazamiento (recomendados, testimonios)
+    const railNav = (rail, prev, next) => {
+      const paso = dir => $(rail).scrollBy({ left: dir * $(rail).clientWidth * .85, behavior: reduceMotion.matches ? "auto" : "smooth" });
+      $(prev).onclick = () => paso(-1);
+      $(next).onclick = () => paso(1);
+    };
+    railNav("recomendados", "reco-prev", "reco-next");
+    railNav("testi", "testi-prev", "testi-next");
 
     // ---------- Colecciones (círculos) ----------
     function renderCirculos() {
@@ -1332,9 +1427,20 @@
     });
 
     // ---------- Clientas e info ----------
-    NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
-      `<figure><img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
-    $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
+    function renderClientas() {
+      $("clients").innerHTML = NEGOCIO.clientas.map(c => `<figure><img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`).join("");
+    }
+    renderClientas();
+    function renderTestimonios() {
+      $("testi").innerHTML = NEGOCIO.testimonios.map(t => `<figure class="quote-card"><blockquote>${t.texto}</blockquote><figcaption><b>${t.nombre}</b><span>${t.oficio}</span>${t.ejemplo ? '<span class="ejemplo">Texto de ejemplo</span>' : ""}</figcaption></figure>`).join("");
+    }
+    renderTestimonios();
+    function renderFooter() {
+      $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
+      $("f-horario").textContent = NEGOCIO.horarioTexto;
+      $("f-copy").textContent = `© ${new Date().getFullYear()} Multicostura. Uniformes médicos para mujer, hechos en ${NEGOCIO.ciudad}.`;
+    }
+    renderFooter();
     function renderMapa() {
       const q = NEGOCIO.mapa || NEGOCIO.direccionTaller;
       $("map").innerHTML = `<iframe title="Mapa del taller Multicostura" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed"></iframe>`;
@@ -1347,9 +1453,9 @@
         ? `<iframe title="${v.titulo || "Video"}" loading="lazy" allowfullscreen src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube)}"></iframe>`
         : `<video controls preload="metadata" playsinline src="${v.src}"></video>`}${v.titulo ? `<figcaption>${v.titulo}</figcaption>` : ""}</figure>`).join("");
     }
-    $("f-ig").href = NEGOCIO.instagram;
+    $("f-ig").href = $("ig-btn").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
-    $("f-wa").href = $("wa-float").href = $("hdr-wa").href = waLink("Hola Multicostura 💗 quiero información");
+    $("f-wa").href = $("wa-float").href = $("hdr-wa").href = $("band-wa").href = waLink("Hola Multicostura 💗 quiero información");
 
     // ---------- Chatbot de preguntas frecuentes (sin IA ni red: coincidencia por palabras clave) ----------
     const normaliza = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");
@@ -1406,6 +1512,12 @@
       if (t) { $("chat-input").value = ""; preguntar(t); }
     });
     document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("chat-panel").hidden) abrirChat(false); });
+
+    // Preguntas frecuentes en acordeón (mismos datos y respuestas que el chatbot)
+    function renderFaq() {
+      $("faq-list").innerHTML = NEGOCIO.faq.map(f => `<details class="faq-item" name="faq"><summary>${f.q}</summary><p>${respuesta(f)}</p></details>`).join("");
+    }
+    renderFaq();
 
     design.color = model().colores[0];
     if (NEGOCIO.guiaTallas) {

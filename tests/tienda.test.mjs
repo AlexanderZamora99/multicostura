@@ -14,7 +14,7 @@ test("no eyebrow labels remain in markup or styles", () => {
 
 test("no emoji are used as icons in the page", () => {
   const visible = dom.replace(/<style[\s\S]*?<\/style>/g, "");
-  assert.doesNotMatch(visible, /\p{Extended_Pictographic}/u);
+  assert.doesNotMatch(visible, /[^\u00A9\u00AE\P{Extended_Pictographic}]/u); // the copyright sign is text, not an icon
   assert.doesNotMatch(source, /content:\s*"[^"]*\p{Extended_Pictographic}/u);
 });
 
