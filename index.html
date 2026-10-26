@@ -91,8 +91,12 @@
     .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: linear-gradient(180deg, var(--bg-2), #fff); }
     .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .model .pic svg { width: 62%; }
+    .model .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
+    .model .pic .ph svg { width: 44px; height: 44px; }
     .model .price { font-weight: 700; }
     .model .price.ask { color: var(--muted); font-weight: 600; }
+    @media (max-width: 480px) { .stats { flex-wrap: nowrap; gap: 1rem; } .stats strong { font-size: 1.3rem; } .stats small { font-size: .72rem; display: block; line-height: 1.25; } }
+    @media (max-width: 640px) { #recomendados { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: .8rem; padding-bottom: .6rem; } #recomendados .model { flex: 0 0 75%; scroll-snap-align: start; } }
     .reco-title { margin: 2rem 0 -.4rem; font-size: 1.5rem; }
     .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .65rem; border-radius: 999px; }
     .model .info { padding: 1rem 1.1rem 1.2rem; display: grid; gap: .35rem; flex: 1; }
@@ -101,7 +105,10 @@
     .model .row button { background: var(--bg-2); color: var(--mag-2); border: 0; border-radius: 999px; padding: .5rem 1rem; font-weight: 600; font-size: .86rem; }
     .model .row button:hover { background: var(--mag); color: #fff; }
     .swatches { display: flex; gap: .3rem; flex-wrap: wrap; }
+    .swatches { gap: .6rem; }
     .swatches i, .swatches button { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); padding: 0; }
+    .swatches button { position: relative; }
+    .swatches button::after { content: ""; position: absolute; inset: -5px; } /* área táctil de 24px */
     .swatches button.on { outline: 2px solid var(--mag); outline-offset: 1px; }
     .swatches small { font-size: .72rem; color: var(--muted); align-self: center; }
     .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
@@ -601,6 +608,8 @@
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
       // Ids de los modelos de la fila "Recomendados" (confirmar con la dueña)
+      // Categorías que no son uniformes: sin foto muestran un recuadro neutro, no el uniforme en SVG
+      categoriasNoUniforme: ["Gorros quirúrgicos", "Medias de compresión"],
       recomendados: ["kaill", "paris", "violet", "alondra"],
       // Imagen de la guía de tallas (confirmar con la dueña)
       guiaTallas: "img/guia-tallas.jpg",
@@ -643,18 +652,18 @@
         ["Estatura", "Descalza, contra la pared."],
       ],
       // ---- Preguntas frecuentes (chatbot) ----
-      // Respuestas de ejemplo armadas con los datos de arriba: confirmar con la dueña.
+      // Respuestas de ejemplo: confirmar con la dueña. Si "a" es función, recibe NEGOCIO y arma el texto con sus datos (precios, tiempos, recargo, bonos).
       // claves: palabras que activan la respuesta (sin tildes, en minúscula).
       faq: [
         { q: "¿Cómo se paga?", a: "Con el 50% empezamos a confeccionar tu uniforme y el resto lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "50", "nequi", "transferencia", "efectivo", "tarjeta"] }, // confirmar con la dueña
-        { q: "¿En cuánto tiempo me lo entregan?", a: "Modelos de tienda: entrega inmediata. Diseño bajo pedido: 3 a 5 días hábiles. Diseño por medida: 5 a 8 días hábiles.", claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "cuando", "dias", "entrega", "entregan", "entregar", "listo"] }, // confirmar con la dueña
-        { q: "¿Cuánto cuestan?", a: "Precio tienda desde $159.000, diseño bajo pedido $175.000 y diseño por medida $185.000. El bordado cuesta $12.000 el nombre y $6.000 la profesión, y hay descuento desde 3 uniformes.", claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "bordado", "descuento"] }, // confirmar con la dueña
-        { q: "¿Hacen envíos?", a: "Sí, enviamos a toda Colombia. Para otras ciudades, el envío se cotiza según el destino.", claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete"] }, // confirmar con la dueña
-        { q: "¿Toman medidas a domicilio?", a: "Sí, en Tuluá vamos a tu casa o consultorio con un recargo de $8.000. También puedes venir al taller o medirte en casa y enviarnos tus medidas.", claves: ["domicilio", "visita", "visitan", "vienen", "van", "recargo", "consultorio"] }, // confirmar con la dueña
+        { q: "¿En cuánto tiempo me lo entregan?", a: n => n.tipos.map(t => `${t.t}: ${t.tiempo.toLowerCase()}`).join(". ") + ".", claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "cuando", "dias", "entrega", "entregan", "entregar", "listo"] }, // confirmar con la dueña
+        { q: "¿Cuánto cuestan?", a: n => `Precio tienda desde ${pesos(minTienda)}, ${n.tipos[1].t.toLowerCase()} ${pesos(n.tipos[1].precio)} y ${n.tipos[2].t.toLowerCase()} ${pesos(n.tipos[2].precio)}. El bordado cuesta ${pesos(n.bordado.nombre)} el nombre y ${pesos(n.bordado.profesion)} la profesión, y hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "bordado", "descuento"] }, // confirmar con la dueña
+        { q: "¿Hacen envíos?", a: n => `Sí, enviamos a toda Colombia. ${n.envio}`, claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete"] }, // confirmar con la dueña
+        { q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio con un recargo de ${pesos(n.recargoDomicilio)}. También puedes venir al taller o medirte en casa y enviarnos tus medidas.`, claves: ["domicilio", "visita", "visitan", "vienen", "van", "recargo", "consultorio"] }, // confirmar con la dueña
         { q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Mira la guía en la sección \"Cómo tomar tus medidas en casa\" o agenda tu cita.", claves: ["medida", "medidas", "medir", "medirme", "talla", "tallas", "metro", "cinta"] }, // confirmar con la dueña
-        { q: "¿Tienen bonos de regalo?", a: "Sí, bonos de $100.000, $150.000, $200.000 y $300.000. Pídelo en la sección \"Bono de regalo\".", claves: ["bono", "bonos", "regalo", "regalar", "obsequio", "cumpleanos", "grado"] }, // confirmar con la dueña
+        { q: "¿Tienen bonos de regalo?", a: n => `Sí, bonos de ${n.bonos.map(pesos).join(", ")}. Pídelo en la sección "Bono de regalo".`, claves: ["bono", "bonos", "regalo", "regalar", "obsequio", "cumpleanos", "grado"] }, // confirmar con la dueña
         { q: "¿Hacen uniformes para empresas?", a: "Sí. Vamos a tu clínica o consultorio a tomar medidas a todo el personal, con logo bordado y precio especial por cantidad. Llena el formulario de la sección Empresas.", claves: ["empresa", "empresas", "clinica", "equipo", "logo", "personal", "spa", "mayor"] }, // confirmar con la dueña
-        { q: "¿Dónde están y qué horario tienen?", a: "Estamos en Calle 24 T10-39, barrio Porvenir, Tuluá (Valle). Atendemos de lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m., y los sábados de 8:00 a. m. a 1:00 p. m.", claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
+        { q: "¿Dónde están y qué horario tienen?", a: n => `Estamos en ${n.direccionTaller}. Atendemos de lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m., y los sábados de 8:00 a. m. a 1:00 p. m.`, claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
       ],
       bonos: [100000, 150000, 200000, 300000],
       clientas: [
@@ -730,20 +739,23 @@
     // Foto del modelo para un color: la del color si existe, si no la general, y si no el uniforme en SVG
     const fotoDe = (m, color) => (m.fotos && m.fotos[color]) || m.foto;
     const diseñable = m => m.precio != null;
+    const esUniforme = m => !m.cat.every(c => NEGOCIO.categoriasNoUniforme.includes(c));
+    const fotoCard = (m, color) => esUniforme(m) ? photoOr(fotoDe(m, color), C(color))
+      : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="" loading="lazy" onerror="this.remove()">`;
     function modelCard(m) {
       const el = document.createElement("article");
       el.className = "model";
       const extra = m.colores.length - 8;
       const lista = diseñable(m);
       el.innerHTML = `
-        <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(fotoDe(m, m.colores[0]), C(m.colores[0]))}</div>
+        <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${fotoCard(m, m.colores[0])}</div>
         <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
           <div class="swatches">${m.colores.slice(0, 8).map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="background:${C(c)}" title="${c}" aria-label="Color ${c}"></button>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
           <div class="row"><strong class="price${lista ? "" : " ask"}">${lista ? pesos(m.precio) : "Consultar"}</strong><button type="button" class="go">${lista ? "Diseñar" : "Preguntar"}</button></div>
         </div>`;
       el.querySelectorAll(".swatches button").forEach(b => b.onclick = () => {
         el.querySelectorAll(".swatches button").forEach(x => x.classList.toggle("on", x === b));
-        el.querySelector(".pic").innerHTML = (m.tag ? `<span class="tag">${m.tag}</span>` : "") + photoOr(fotoDe(m, b.dataset.color), C(b.dataset.color));
+        el.querySelector(".pic").innerHTML = (m.tag ? `<span class="tag">${m.tag}</span>` : "") + fotoCard(m, b.dataset.color);
       });
       el.querySelector(".go").onclick = lista
         ? () => { $("s-model").value = m.id; design.color = (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); }
@@ -1113,6 +1125,7 @@
       });
       return mejor;
     };
+    const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);
     const chat = { preguntas: [] };
     const burbuja = (texto, yo) => {
       const b = document.createElement("div");
@@ -1126,7 +1139,7 @@
       burbuja(texto, true);
       chat.preguntas.push(texto);
       const f = faqDe(texto);
-      if (f) return burbuja(f.a);
+      if (f) return burbuja(respuesta(f));
       const b = burbuja("No encontré eso. ¿Te comunico por WhatsApp?");
       const a = document.createElement("a");
       a.className = "btn btn-wa"; a.target = "_blank"; a.rel = "noopener";
@@ -1145,7 +1158,7 @@
     NEGOCIO.faq.forEach(f => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "faq-chip"; b.textContent = f.q;
-      b.onclick = () => { burbuja(f.q, true); chat.preguntas.push(f.q); burbuja(f.a); };
+      b.onclick = () => { burbuja(f.q, true); chat.preguntas.push(f.q); burbuja(respuesta(f)); };
       $("chat-chips").appendChild(b);
     });
     $("chat-btn").onclick = () => abrirChat($("chat-panel").hidden);
