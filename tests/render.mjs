@@ -3,7 +3,8 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PAGE = pathToFileURL(join(ROOT, "index.html")).href;
@@ -18,14 +19,22 @@ function chromeBin() {
 
 const cache = new Map();
 
-export function render({ width = 1366, height = 900 } = {}) {
-  const key = `${width}x${height}`;
+// `inject`: script opcional que se ejecuta al final del <body> (para simular clics y escritura en los tests).
+export function render({ width = 1366, height = 900, inject = "" } = {}) {
+  const key = `${width}x${height}|${inject}`;
   if (cache.has(key)) return cache.get(key);
+  let page = PAGE;
+  if (inject) {
+    const dir = mkdtempSync(join(tmpdir(), "multicostura-"));
+    const file = join(dir, "index.html");
+    writeFileSync(file, readFileSync(join(ROOT, "index.html"), "utf8").replace("</body>", `<script>${inject}</script></body>`));
+    page = pathToFileURL(file).href;
+  }
   const run = spawnSync(chromeBin(), [
     "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
     "--enable-logging=stderr", "--v=0",
     "--virtual-time-budget=5000", `--window-size=${width},${height}`,
-    "--dump-dom", PAGE,
+    "--dump-dom", page,
   ], { encoding: "utf8", timeout: 60000 });
   if (run.status !== 0) throw new Error(`Chrome failed: ${run.stderr || run.error}`);
   const html = run.stdout;

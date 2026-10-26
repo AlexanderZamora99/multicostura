@@ -235,6 +235,26 @@
     footer.site a:hover { color: #fff; }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
+
+    /* Chatbot de preguntas frecuentes (encima del botón de WhatsApp) */
+    .chat-btn { position: fixed; right: 18px; bottom: 90px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--mag); color: #fff; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+    .chat-btn:hover { background: var(--mag-2); }
+    .chat-btn svg { width: 28px; height: 28px; fill: #fff; }
+    .chat-panel { position: fixed; right: 18px; bottom: 162px; z-index: 41; width: min(360px, 100vw - 36px); max-height: min(520px, 100dvh - 190px); display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,.22); overflow: hidden; }
+    .chat-panel[hidden] { display: none; }
+    .chat-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .8rem 1rem; background: var(--text); color: #fff; font-weight: 600; }
+    .chat-head button { border: 0; background: transparent; color: #fff; font-size: 1.5rem; line-height: 1; width: 32px; height: 32px; }
+    .chat-log { flex: 1; overflow-y: auto; padding: .9rem; display: grid; gap: .5rem; align-content: start; background: var(--bg-2); min-height: 120px; }
+    .bubble { max-width: 88%; padding: .55rem .8rem; border-radius: 14px; font-size: .9rem; line-height: 1.4; background: var(--card); border: 1px solid var(--line); justify-self: start; }
+    .bubble.me { background: var(--mag); border-color: var(--mag); color: #fff; justify-self: end; }
+    .bubble .btn { margin-top: .5rem; padding: .5rem 1rem; font-size: .85rem; }
+    .chat-chips { display: flex; flex-wrap: wrap; gap: .4rem; padding: .7rem .9rem; border-top: 1px solid var(--line); max-height: 116px; overflow-y: auto; }
+    .faq-chip { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: .35rem .75rem; font-size: .8rem; text-align: left; }
+    .faq-chip:hover { border-color: var(--mag); color: var(--mag-2); }
+    .chat-form { display: flex; gap: .5rem; padding: .7rem .9rem; border-top: 1px solid var(--line); }
+    .chat-form input { flex: 1; min-width: 0; border: 1.5px solid var(--line); border-radius: 12px; padding: .6rem .8rem; font: inherit; font-size: 1rem; }
+    .chat-form input:focus { outline: 2px solid var(--mag); border-color: transparent; }
+    .chat-form .btn { padding: .6rem 1rem; }
   </style>
 </head>
 <body>
@@ -508,6 +528,19 @@
     <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.2Z"/></svg>
   </a>
 
+  <button type="button" class="chat-btn" id="chat-btn" aria-label="Abrir preguntas frecuentes" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-panel">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 6v2h10V9H7Zm0 4v2h7v-2H7Z"/></svg>
+  </button>
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Preguntas frecuentes" hidden>
+    <div class="chat-head"><span>Asistente Multicostura</span><button type="button" id="chat-close" aria-label="Cerrar preguntas frecuentes">×</button></div>
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <input id="chat-input" maxlength="120" placeholder="Escribe tu pregunta" aria-label="Escribe tu pregunta">
+      <button class="btn btn-mag" type="submit">Enviar</button>
+    </form>
+  </div>
+
   <script>
     // ===== DATOS DEL NEGOCIO: confirma todo con la dueña =====
     const NEGOCIO = {
@@ -608,6 +641,20 @@
         ["Largo de pantalón", "De la cintura al tobillo, por el costado."],
         ["Ancho de hombros", "De la punta de un hombro a la otra, por la espalda."],
         ["Estatura", "Descalza, contra la pared."],
+      ],
+      // ---- Preguntas frecuentes (chatbot) ----
+      // Respuestas de ejemplo armadas con los datos de arriba: confirmar con la dueña.
+      // claves: palabras que activan la respuesta (sin tildes, en minúscula).
+      faq: [
+        { q: "¿Cómo se paga?", a: "Con el 50% empezamos a confeccionar tu uniforme y el resto lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "50", "nequi", "transferencia", "efectivo", "tarjeta"] }, // confirmar con la dueña
+        { q: "¿En cuánto tiempo me lo entregan?", a: "Modelos de tienda: entrega inmediata. Diseño bajo pedido: 3 a 5 días hábiles. Diseño por medida: 5 a 8 días hábiles.", claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "cuando", "dias", "entrega", "entregan", "entregar", "listo"] }, // confirmar con la dueña
+        { q: "¿Cuánto cuestan?", a: "Precio tienda desde $159.000, diseño bajo pedido $175.000 y diseño por medida $185.000. El bordado cuesta $12.000 el nombre y $6.000 la profesión, y hay descuento desde 3 uniformes.", claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "bordado", "descuento"] }, // confirmar con la dueña
+        { q: "¿Hacen envíos?", a: "Sí, enviamos a toda Colombia. Para otras ciudades, el envío se cotiza según el destino.", claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete"] }, // confirmar con la dueña
+        { q: "¿Toman medidas a domicilio?", a: "Sí, en Tuluá vamos a tu casa o consultorio con un recargo de $8.000. También puedes venir al taller o medirte en casa y enviarnos tus medidas.", claves: ["domicilio", "visita", "visitan", "vienen", "van", "recargo", "consultorio"] }, // confirmar con la dueña
+        { q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Mira la guía en la sección \"Cómo tomar tus medidas en casa\" o agenda tu cita.", claves: ["medida", "medidas", "medir", "medirme", "talla", "tallas", "metro", "cinta"] }, // confirmar con la dueña
+        { q: "¿Tienen bonos de regalo?", a: "Sí, bonos de $100.000, $150.000, $200.000 y $300.000. Pídelo en la sección \"Bono de regalo\".", claves: ["bono", "bonos", "regalo", "regalar", "obsequio", "cumpleanos", "grado"] }, // confirmar con la dueña
+        { q: "¿Hacen uniformes para empresas?", a: "Sí. Vamos a tu clínica o consultorio a tomar medidas a todo el personal, con logo bordado y precio especial por cantidad. Llena el formulario de la sección Empresas.", claves: ["empresa", "empresas", "clinica", "equipo", "logo", "personal", "spa", "mayor"] }, // confirmar con la dueña
+        { q: "¿Dónde están y qué horario tienen?", a: "Estamos en Calle 24 T10-39, barrio Porvenir, Tuluá (Valle). Atendemos de lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m., y los sábados de 8:00 a. m. a 1:00 p. m.", claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
       ],
       bonos: [100000, 150000, 200000, 300000],
       clientas: [
@@ -1054,6 +1101,61 @@
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
+
+    // ---------- Chatbot de preguntas frecuentes (sin IA ni red: coincidencia por palabras clave) ----------
+    const normaliza = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");
+    const faqDe = texto => {
+      const palabras = new Set(normaliza(texto).split(/\s+/).filter(Boolean));
+      let mejor = null, max = 0;
+      NEGOCIO.faq.forEach(f => {
+        const puntos = f.claves.filter(c => palabras.has(normaliza(c).trim())).length;
+        if (puntos > max) { max = puntos; mejor = f; }
+      });
+      return mejor;
+    };
+    const chat = { preguntas: [] };
+    const burbuja = (texto, yo) => {
+      const b = document.createElement("div");
+      b.className = "bubble" + (yo ? " me" : "");
+      b.textContent = texto;
+      $("chat-log").appendChild(b);
+      $("chat-log").scrollTop = $("chat-log").scrollHeight;
+      return b;
+    };
+    function preguntar(texto) {
+      burbuja(texto, true);
+      chat.preguntas.push(texto);
+      const f = faqDe(texto);
+      if (f) return burbuja(f.a);
+      const b = burbuja("No encontré eso. ¿Te comunico por WhatsApp?");
+      const a = document.createElement("a");
+      a.className = "btn btn-wa"; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = "Hablar por WhatsApp";
+      a.href = waLink(`Hola Multicostura 💗 tengo una pregunta que no encontré en el asistente:\n${chat.preguntas.slice(-3).map(q => "• " + q).join("\n")}`);
+      b.appendChild(document.createElement("br")); b.appendChild(a);
+    }
+    function abrirChat(abrir) {
+      $("chat-panel").hidden = !abrir;
+      $("chat-btn").setAttribute("aria-expanded", abrir);
+      if (abrir) {
+        if (!$("chat-log").children.length) burbuja("¡Hola! Soy el asistente de Multicostura 💗 Elige una pregunta o escribe la tuya.");
+        $("chat-input").focus();
+      } else $("chat-btn").focus();
+    }
+    NEGOCIO.faq.forEach(f => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "faq-chip"; b.textContent = f.q;
+      b.onclick = () => { burbuja(f.q, true); chat.preguntas.push(f.q); burbuja(f.a); };
+      $("chat-chips").appendChild(b);
+    });
+    $("chat-btn").onclick = () => abrirChat($("chat-panel").hidden);
+    $("chat-close").onclick = () => abrirChat(false);
+    $("chat-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const t = $("chat-input").value.trim();
+      if (t) { $("chat-input").value = ""; preguntar(t); }
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("chat-panel").hidden) abrirChat(false); });
 
     design.color = model().colores[0];
     if (NEGOCIO.guiaTallas) {
