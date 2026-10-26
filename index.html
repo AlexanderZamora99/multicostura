@@ -10,18 +10,18 @@
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fffafc;
-      --bg-2: #fcedf4;
+      --bg: #ffffff;
+      --bg-2: #f6f6f7;
       --card: #ffffff;
-      --text: #24161d;
-      --muted: #84707a;
+      --text: #1c1c21;
+      --muted: #6b6b76;
       --mag: #d6247f;
       --mag-2: #ad1765;
       --pink: #f4b6d2;
-      --line: #f2dde7;
+      --line: #e6e6ea;
       --wa: #25d366;
       --radius: 18px;
     }
@@ -32,8 +32,8 @@
     button { font: inherit; cursor: pointer; color: inherit; }
     img { max-width: 100%; display: block; }
     .wrap { width: min(1150px, 100% - 32px); margin-inline: auto; }
-    h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 700; line-height: 1.02; }
-    h2 { font-size: clamp(2.3rem, 6vw, 3.3rem); margin-bottom: .4rem; }
+    h1, h2, h3 { font-family: "Poppins", "Inter", system-ui, sans-serif; font-weight: 700; line-height: 1.15; }
+    h2 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: .4rem; }
     .eyebrow { color: var(--mag); font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: .74rem; }
     .lead { color: var(--muted); max-width: 600px; }
     section { padding: 80px 0; }
@@ -49,7 +49,7 @@
     .btn-wa { background: var(--wa); color: #08260f; }
 
     /* Nav */
-    header { position: sticky; top: 0; z-index: 30; background: rgba(255,250,252,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    header { position: sticky; top: 0; z-index: 30; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
     .nav { display: flex; align-items: center; justify-content: space-between; height: 66px; }
     .logo { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .02em; }
     .logo svg { width: 40px; height: 40px; }
@@ -60,15 +60,14 @@
     @media (max-width: 900px) { .nav ul { display: none; } }
 
     /* Hero */
-    .hero { padding: 72px 0 64px; background: radial-gradient(640px 400px at 88% 10%, rgba(214,36,127,.16), transparent 60%), radial-gradient(500px 320px at 0% 100%, rgba(244,182,210,.35), transparent 60%); }
+    .hero { padding: 72px 0 64px; background: var(--bg); }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 2.5rem; align-items: center; }
     @media (max-width: 880px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
-    .hero h1 { font-size: clamp(3rem, 8.5vw, 5.4rem); margin: .7rem 0 1rem; }
-    .hero h1 em { color: var(--mag); }
+    .hero h1 { font-size: clamp(2.1rem, 6vw, 3.6rem); margin: .7rem 0 1rem; }
     .hero .lead { font-size: 1.08rem; margin-bottom: 1.7rem; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
     .stats { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2.2rem; }
-    .stats strong { font-family: "Cormorant Garamond"; font-size: 2.4rem; color: var(--mag); display: block; line-height: 1; }
+    .stats strong { font-family: "Poppins", "Inter", sans-serif; font-size: 1.9rem; font-weight: 700; color: var(--text); display: block; line-height: 1.1; }
     .stats small { color: var(--muted); }
     .hero-pics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; align-items: end; }
     .hero-pics figure { border-radius: 999px 999px 22px 22px; overflow: hidden; aspect-ratio: 9/16; position: relative; display: grid; place-items: end center; padding-bottom: 1rem; }
@@ -97,14 +96,14 @@
     .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
     .tipos div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; display: grid; gap: .3rem; }
     .tipos b { text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
-    .tipos strong { font-family: "Cormorant Garamond"; font-size: 2rem; color: var(--mag); line-height: 1.1; }
+    .tipos strong { font-family: "Poppins", "Inter", sans-serif; font-size: 1.5rem; color: var(--mag); line-height: 1.2; }
     .tipos p { color: var(--muted); font-size: .9rem; }
-    .tipos-title { margin-top: 3rem; font-size: 2rem; }
+    .tipos-title { margin-top: 3rem; font-size: 1.5rem; }
 
     /* Personalizador */
     .studio { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 2.5rem; align-items: start; margin-top: 2.2rem; }
     @media (max-width: 880px) { .studio { grid-template-columns: minmax(0, 1fr); } }
-    .preview { position: sticky; top: 90px; background: radial-gradient(circle at 50% 35%, #fff, var(--bg-2) 70%); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; display: grid; place-items: center; gap: .8rem; }
+    .preview { position: sticky; top: 90px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; display: grid; place-items: center; gap: .8rem; }
     @media (max-width: 880px) { .preview { position: static; } }
     .preview svg { width: min(100%, 340px); }
     .preview .cap { font-size: .85rem; color: var(--muted); text-align: center; }
@@ -126,7 +125,7 @@
     .quote { background: var(--text); color: #fff; border-radius: 18px; padding: 1.2rem 1.3rem; display: grid; gap: .3rem; font-size: .93rem; }
     .quote div { display: flex; justify-content: space-between; gap: 1rem; }
     .quote .total { font-size: 1.2rem; font-weight: 700; border-top: 1px solid rgba(255,255,255,.2); padding-top: .5rem; margin-top: .3rem; }
-    .quote small { color: #d9c4cf; }
+    .quote small { color: #c9c9d1; }
     .tiers { display: flex; gap: .4rem; flex-wrap: wrap; font-size: .8rem; }
     .tiers span { border: 1px dashed var(--mag); color: var(--mag-2); border-radius: 999px; padding: .2rem .6rem; }
     .tiers span.on { background: var(--mag); color: #fff; border-style: solid; }
@@ -143,7 +142,7 @@
     .mode { text-align: left; border: 1.5px solid var(--line); background: var(--bg); border-radius: 16px; padding: 1rem; display: grid; gap: .2rem; }
     .mode .ico { font-size: 1.5rem; }
     .mode small { color: var(--muted); font-size: .85rem; }
-    .mode.on { border-color: var(--mag); background: var(--bg-2); box-shadow: 0 0 0 3px rgba(214,36,127,.12); }
+    .mode.on { border-color: var(--mag); background: var(--bg-2); box-shadow: 0 0 0 3px rgba(214,36,127,.10); }
     .chips { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .3rem; }
     .chip { flex: none; background: var(--bg); border: 1.5px solid var(--line); border-radius: 14px; padding: .55rem .9rem; font-size: .9rem; text-align: center; line-height: 1.25; }
     .chip small { display: block; color: var(--muted); font-size: .72rem; text-transform: capitalize; }
@@ -183,13 +182,13 @@
     .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1.2rem; }
     .box { border-radius: 24px; padding: 1.8rem; display: grid; gap: .9rem; align-content: start; }
     .box.dark { background: var(--text); color: #fff; }
-    .box.dark .lead { color: #d9c4cf; }
-    .box.pinkbox { background: linear-gradient(135deg, #fbd3e5, #f7a9cc); }
+    .box.dark .lead { color: #c9c9d1; }
+    .box.pinkbox { background: #fdf2f7; border: 1px solid #f3cfe0; }
     .box label { display: grid; gap: .3rem; font-size: .84rem; }
     .box input { width: 100%; border: 1.5px solid rgba(0,0,0,.08); border-radius: 12px; padding: .75rem .9rem; font: inherit; font-size: 1rem; background: rgba(255,255,255,.9); color: var(--text); }
-    .gift { background: #fff; border-radius: 18px; padding: 1.2rem; box-shadow: 0 16px 30px -18px rgba(173,23,101,.6); display: grid; gap: .3rem; position: relative; overflow: hidden; }
+    .gift { background: #fff; border-radius: 18px; padding: 1.2rem; border: 1.5px dashed #e7a9c7; box-shadow: 0 10px 24px -18px rgba(0,0,0,.25); display: grid; gap: .3rem; position: relative; overflow: hidden; }
     .gift::after { content: "🎀"; position: absolute; right: .8rem; top: .5rem; font-size: 2rem; }
-    .gift b { font-family: "Cormorant Garamond"; font-size: 1.8rem; color: var(--mag-2); }
+    .gift b { font-family: "Poppins", "Inter", sans-serif; font-size: 1.5rem; color: var(--mag-2); }
     .gift small { color: var(--muted); }
     .amounts { display: flex; flex-wrap: wrap; gap: .4rem; }
     .amounts button { border: 1.5px solid rgba(0,0,0,.1); background: rgba(255,255,255,.8); border-radius: 999px; padding: .45rem .9rem; font-weight: 600; font-size: .9rem; }
@@ -197,11 +196,11 @@
 
     /* Clientas */
     .clients { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); margin-top: 2rem; }
-    .clients figure { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #fbd3e5, #f4b6d2); display: grid; place-items: center; font-size: 2.4rem; }
+    .clients figure { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #f6f6f7, #e6e6ea); display: grid; place-items: center; font-size: 2.4rem; }
     .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(36,22,29,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
+    .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(28,28,33,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
 
-    footer.site { background: var(--text); color: #d9c4cf; padding: 40px 0 100px; font-size: .9rem; }
+    footer.site { background: var(--text); color: #c9c9d1; padding: 40px 0 100px; font-size: .9rem; }
     footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
     footer.site b { color: #fff; display: block; margin-bottom: .4rem; }
     footer.site a { display: block; }
@@ -250,7 +249,7 @@
     <div class="wrap hero-grid">
       <div>
         <span class="eyebrow">Uniformes médicos · Catálogo 2026</span>
-        <h1>Viste tu profesión <em>con estilo.</em></h1>
+        <h1>Viste tu profesión con estilo.</h1>
         <p class="lead">Calidad, comodidad y estilo en antifluido. Llévate un modelo listo para entrega, pídelo en tu talla o mándalo a confeccionar a tu medida, con tu nombre bordado.</p>
         <div class="hero-actions">
           <a href="#agenda" class="btn btn-mag">Agendar toma de medidas</a>
@@ -295,7 +294,7 @@
         <div class="preview">
           <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
             <use href="#scrub"/>
-            <text id="pv-name" x="125" y="62" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="700" font-size="11" text-anchor="middle"></text>
+            <text id="pv-name" x="125" y="62" font-family="Poppins, Inter, sans-serif" font-weight="600" font-size="9" text-anchor="middle"></text>
             <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
           </svg>
           <span class="cap" id="pv-cap"></span>
@@ -424,7 +423,7 @@
       <form class="box pinkbox" id="bono">
         <span class="eyebrow" style="color:var(--mag-2)">Bono de regalo</span>
         <h2>Un detalle para alguien increíble</h2>
-        <p class="lead" style="color:#6b3c53">Ideal para grados, cumpleaños o el día de la enfermera. Ella agenda sus medidas y elige el modelo que más le guste.</p>
+        <p class="lead">Ideal para grados, cumpleaños o el día de la enfermera. Ella agenda sus medidas y elige el modelo que más le guste.</p>
         <div class="amounts" id="amounts"></div>
         <div class="two">
           <label>Para<input id="g-to" required maxlength="40" placeholder="Ej: Valentina"></label>
