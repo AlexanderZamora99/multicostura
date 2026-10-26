@@ -27,9 +27,10 @@ test("recommended row is a horizontal scroll-snap row on phones", () => {
   assert.match(m, /#recomendados[^}]*overflow-x:\s*auto/);
 });
 
-test("color swatches keep a 14px dot but have a 24px touch target", () => {
-  assert.match(source, /\.swatches button::after\s*\{[^}]*inset:\s*-5px/);
-  assert.match(source, /\.swatches button\s*\{[^}]*position:\s*relative/);
+test("color swatches keep a small dot but the button itself is a 24px touch target", () => {
+  // was a 14px button with a ::after hit area; the dot is now ::before inside a real 24x24 button
+  assert.match(source, /\.swatches button\s*\{[^}]*width:\s*24px;\s*height:\s*24px/);
+  assert.match(source, /\.swatches button::before\s*\{[^}]*inset:\s*4px/);
 });
 
 test("FAQ answers with business figures are built from NEGOCIO", () => {

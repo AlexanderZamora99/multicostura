@@ -19,7 +19,7 @@ test("clicking a category circle filters the catalog", () => {
   const html = strip(render({ inject: 'document.querySelectorAll("#cats .cat")[1].click();' }).html);
   const grid = section(html, "models");
   assert.equal(count(grid, '<article class="model"'), 5); // París, Alondra/Clásico/Durango blanco, Bata
-  assert.match(html, /<button type="button" class="on">Línea blancos<\/button>/);
+  assert.match(html, /<button type="button" class="on" aria-pressed="true">Línea blancos<\/button>/);
 });
 
 test("a category circle without photo keeps its label and a neutral icon", () => {

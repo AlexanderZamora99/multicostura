@@ -33,7 +33,7 @@ test("testimonials: one card per NEGOCIO.testimonios, placeholders are marked, a
 test("FAQ accordion has one item per NEGOCIO.faq with its answer", () => {
   const s = section(dom, "faq");
   assert.equal(count(s, 'class="faq-item"'), FAQS);
-  assert.equal(count(s, "<summary"), FAQS);
+  assert.equal(count(s, 'class="faq-q"'), FAQS); // was <summary>: the accordion now uses buttons with aria-expanded
   assert.ok(s.includes("¿Cómo se paga?"));
   const html = strip(render({ inject: 'NEGOCIO.recargoDomicilio = 12345; NEGOCIO.faq = NEGOCIO.faq.slice(0, 5); renderFaq();' }).html);
   const s2 = section(html, "faq");
