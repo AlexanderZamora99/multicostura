@@ -9,7 +9,7 @@ Se publica gratis en GitHub Pages. No necesita servidor.
 |---|---|
 | `index.html` | Toda la página. Los datos del negocio están en `const NEGOCIO = {...}` dentro del `<script>`. |
 | `apps-script.gs` | Código de la agenda. Se pega en Google Apps Script (no se sube a GitHub). |
-| `img/` | Fotos. Los nombres deben coincidir con los de `NEGOCIO` (`portada-1.jpg`, `jogger.jpg`, `clienta-1.jpg`, …). |
+| `img/` | Fotos. Los nombres deben coincidir con los de `NEGOCIO` (`portada-1.jpg`, `kaill.jpg`, `clienta-1.jpg`, …). |
 
 ## Ver la página en Visual Studio Code
 
@@ -23,12 +23,13 @@ Dentro de `NEGOCIO` en `index.html`:
 
 - `whatsapp`: número con 57 adelante, sin espacios ni `+`.
 - `direccionTaller`, `ciudad`.
-- `canvaLink` (y opcional `canvaEmbed`).
+- `tipos`: modalidades y precios (precio tienda, bajo pedido, por medida).
+- `categorias`: filtros del catálogo.
 - `horario`: días y rangos. Ej.: `1: [["08:00","12:00"],["14:00","18:00"]]` = lunes de 8 a 12 y de 2 a 6.
 - `minutosPorPersona`, `minutosBase`: cuánto dura tomar medidas.
 - `margen.domicilio`: minutos de traslado después de una cita a domicilio.
 - `recargoDomicilio`.
-- `modelos`: nombre, precio, colores, profesiones y foto.
+- `modelos`: nombre, precio tienda, categorías (`cat`), colores (vacío = todos) y foto. `precioFijo: true` = no cambia con la modalidad (batas, pantalones).
 - `bordado`, `descuentos`, `bonos`, `proceso`, `medidas`.
 
 ## Cómo funciona la agenda
