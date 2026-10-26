@@ -109,7 +109,18 @@
     .tipos b { text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
     .tipos strong { font-family: "Poppins", "Inter", sans-serif; font-size: 1.5rem; color: var(--mag); line-height: 1.2; }
     .tipos p { color: var(--muted); font-size: .9rem; }
+    .tipos .tiempo { color: var(--text); font-size: .85rem; font-weight: 600; }
     .tipos-title { margin-top: 3rem; font-size: 1.5rem; }
+
+    .stock { margin-top: 1.2rem; }
+    .about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; }
+    @media (max-width: 780px) { .about { grid-template-columns: minmax(0, 1fr); } }
+    .about .addr { margin-top: 1rem; font-weight: 600; }
+    .map iframe { width: 100%; height: 320px; border: 0; border-radius: var(--radius); background: var(--line); }
+    .vids { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin-top: 1.6rem; }
+    .vids figure { display: grid; gap: .5rem; }
+    .vids video, .vids iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: var(--radius); background: #000; }
+    .vids figcaption { font-size: .9rem; color: var(--muted); }
 
     /* Personalizador */
     .studio { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 2.5rem; align-items: start; margin-top: 2.2rem; }
@@ -290,6 +301,7 @@
       <span class="eyebrow">Catálogo 2026</span>
       <h2>Encuentra tu próximo uniforme</h2>
       <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch, línea de blancos, batas y pantalones.</p>
+      <div class="stock"><a class="btn btn-ghost" id="stock-btn" target="_blank" rel="noopener">Ver disponibles en tienda física</a></div>
       <div id="reco" class="hidden">
         <h3 class="reco-title">Recomendados</h3>
         <div class="models" id="recomendados"></div>
@@ -301,11 +313,23 @@
     </div>
   </section>
 
-  <section id="nosotros" class="alt">
+  <section id="videos" class="hidden">
     <div class="wrap">
-      <span class="eyebrow">Quiénes somos</span>
-      <h2>Empresa Multicostura</h2>
-      <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+      <span class="eyebrow">Mira cómo trabajamos</span>
+      <h2>Videos</h2>
+      <div class="vids" id="vids"></div>
+    </div>
+  </section>
+
+  <section id="nosotros" class="alt">
+    <div class="wrap about">
+      <div>
+        <span class="eyebrow">Quiénes somos</span>
+        <h2>Empresa Multicostura</h2>
+        <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+        <p class="addr">📍 <span id="n-address"></span></p>
+      </div>
+      <div class="map" id="map"></div>
     </div>
   </section>
 
@@ -493,6 +517,10 @@
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
       ciudad: "Tuluá",
+      // Tienda en línea de Mecodes (confirmar con la dueña). Vacío = el botón abre WhatsApp.
+      tiendaOnline: "",
+      // Videos (confirmar con la dueña): { src: "video/a.mp4", titulo } o { youtube: "ID", titulo }. Vacío = sección oculta.
+      videos: [],
 
       // ---- Agenda de toma de medidas ----
       // URL de la aplicación web de Google Apps Script. Vacío = modo demostración.
@@ -522,10 +550,11 @@
 
       // ---- Diseño y precios (del catálogo 2026) ----
       // precio: null = el precio tienda de cada modelo. Los modelos con precioFijo no cambian de precio.
+      // tiempo: tiempos de entrega de ejemplo, confirmar con la dueña
       tipos: [
-        { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null },
-        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000 },
-        { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000 },
+        { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null, tiempo: "Entrega inmediata" },
+        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000, tiempo: "3 a 5 días hábiles" },
+        { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000, tiempo: "5 a 8 días hábiles" },
       ],
       // Colores de ejemplo: confirmar con la dueña
       colores: {
@@ -687,7 +716,7 @@
     // ---------- Modalidades y precios ----------
     const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
     const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
-    $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
+    $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p><small class="tiempo">⏱ ${t.tiempo}</small></div>`).join("");
 
     // ---------- Personalizador ----------
     const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
@@ -1013,7 +1042,15 @@
     // ---------- Clientas e info ----------
     NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
       `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
-    $("f-address").textContent = NEGOCIO.direccionTaller;
+    $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
+    $("map").innerHTML = `<iframe title="Mapa del taller Multicostura" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.direccionTaller)}&output=embed"></iframe>`;
+    $("stock-btn").href = NEGOCIO.tiendaOnline || waLink("Hola Multicostura 💗 quiero saber qué modelos hay disponibles en la tienda física");
+    if (NEGOCIO.videos.length) {
+      $("videos").classList.remove("hidden");
+      $("vids").innerHTML = NEGOCIO.videos.map(v => `<figure>${v.youtube
+        ? `<iframe title="${v.titulo || "Video"}" loading="lazy" allowfullscreen src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube)}"></iframe>`
+        : `<video controls preload="metadata" playsinline src="${v.src}"></video>`}${v.titulo ? `<figcaption>${v.titulo}</figcaption>` : ""}</figure>`).join("");
+    }
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
