@@ -8,27 +8,7 @@ const strip = h => h.replace(/<script[\s\S]*?<\/script>/g, "");
 const dom = strip(render().html);
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
 
-test("category circles: one per NEGOCIO.categoriasCirculos, in order", () => {
-  const s = section(dom, "colecciones");
-  assert.equal(count(s, 'class="cat"'), 5);
-  const labels = [...s.matchAll(/<span class="cat-name">([^<]+)</g)].map(m => m[1]);
-  assert.deepEqual(labels, ["Uniformes", "Línea blancos", "Gorros quirúrgicos", "Medias de compresión", "Batas y pantalones"]);
-});
-
-test("clicking a category circle filters the catalog", () => {
-  const html = strip(render({ inject: 'document.querySelectorAll("#cats .cat")[1].click();' }).html);
-  const grid = section(html, "models");
-  assert.equal(count(grid, '<article class="model"'), 5); // París, Alondra/Clásico/Durango blanco, Bata
-  assert.match(html, /<button type="button" class="on" aria-pressed="true">Línea blancos<\/button>/);
-});
-
-test("a category circle without photo keeps its label and a neutral icon", () => {
-  const html = strip(render({ inject: 'document.querySelectorAll("#cats img").forEach(i => i.dispatchEvent(new Event("error")));' }).html);
-  const s = section(html, "colecciones");
-  assert.doesNotMatch(s, /<img/);
-  assert.equal(count(s, "<svg"), 5);
-});
-
+// changed: the five category circles became three large collection tiles (Uniformes, Línea blancos, Gorros y medias); the new shape is covered in canon.test.mjs
 test("three 'uniforme para ti' tiles map to the price tiers with their price and delivery time", () => {
   const s = section(dom, "perfiles");
   assert.ok(s.includes("¿Cuál es el uniforme para ti?"));
@@ -64,18 +44,18 @@ test("a product with a second photo swaps it in on hover", () => {
   assert.doesNotMatch(section(dom, "reco"), /class="swap"/);
 });
 
-test("trust strip replaces the stats band: four items with inline line icons and dividers", () => {
+// changed: the trust block is four centred line-icon items on light grey (no dividers); "Más de 10 años" now lives in the marquee and the about text
+test("trust block replaces the stats band: four items with inline line icons", () => {
   const s = section(dom, "confianza");
   assert.equal(count(s, 'class="trust-item"'), 4);
   assert.equal(count(s, "<svg"), 4);
-  assert.ok(s.includes("10 años") && s.includes("toda Colombia"));
+  assert.ok(s.includes("toda Colombia"));
   assert.doesNotMatch(dom, /stats-band/);
-  assert.match(source, /\.trust-item \+ \.trust-item\s*\{[^}]*border-left/);
   assert.doesNotMatch(source, /\.trust strong\s*\{[^}]*var\(--mag\)/);
 });
 
-test("trust strip fits two columns on phones", () => {
-  assert.match(source, /@media \(max-width: 900px\)\s*\{\s*\.trust \.wrap\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
+test("trust block fits two columns on phones", () => {
+  assert.match(source, /@media \(max-width: 900px\)\s*\{\s*\.trust-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/); // changed: .trust .wrap became .trust-grid
 });
 
 test("price tiers live in the tiles, not in a duplicated table", () => {

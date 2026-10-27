@@ -220,3 +220,77 @@ test("first viewport on desktop reaches the top of NUESTROS RECOMENDADOS", () =>
   assert.ok(Number(c("reco-h2-b")) < 900, `title bottom at ${c("reco-h2-b")}`);
   assert.ok(Number(c("reco-card-t")) < 900, `first card top at ${c("reco-card-t")}`);
 });
+
+// ---- C4: body to canon ----
+const at = (d, id) => d.indexOf(`id="${id}"`);
+const models = h => count(section(h, "models"), '<article class="model"');
+const click = (sel, i) => strip(render({ inject: `document.querySelectorAll("${sel}")[${i}].click();` }).html);
+
+test("page order follows the store canon: recommended, collections, trust, uniform picker, catalog", () => {
+  const order = ["reco", "colecciones", "confianza", "perfiles", "modelos"].map(id => at(dom, id));
+  assert.deepEqual([...order].sort((x, y) => x - y), order);
+  assert.ok(order.every(i => i > 0));
+});
+
+test("EXPLORA NUESTRAS COLECCIONES: three large tiles with name, item count and a Ver todo link", () => {
+  const s = section(dom, "colecciones");
+  assert.match(s, /<h2>Explora nuestras colecciones<\/h2>/);
+  assert.equal(count(s, 'class="col-tile'), 3);
+  assert.deepEqual([...s.matchAll(/<h3>([^<]+)<\/h3>/g)].map(m => m[1]), ["Uniformes", "Línea blancos", "Gorros y medias"]);
+  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["12 modelos", "5 modelos", "2 modelos"]);
+  assert.equal(count(s, 'class="ver-todo" href="#modelos"'), 3);
+  assert.doesNotMatch(s, /<img/, "no stock posing as product: a calm grey tile until a photo is configured");
+});
+
+test("collection tiles show their photo when one is configured", () => {
+  const html = strip(render({ inject: `NEGOCIO.colecciones[0].img = "${PIX}"; renderColecciones();` }).html);
+  const s = section(html, "colecciones");
+  assert.equal(count(s, "<img"), 1);
+  assert.match(s, /class="col-tile has-photo"/);
+});
+
+test("Ver todo filters the catalog, including the Gorros y medias group", () => {
+  assert.equal(models(click("#colecciones .ver-todo", 1)), 5); // París, Alondra/Clásico/Durango blanco, Bata
+  const caps = click("#colecciones .ver-todo", 2);
+  assert.equal(models(caps), 2);
+  assert.match(caps, /<button type="button" class="on" aria-pressed="true">Gorros y medias<\/button>/);
+  assert.equal(models(click("#colecciones .ver-todo", 0)), 12);
+});
+
+test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the business data, on light grey", () => {
+  const s = section(dom, "confianza");
+  assert.match(s, /<h2[^>]*>Confianza en cada paso de tu compra<\/h2>/);
+  const items = s.match(/<div class="trust-item">/g);
+  assert.equal(items.length, 4);
+  for (const t of ["Envíos a toda Colombia", "Taller propio en Tuluá", "A tu medida", "Pago 50% para empezar"]) assert.ok(s.includes(t), t);
+  assert.equal(count(s, "<svg"), 4);
+  assert.match(css, /\.trust\s*\{[^}]*background:\s*var\(--bg-2\)/);
+});
+
+test("¿CUÁL ES EL UNIFORME PARA TI? shows the three buying modes with price and delivery time", () => {
+  const s = section(dom, "perfiles");
+  assert.match(s, /<h2>¿Cuál es el uniforme para ti\?<\/h2>/);
+  assert.equal(count(s, '<a class="tile'), 3);
+  for (const t of ["Precio tienda", "Diseño bajo pedido", "Diseño por medida", "$175.000", "$185.000", "Entrega inmediata"]) assert.ok(s.includes(t), t);
+  assert.doesNotMatch(css, /\.tile\s*\{[^}]*linear-gradient/);
+});
+
+test("testimonials and the social grid stay hidden while every entry is an example; the FAQ accordion stays", () => {
+  assert.match(dom.match(/<section[^>]*id="testimonios"[^>]*>/)[0], /\bhidden\b/);
+  assert.match(dom.match(/<section[^>]*id="clientas"[^>]*>/)[0], /\bhidden\b/);
+  assert.ok(count(section(dom, "faq"), 'class="faq-q"') >= 5);
+});
+
+test("footer has Contacto, Centro de ayuda and Explora columns and invents no policies", () => {
+  const f = dom.slice(dom.indexOf("<footer"), dom.indexOf("</footer>"));
+  const col = name => f.slice(f.indexOf(`<h3>${name}</h3>`), f.indexOf("</div>", f.indexOf(`<h3>${name}</h3>`)));
+  const contacto = col("Contacto"), ayuda = col("Centro de ayuda"), explora = col("Explora");
+  assert.match(contacto, /href="https:\/\/wa\.me\/573217830050/);
+  assert.ok(contacto.includes("Calle 24 T10-39") && contacto.includes("Lunes a viernes"));
+  for (const [t, id] of [["Guía de tallas", "guia-tallas"], ["Cómo tomar medidas", "medidas"], ["Ubicación", "nosotros"], ["Preguntas frecuentes", "faq"]]) {
+    assert.match(ayuda, new RegExp(`href="#${id}"[^>]*>${t}<`), t);
+    assert.ok(at(dom, id) > -1, `#${id} exists`);
+  }
+  for (const id of ["modelos", "personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
+  assert.doesNotMatch(dom, /devoluci|garant[ií]a|reembolso|cambios y/i);
+});

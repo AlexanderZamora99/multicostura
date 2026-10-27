@@ -40,8 +40,9 @@
     button { font: inherit; cursor: pointer; color: inherit; }
     img { max-width: 100%; display: block; }
     :focus-visible { outline: 3px solid var(--mag-2); outline-offset: 2px; }
-    .ann :focus-visible, .trust :focus-visible, footer.site :focus-visible, .box.dark :focus-visible, .chat-head :focus-visible, .tile :focus-visible { outline-color: #fff; }
+    .ann :focus-visible, footer.site :focus-visible, .box.dark :focus-visible, .chat-head :focus-visible, .has-photo :focus-visible { outline-color: #fff; }
     .tile:focus-visible, .ann-pp:focus-visible { outline-offset: -4px; }
+    .col-tile:has(.ver-todo:focus-visible) { outline: 3px solid var(--mag-2); outline-offset: 2px; }
     ::placeholder { color: #6b6b73; opacity: 1; }
     .skip { position: absolute; left: 8px; top: -80px; z-index: 100; background: #000; color: #fff; padding: .8rem 1.1rem; border-radius: var(--radius); font-weight: 600; }
     .skip:focus { top: 8px; }
@@ -157,37 +158,39 @@
       .slide.is-active .slide-copy > * { animation: none; }
     }
 
-    /* Colecciones (círculos) */
-    .colecciones { padding: 56px 0 24px; }
-    .cats { display: flex; justify-content: center; gap: 2.2rem; flex-wrap: wrap; }
-    .cat { display: grid; justify-items: center; gap: .8rem; width: 128px; background: none; border: 0; text-align: center; }
-    .cat-disc { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; position: relative; background: var(--bg-2); display: grid; place-items: center; border: 2px solid transparent; outline: 2px solid var(--ctl); outline-offset: 3px; transition: outline-color .2s, transform .15s var(--ease); }
-    .cat:hover .cat-disc { outline-color: var(--mag); }
-    .cat:active .cat-disc { transform: scale(.96); }
-    .cat-disc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .cat-disc .ico { width: 42%; height: 42%; color: #767680; }
-    .cat-name { font-weight: 600; font-size: .95rem; line-height: 1.25; }
-    @media (max-width: 640px) {
-      .cats { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 1.2rem; padding: 6px 4px 10px; scroll-snap-type: x proximity; }
-      .cat { flex: none; width: 104px; scroll-snap-align: start; }
-      .cat-disc { width: 96px; height: 96px; }
-    }
+    /* Colecciones: tres teselas grandes */
+    .colecciones { padding-bottom: 24px; }
+    .col-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .col-tile { position: relative; aspect-ratio: 4 / 3; display: flex; align-items: flex-end; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .col-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .col-body { position: relative; width: 100%; padding: 1.6rem; display: grid; gap: .2rem; justify-items: start; }
+    .col-body h3 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: .03em; }
+    .col-n { color: var(--muted); font-size: .95rem; margin-bottom: .8rem; }
+    .ver-todo { display: inline-flex; align-items: center; min-height: 44px; padding: .6rem 1.4rem; border-radius: 4px; background: var(--text); color: #fff; font-weight: 600; transition: background .15s; }
+    .ver-todo::after { content: ""; position: absolute; inset: 0; }
+    .col-tile:hover .ver-todo { background: #000; }
+    .col-tile.has-photo { border-color: transparent; color: #fff; }
+    .col-tile.has-photo .col-body { padding-top: 5rem; background: linear-gradient(transparent, rgba(0,0,0,.72)); }
+    .col-tile.has-photo .col-n { color: #e4e4e8; }
+    .col-tile.has-photo .ver-todo { background: #fff; color: var(--text); }
+    @media (max-width: 760px) { .col-grid { grid-template-columns: minmax(0, 1fr); } .col-tile { aspect-ratio: 16 / 10; } }
 
-    /* Perfiles: tres fotos */
-    .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-    .tile { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius); background: #3a3a3a; color: #fff; display: flex; align-items: flex-end; transition: transform .15s var(--ease); }
+    /* ¿Cuál es el uniforme para ti?: tres modalidades */
+    .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .tile { position: relative; overflow: hidden; border-radius: var(--radius); background: var(--bg-2); border: 1px solid var(--line); color: var(--text); display: flex; transition: transform .15s var(--ease); }
     .tile:active { transform: scale(.985); }
     .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .tile-body { position: relative; width: 100%; padding: 4rem 1.3rem 1.3rem; background: linear-gradient(transparent, rgba(0,0,0,.78)); display: grid; gap: .25rem; }
-    .tile-body h3 { font-size: 1.5rem; }
-    .tile-body strong { font-weight: 600; font-size: 1.15rem; }
-    .tile-body small { color: #dcdce2; font-size: .88rem; }
-    .tile-cta { justify-self: start; margin-top: .6rem; padding: .55rem 1.1rem; border-radius: 4px; background: #fff; color: var(--text); font-weight: 600; font-size: .88rem; }
-    .tile.no-photo { aspect-ratio: auto; background: var(--bg-2); color: var(--text); border: 1px solid var(--ctl); }
-    .tile.no-photo .tile-body { background: none; padding: 1.6rem 1.4rem; }
-    .tile.no-photo .tile-body small { color: var(--muted); }
-    .tile.no-photo .tile-cta { background: var(--text); color: #fff; }
-    @media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile { aspect-ratio: 1 / 1.1; } }
+    .tile-body { position: relative; width: 100%; padding: 1.8rem 1.6rem; display: grid; gap: .3rem; align-content: start; }
+    .tile-body h3 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: .04em; }
+    .tile-body strong { font-weight: 700; font-size: 1.5rem; margin: .2rem 0 .3rem; }
+    .tile-body small { color: var(--muted); font-size: .92rem; }
+    .tile-cta { justify-self: start; margin-top: 1.1rem; padding: .7rem 1.3rem; border-radius: 4px; background: var(--text); color: #fff; font-weight: 600; font-size: .92rem; }
+    .tile:hover .tile-cta { background: #000; }
+    .tile.has-photo { aspect-ratio: 4 / 5; align-items: flex-end; background: #3a3a3a; color: #fff; border-color: transparent; }
+    .tile.has-photo .tile-body { padding-top: 4rem; background: linear-gradient(transparent, rgba(0,0,0,.78)); }
+    .tile.has-photo .tile-body small { color: #e4e4e8; }
+    .tile.has-photo .tile-cta { background: #fff; color: var(--text); }
+    @media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } }
 
     /* Carrusel de desplazamiento (testimonios) */
     .rail-wrap { position: relative; }
@@ -202,15 +205,13 @@
     @media (max-width: 640px) { .rail-btn { display: none; } }
 
     /* Confianza */
-    .trust { background: var(--ink); color: #fff; padding: 2rem 0; }
-    .trust .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .trust-item { display: flex; align-items: center; gap: 1rem; padding: .4rem 1.6rem; }
-    .trust-item + .trust-item { border-left: 1px solid rgba(255,255,255,.22); }
-    .trust-item svg { width: 38px; height: 38px; flex: none; fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-    .trust strong { display: block; font-weight: 600; font-size: 1.05rem; line-height: 1.2; }
-    .trust small { color: #c4c4cc; font-size: .86rem; line-height: 1.35; display: block; margin-top: .15rem; }
-    @media (max-width: 900px) { .trust .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.2rem; } .trust-item:nth-child(3) { border-left: 0; } }
-    @media (max-width: 640px) { .trust-item { padding: .3rem .8rem; gap: .7rem; } .trust-item svg { width: 30px; height: 30px; } }
+    .trust { background: var(--bg-2); }
+    .trust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem 1.5rem; }
+    .trust-item { display: grid; justify-items: center; align-content: start; gap: .5rem; text-align: center; }
+    .trust-item svg { width: 44px; height: 44px; margin-bottom: .3rem; fill: none; stroke: var(--text); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+    .trust strong { display: block; font-weight: 700; font-size: 1rem; line-height: 1.25; }
+    .trust small { color: var(--muted); font-size: .92rem; line-height: 1.4; display: block; max-width: 26ch; }
+    @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     /* Modelos */
     .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
@@ -255,26 +256,27 @@
     .qv-dialog::backdrop { background: rgba(0,0,0,.55); }
     .qv-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .qv-dialog .pic { border-radius: 0; height: 100%; aspect-ratio: auto; min-height: 420px; }
-    .qv-info { padding: 2.2rem 1.8rem 1.8rem; display: grid; gap: 1.1rem; align-content: start; min-width: 0; }
+    .qv-info { padding: 1.8rem 1.8rem 0; display: grid; gap: .9rem; align-content: start; min-width: 0; }
     .qv-info h2 { text-transform: none; letter-spacing: 0; font-size: 1.6rem; margin: 0; }
     .qv-price { font-weight: 700; font-size: 1.15rem; }
     .qv-desc { color: var(--muted); font-size: .95rem; }
     .qv-tipos { display: grid; gap: .5rem; }
-    .qv-tipo { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-align: left; border: 1px solid var(--ctl); background: #fff; border-radius: 4px; padding: .65rem .9rem; min-height: 56px; }
+    .qv-tipo { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-align: left; border: 1px solid var(--ctl); background: #fff; border-radius: 4px; padding: .5rem .9rem; min-height: 52px; }
     .qv-tipo b { font-weight: 600; display: block; }
     .qv-tipo small { color: var(--muted); font-size: .85rem; }
     .qv-tipo strong { white-space: nowrap; }
     .qv-tipo[aria-pressed="true"] { border-color: var(--mag-2); box-shadow: inset 0 0 0 1px var(--mag-2); background: var(--bg-3); }
     .qv-info .lbl { display: block; font-size: .95rem; font-weight: 600; margin-bottom: .45rem; }
-    .qv-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
-    .qv-actions .btn { flex: 1 1 180px; }
+    .qv-info .opts button { min-height: 36px; padding: .3rem .7rem; font-size: .88rem; }
+    .qv-actions { display: flex; flex-wrap: wrap; gap: .6rem; position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--line); padding: .8rem 0; }
+    .qv-actions .btn { flex: 1 1 150px; padding-inline: 1rem; }
     .qv-close { position: absolute; top: .6rem; right: .6rem; z-index: 3; width: 44px; height: 44px; border-radius: 4px; border: 1px solid var(--ctl); background: #fff; display: grid; place-items: center; }
     .qv-close svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
     @media (max-width: 760px) {
       .qv-dialog { width: 100%; max-height: 94dvh; margin: auto 0 0; border-radius: 4px 4px 0 0; }
       .qv-body { grid-template-columns: minmax(0, 1fr); }
       .qv-dialog .pic { aspect-ratio: 4 / 3; min-height: 0; height: auto; }
-      .qv-info { padding: 1.4rem 16px 1.6rem; }
+      .qv-info { padding: 1.4rem 16px 0; }
     }
 
     .stock { margin-top: 1.2rem; }
@@ -467,9 +469,10 @@
     .band h2 { font-size: 1.6rem; margin: 0; }
     .band p { color: var(--muted); }
     footer.site { background: var(--ink); color: #c4c4cc; padding: 3rem 0 0; font-size: .92rem; }
-    .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 2.4rem; padding-bottom: 2.4rem; }
-    @media (max-width: 760px) { .foot-grid { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; } }
-    footer.site h3 { color: #fff; font-size: 1.1rem; margin-bottom: .8rem; }
+    .foot-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.3fr; gap: 2.4rem; padding-bottom: 2.4rem; }
+    @media (max-width: 900px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .foot-grid { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; } }
+    footer.site h3 { color: #fff; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .8rem; }
     footer.site ul { list-style: none; display: grid; gap: .2rem; }
     footer.site ul a { display: inline-block; padding: .2rem 0; min-height: 28px; }
     footer.site a:hover { color: #fff; text-decoration: underline; }
@@ -570,7 +573,14 @@
   <section class="colecciones" id="colecciones">
     <div class="wrap">
       <div class="sec-head"><h2>Explora nuestras colecciones</h2><p class="lead">Elige por tipo de prenda.</p></div>
-      <div class="cats" id="cats"></div>
+      <div class="col-grid" id="cols"></div>
+    </div>
+  </section>
+
+  <section class="trust" id="confianza" aria-labelledby="confianza-t">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="confianza-t">Confianza en cada paso de tu compra</h2><p class="lead">Taller propio, medidas a tu cuerpo y envío a toda Colombia.</p></div>
+      <div class="trust-grid" id="trust"></div>
     </div>
   </section>
 
@@ -582,10 +592,6 @@
       </div>
       <div class="tiles" id="tiles"></div>
     </div>
-  </section>
-
-  <section class="trust" id="confianza" aria-label="Por qué Multicostura">
-    <div class="wrap" id="trust"></div>
   </section>
 
   <section id="modelos">
@@ -674,7 +680,7 @@
         <h2>Cómo tomar tus medidas en casa</h2>
         <p class="lead">Si estás en otra ciudad, usa un metro de costura, sin apretar, y pide ayuda a alguien. Envíanos las medidas en centímetros desde la agenda, en la opción "Me mido en casa".</p>
       </div>
-      <div class="measure">
+      <div class="measure" id="guia-tallas">
         <ol id="measures"></ol>
         <div class="diagrama" id="diagrama-guia"></div>
       </div>
@@ -820,7 +826,7 @@
         </div>
       </div>
       <div>
-        <h3>Navegación</h3>
+        <h3>Explora</h3>
         <ul>
           <li><a href="#modelos">Catálogo</a></li>
           <li><a href="#personaliza">Diseña tu uniforme</a></li>
@@ -831,7 +837,17 @@
         </ul>
       </div>
       <div>
-        <h3>Taller y contacto</h3>
+        <h3>Centro de ayuda</h3>
+        <ul>
+          <li><a href="#guia-tallas">Guía de tallas</a></li>
+          <li><a href="#medidas">Cómo tomar medidas</a></li>
+          <li><a href="#nosotros">Ubicación</a></li>
+          <li><a href="#faq">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contacto</h3>
+        <p><a id="f-wa-txt" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>
         <p id="f-address"></p>
         <p id="f-horario"></p>
       </div>
@@ -927,14 +943,12 @@
       // Categorías que no son uniformes: sin foto muestran un recuadro neutro, no el uniforme en SVG
       categoriasNoUniforme: ["Gorros quirúrgicos", "Medias de compresión"],
       recomendados: ["kaill", "alondra", "paris", "violet", "clasico", "durango", "luna", "lisboa"],
-      // Círculos de "Explora nuestras colecciones". cat = categoría del catálogo que filtran.
-      // placeholder: replace with the client's photos (sin img = icono neutro)
-      categoriasCirculos: [
-        { t: "Uniformes", cat: "Conjuntos", ico: "hanger" },
-        { t: "Línea blancos", cat: "Línea blancos", ico: "coat" },
-        { t: "Gorros quirúrgicos", cat: "Gorros quirúrgicos", ico: "cap" },
-        { t: "Medias de compresión", cat: "Medias de compresión", ico: "sock" },
-        { t: "Batas y pantalones", cat: "Batas y pantalones", ico: "coat" },
+      // "Explora nuestras colecciones": cats = categorías del catálogo que filtra "Ver todo" (varias = un grupo con el nombre de la colección).
+      // placeholder: replace with the client's photos (img = foto de la colección; sin img = tesela gris con el nombre y la cantidad)
+      colecciones: [
+        { t: "Uniformes", cats: ["Conjuntos"] },
+        { t: "Línea blancos", cats: ["Línea blancos"] },
+        { t: "Gorros y medias", cats: ["Gorros quirúrgicos", "Medias de compresión"] },
       ],
       // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
       // placeholder: replace with the client's photos
@@ -943,12 +957,12 @@
         { tipo: "pedido", cta: "Elegir mi modelo" },
         { tipo: "medida", cta: "Agendar mis medidas" },
       ],
-      // Franja de confianza (ico = nombre en ICONO)
+      // "Confianza en cada paso de tu compra" (ico = nombre en ICONO). Solo hechos del negocio.
       confianza: [
-        { ico: "calendar", t: "Más de 10 años", d: "confeccionando uniformes médicos" },
         { ico: "truck", t: "Envíos a toda Colombia", d: "El envío se cotiza según el destino" },
-        { ico: "scissors", t: "Taller propio", d: "Fabricamos y vendemos en el mismo lugar" },
+        { ico: "scissors", t: "Taller propio en Tuluá", d: "Cortamos, cosemos y bordamos en el mismo lugar" },
         { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
+        { ico: "card", t: "Pago 50% para empezar", d: "Con el 50% empezamos a confeccionar tu uniforme" },
       ],
       // Imagen de la guía de tallas (confirmar con la dueña)
       guiaTallas: "img/guia-tallas.jpg",
@@ -1053,6 +1067,7 @@
       cap: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15a8 8 0 0 1 16 0v2H4zM4 17c0 2 3 3 8 3s8-1 8-3"/></svg>',
       sock: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h7v9l4 4a3 3 0 0 1-4 4l-6-5a4 4 0 0 1-1-3z"/></svg>',
       coat: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0zM12 7v14"/></svg>',
+      card: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
       ruler: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1.500"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4"/></svg>',
     };
     const $ = id => document.getElementById(id);
@@ -1140,9 +1155,12 @@
 
     // ---------- Modelos ----------
     let cat = "Todos";
+    // Una colección con varias categorías (Gorros y medias) filtra por el conjunto; su nombre aparece como filtro activo
+    const gruposCat = () => Object.fromEntries(NEGOCIO.colecciones.filter(c => c.cats.length > 1).map(c => [c.t, c.cats]));
+    const enCat = (m, c) => c === "Todos" || m.cat.includes(c) || (gruposCat()[c] || []).some(x => m.cat.includes(x));
     function renderProfs() {
       $("profs").innerHTML = "";
-      NEGOCIO.categorias.forEach(p => {
+      (NEGOCIO.categorias.includes(cat) ? NEGOCIO.categorias : [...NEGOCIO.categorias, cat]).forEach(p => {
         const b = document.createElement("button");
         b.type = "button"; b.textContent = p; b.className = p === cat ? "on" : ""; b.setAttribute("aria-pressed", p === cat);
         b.onclick = () => { cat = p; renderProfs(); renderModels(); };
@@ -1242,7 +1260,7 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape" && $("qv").open) quickViewClose(); });
     function renderModels() {
       $("models").innerHTML = "";
-      NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => $("models").appendChild(modelCard(m)));
+      NEGOCIO.modelos.filter(m => enCat(m, cat)).forEach(m => $("models").appendChild(modelCard(m)));
     }
     // true si la foto carga: las secciones que dependen de fotos solo muestran las que existen
     const fotosCargadas = new Map();
@@ -1267,11 +1285,16 @@
     };
     railNav("testi", "testi-prev", "testi-next");
 
-    // ---------- Colecciones (círculos) ----------
-    function renderCirculos() {
-      $("cats").innerHTML = NEGOCIO.categoriasCirculos.map((c, i) => `<button type="button" class="cat"><span class="cat-disc">${ICONO[c.ico] || ""}${c.img ? `<img src="${c.img}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span><span class="cat-name">${c.t}</span></button>`).join("");
-      [...$("cats").children].forEach((b, i) => (b.onclick = () => {
-        cat = NEGOCIO.categoriasCirculos[i].cat; renderProfs(); renderModels(); $("modelos").scrollIntoView();
+    // ---------- Colecciones ----------
+    function renderColecciones() {
+      $("cols").innerHTML = NEGOCIO.colecciones.map(c => {
+        const n = NEGOCIO.modelos.filter(m => c.cats.some(x => m.cat.includes(x))).length;
+        return `<article class="col-tile${c.img ? " has-photo" : ""}">${c.img ? `<img src="${c.img}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-photo'); this.remove()">` : ""}
+          <div class="col-body"><h3>${c.t}</h3><p class="col-n">${n} ${n === 1 ? "modelo" : "modelos"}</p><a class="ver-todo" href="#modelos">Ver todo</a></div></article>`;
+      }).join("");
+      [...$("cols").querySelectorAll(".ver-todo")].forEach((a, i) => (a.onclick = () => {
+        const c = NEGOCIO.colecciones[i];
+        cat = c.cats.length > 1 ? c.t : c.cats[0]; renderProfs(); renderModels();
       }));
     }
 
@@ -1284,7 +1307,7 @@
       const destino = { tienda: () => ({ href: tiendaHref(), ext: true }), pedido: () => ({ href: "#personaliza" }), medida: () => ({ href: "#agenda" }) };
       $("tiles").innerHTML = NEGOCIO.perfiles.map(p => {
         const t = NEGOCIO.tipos.find(x => x.id === p.tipo), d = destino[p.tipo]();
-        return `<a class="tile${p.img ? "" : " no-photo"}" data-tipo="${p.tipo}" href="${d.href}"${d.ext ? ' target="_blank" rel="noopener"' : ""}>${p.img ? `<img src="${p.img}" alt="" loading="lazy" onerror="this.parentElement.classList.add('no-photo'); this.remove()">` : ""}
+        return `<a class="tile${p.img ? " has-photo" : ""}" data-tipo="${p.tipo}" href="${d.href}"${d.ext ? ' target="_blank" rel="noopener"' : ""}>${p.img ? `<img src="${p.img}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-photo'); this.remove()">` : ""}
           <span class="tile-body"><h3>${t.t}</h3><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} a ${pesos(maxTienda)}`}</strong><small>${t.d}</small><small>${t.tiempo}</small><span class="tile-cta">${p.cta}</span></span></a>`;
       }).join("");
       $("tiles").querySelectorAll(".tile").forEach(a => (a.onclick = () => {
@@ -1293,7 +1316,7 @@
     }
 
     // ---------- Franja de confianza ----------
-    $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<div><strong>${c.t}</strong><small>${c.d}</small></div></div>`).join("");
+    $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<strong>${c.t}</strong><small>${c.d}</small></div>`).join("");
 
     // ---------- Personalizador ----------
     const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
@@ -1688,7 +1711,7 @@
     }
     $("f-ig").href = $("ig-btn").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
-    $("f-wa").href = $("wa-float").href = $("hdr-wa").href = $("band-wa").href = waLink("Hola Multicostura 💗 quiero información");
+    $("f-wa").href = $("f-wa-txt").href = $("wa-float").href = $("hdr-wa").href = $("band-wa").href = waLink("Hola Multicostura 💗 quiero información");
 
     // ---------- Chatbot de preguntas frecuentes (sin IA ni red: coincidencia por palabras clave) ----------
     const normaliza = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");
@@ -1773,7 +1796,7 @@
         movil.addEventListener("change", sync);
       }
     }
-    renderProfs(); renderModels(); renderRecomendados(); renderCirculos(); renderDesign(); renderPerfiles(); renderBono();
+    renderProfs(); renderModels(); renderRecomendados(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
     loadBusy().then(renderAgenda);
   </script>
 </body>

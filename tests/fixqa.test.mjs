@@ -48,13 +48,7 @@ test("photo grid hides stock-photo examples until real client photos are configu
   assert.ok(s.includes("Esteticista"));
 });
 
-test("category circles use line icons for all five until a real photo is configured", () => {
-  const cats = dom.slice(dom.indexOf('id="cats"'), dom.indexOf("</section>", dom.indexOf('id="cats"')));
-  assert.equal(count(cats, "<img"), 0);
-  assert.equal(count(cats, "<svg"), 5);
-  const html = strip(render({ inject: `NEGOCIO.categoriasCirculos[0].img = "${PIX}"; renderCirculos();` }).html);
-  assert.equal(count(html.slice(html.indexOf('id="cats"'), html.indexOf("</section>", html.indexOf('id="cats"'))), "<img"), 1);
-});
+// changed: collection tiles replaced the circles; they stay photo-free (calm grey) until a photo is configured, covered in canon.test.mjs
 
 const fab = `document.querySelectorAll("#modes .mode")[2].click(); document.getElementById("form").scrollIntoView();`;
 test("floating buttons step aside on phones while a form is on screen", () => {
