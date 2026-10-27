@@ -25,6 +25,15 @@ const MODELOS = [
   { id: "lisboa", nombre: "Lisboa", precio: 165000, desc: "Diseño exclusivo, ideal para lucir profesional.", fotos: { "Rojo": "img/lisboa.webp" } },
   { id: "glam", nombre: "Glam", precio: 159000, desc: "Conjunto de pantalón y blusa en antifluido licrado.", fotos: { "Negro": "img/glam.webp" } },
 ];
+// Tabla de medidas real de la clienta (img/guia-tallas.webp), en cm.
+const TABLA = {
+  blusa: { S: { busto: 96, cintura: 78, cadera: 104 }, M: { busto: 100, cintura: 84, cadera: 108 }, L: { busto: 108, cintura: 90, cadera: 114 }, XL: { busto: 112, cintura: 96, cadera: 120 } },
+  pantalon: { S: { cintura: 78, cadera: 104, largo: 102 }, M: { cintura: 84, cadera: 108, largo: 104 }, L: { cintura: 90, cadera: 114, largo: 106 }, XL: { cintura: 96, cadera: 120, largo: 106 } },
+};
+// La talla más pequeña en la que caben todas las medidas; null = ninguna, va a la medida.
+function tallaPara(prenda, med) {
+  return Object.keys(TABLA[prenda]).find(t => Object.entries(med).every(([k, v]) => !v || !(k in TABLA[prenda][t]) || k === "largo" || v <= TABLA[prenda][t][k])) || null;
+}
 const pesos = n => "$" + n.toLocaleString("es-CO");
 const ICO = {
   truck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h11v11H2zM13 9.5h4l4 4V17h-8"/><circle cx="6.5" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>',
@@ -53,7 +62,6 @@ function cabecera(actual) {
     <a class="logo" href="inicio.html" aria-label="Multicostura, inicio"><span class="logo-m" aria-hidden="true">m</span><span><b>MULTICOSTURA</b><small>Uniformes médicos</small></span></a>
     <nav class="nav" aria-label="Principal">${nav.map(([h, t]) => `<a href="${h}"${t === actual ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
     <div class="acciones">
-      <button class="icono-btn" aria-label="Buscar">${ICO.search}</button>
       <a class="icono-btn" href="https://wa.me/${WA}" aria-label="Escribir por WhatsApp" style="color:#128c4b">${ICO.wa}</a>
       <a class="btn btn-fucsia" href="inicio.html#medidas">Agendar medidas</a>
     </div>
@@ -65,7 +73,7 @@ function pie() {
     <div><a class="logo" href="inicio.html" style="color:#fff"><span class="logo-m">m</span><span><b>MULTICOSTURA</b><small style="color:#a9a6b0">Uniformes médicos</small></span></a>
       <p style="max-width:34ch">Taller de uniformes médicos para mujer en Tuluá. Cortamos, cosemos y bordamos en el mismo lugar.</p></div>
     <div><h3>Comprar</h3><ul><li><a href="catalogo.html">Catálogo</a></li><li><a href="producto.html?m=kaill">Diseña tu uniforme</a></li><li><a href="#">Ver disponibles en tienda</a></li><li><a href="#">Bonos regalo</a></li></ul></div>
-    <div><h3>Ayuda</h3><ul><li><a href="#">Guía de tallas</a></li><li><a href="#">Cómo tomar tus medidas</a></li><li><a href="#">Preguntas frecuentes</a></li><li><a href="#">Uniformes para empresas</a></li></ul></div>
+    <div><h3>Ayuda</h3><ul><li><a href="inicio.html#talla">Calcula tu talla</a></li><li><a href="inicio.html#medidas">Cómo tomar tus medidas</a></li><li><a href="inicio.html#preguntas">Preguntas frecuentes</a></li><li><a href="#">Uniformes para empresas</a></li></ul></div>
     <div><h3>Visítanos</h3><ul><li>Calle 24 T10-39, Tuluá (Valle)</li><li>Lunes a viernes 8 a 12 y 2 a 6</li><li>Sábados 8 a 1</li><li><a href="https://wa.me/${WA}">WhatsApp 321 783 0050</a></li><li><a href="https://www.instagram.com/multicostura_uniformes/">Instagram</a> y <a href="https://www.tiktok.com/@uniformes_multicostura">TikTok</a></li></ul></div>
   </div></footer>
   <a class="flotante" href="https://wa.me/${WA}" aria-label="Escribir por WhatsApp" style="color:#fff">${ICO.wa}</a>
