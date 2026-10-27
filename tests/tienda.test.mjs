@@ -24,12 +24,12 @@ test("fonts are one sans family (Open Sans), no script or italic display", () =>
   assert.doesNotMatch(source, /Poppins|Cormorant|cursive|font-style:\s*italic/);
 });
 
+// changed: the rotating bar became a marquee with a looped, aria-hidden copy, so each message appears twice and nothing is "is-active"
 test("announcement bar renders one message per NEGOCIO.anuncios", () => {
   const html = strip(render({ inject: 'NEGOCIO.anuncios = ["Uno", "Dos"]; renderAnuncios();' }).html);
   const bar = html.slice(html.indexOf('id="ann"'), html.indexOf("</header>"));
-  assert.equal(count(bar, 'class="ann-item'), 2);
+  assert.equal(count(bar, 'class="ann-item"'), 4, "two messages, shown in a real run and a looped copy");
   assert.ok(bar.includes("Uno") && bar.includes("Dos"));
-  assert.equal(count(bar, 'class="ann-item is-active'), 1);
 });
 
 test("header keeps Catálogo, Diseña, Agenda medidas, Empresas, Bonos regalo and has a WhatsApp icon", () => {
@@ -45,14 +45,14 @@ const portada = `NEGOCIO.portada = [
   { img: "${PIX}", imgMovil: "https://example.invalid/b-m.jpg", titulo: "Titulo B", texto: "Texto B", cta: "Ver B", href: "#agenda" }];
 renderPortada();`;
 
-test("banner is built from NEGOCIO.portada with <picture>, copy, CTA, arrows and dots", () => {
+// changed: slides with an image are image-only (picture inside one link, alt from titulo); their headline, text and button are gone by design (canon.test.mjs covers the new shape)
+test("banner is built from NEGOCIO.portada with <picture>, linked slides, arrows and dots", () => {
   const html = strip(render({ inject: portada }).html);
   const b = html.slice(html.indexOf('id="banner"'), html.indexOf("</section>", html.indexOf('id="banner"')));
   assert.equal(count(b, "<picture"), 2);
   assert.match(b, /<source[^>]*media="\(max-width: 760px\)"[^>]*srcset="https:\/\/example\.invalid\/a-m\.jpg"/);
   assert.match(b, /<img[^>]*src="data:image\/svg\+xml,/);
-  assert.ok(b.includes("Titulo B") && b.includes("Texto B"));
-  assert.match(b, /<a[^>]*href="#agenda"[^>]*>Ver B<\/a>/);
+  assert.match(b, /<a class="slide-link" href="#agenda"[^>]*><picture>[\s\S]*alt="Titulo B"/);
   assert.equal(count(b, "class=\"dot\""), 2);
   assert.match(b, /aria-label="Banner anterior"/);
   assert.match(b, /aria-label="Banner siguiente"/);

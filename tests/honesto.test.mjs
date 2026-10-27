@@ -52,7 +52,9 @@ test("stock photos with third-party logos, embroidered names or brands are gone"
 });
 
 test("a banner slide without a photo keeps a calm text-only layout", () => {
-  assert.match(css, /\.slide\.no-photo\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+  // changed: slides are single-column now (image-only or text-only), so the text layout is the grey ground plus the copy block
+  assert.match(css, /\.slide\s*\{[^}]*background:\s*var\(--bg-2\)/);
+  assert.match(css, /\.slide-copy\s*\{[^}]*align-items:\s*flex-start/);
   const html = strip(render({ inject: 'document.querySelectorAll("#banner img").forEach(i => i.dispatchEvent(new Event("error")));' }).html);
   assert.match(section(html, "banner"), /class="slide is-active no-photo"|class="slide no-photo is-active"/);
 });

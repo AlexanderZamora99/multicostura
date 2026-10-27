@@ -9,6 +9,7 @@ const PIX = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%
 const attr = (h, k) => Number(h.match(new RegExp(`data-${k}="(-?[\\d.]+)"`))[1]);
 
 const bannerProbe = `
+  NEGOCIO.portada = [{ titulo: "Titulo", texto: "Texto", cta: "Ver", href: "#modelos" }, { titulo: "Dos", texto: "Texto", cta: "Ver", href: "#agenda" }]; renderPortada(); // changed: slides with a photo are image-only, so the alignment is measured on the text slides
   const r = e => e.getBoundingClientRect();
   const b = document.body, ban = document.getElementById("banner");
   const act = document.querySelector(".slide.is-active");

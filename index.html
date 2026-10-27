@@ -69,32 +69,39 @@
     .btn-wa { background: var(--wa); color: #08260f; }
     .ico-line { width: 1.4em; height: 1.4em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-    /* Barra de anuncios */
-    .ann { background: var(--ink); color: #fff; font-size: .86rem; height: 38px; position: relative; overflow: hidden; }
-    .ann-track { position: absolute; inset: 0; }
-    .ann-item { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 0 3rem; opacity: 0; transform: translateY(100%); transition: transform .6s var(--ease), opacity .6s; }
-    .ann-item.is-active { opacity: 1; transform: none; }
+    /* Barra de anuncios: marquesina negra con un icono por mensaje */
+    .ann { background: #000; color: #fff; font-size: .86rem; position: relative; overflow: hidden; }
+    .ann-track { display: flex; width: max-content; animation: marquee 50s linear infinite; }
+    .ann-run { display: flex; flex: none; align-items: center; justify-content: space-around; gap: 3.5rem; min-width: 100vw; padding-right: 3.5rem; height: 38px; }
+    .ann-item { display: inline-flex; align-items: center; gap: .55rem; white-space: nowrap; }
+    .ann-item .ico { width: 1.3em; height: 1.3em; flex: none; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    .ann:hover .ann-track, .ann:focus-within:not(.is-run) .ann-track, .ann.is-paused .ann-track { animation-play-state: paused; }
     .pp { width: 40px; height: 40px; border-radius: 4px; border: 1.5px solid var(--ctl); background: #fff; color: var(--text); display: grid; place-items: center; }
     .pp svg { width: 16px; height: 16px; fill: currentColor; grid-area: 1 / 1; }
     .pp .i-play { display: none; }
     .pp.paused .i-play { display: block; }
     .pp.paused .i-pause { display: none; }
-    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: transparent; border-color: #fff; color: #fff; }
+    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: #000; border-color: #fff; color: #fff; box-shadow: -16px 0 14px 6px #000; }
     .ann-pp svg { width: 12px; height: 12px; }
     .banner-pp { position: absolute; left: 16px; bottom: .6rem; z-index: 2; }
-    .ann-item.out { transform: translateY(-100%); }
+    @media (prefers-reduced-motion: reduce) {
+      .ann-track { animation: none; width: auto; }
+      .ann-run[aria-hidden] { display: none; }
+      .ann-run { flex-wrap: wrap; justify-content: center; gap: .3rem 2rem; min-width: 0; height: auto; padding: .5rem 16px; }
+    }
 
     /* Cabecera de tienda */
-    header { position: sticky; top: 0; z-index: 30; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-    .nav { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.5rem; height: 68px; }
-    .logo { display: flex; align-items: center; gap: .6rem; font-weight: 600; font-size: 1.15rem; letter-spacing: .04em; line-height: 1.1; }
+    header { position: sticky; top: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--line); }
+    .nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1.5rem; height: 72px; }
+    .logo { display: flex; align-items: center; gap: .6rem; justify-self: start; font-weight: 700; font-size: 1.1rem; letter-spacing: .04em; line-height: 1.1; }
     .logo svg { width: 40px; height: 40px; }
     .logo small { display: block; font-size: .7rem; letter-spacing: .18em; color: var(--muted); font-weight: 600; }
     .nav .mainnav { min-width: 0; }
     .nav ul { display: flex; justify-content: center; gap: 1.8rem; list-style: none; font-size: .95rem; font-weight: 600; }
     .nav ul a { padding: .4rem 0; border-bottom: 2px solid transparent; transition: border-color .2s; }
     .nav ul a:hover { border-color: var(--text); }
-    .nav-actions { display: flex; align-items: center; gap: .6rem; }
+    .nav-actions { display: flex; align-items: center; justify-self: end; gap: .6rem; }
     .nav-actions .btn { padding: .6rem 1.1rem; font-size: .88rem; }
     .icon-btn { width: 44px; height: 44px; border-radius: 4px; display: grid; place-items: center; border: 1.5px solid var(--ctl); transition: transform .15s var(--ease), border-color .15s; }
     .icon-btn:hover { border-color: var(--text); }
@@ -111,43 +118,42 @@
       .nav ul a { display: block; padding: .8rem 0; border-bottom: 1px solid var(--line); }
     }
 
-    /* Banner a todo el ancho */
-    .banner { position: relative; padding: 0; background: #eceef0; overflow: hidden; container-type: inline-size; }
+    /* Banner a todo el ancho: cada diapositiva es una imagen que enlaza (con foto) o un texto sobre gris (sin foto) */
+    .banner { position: relative; padding: 0; background: var(--bg-2); overflow: hidden; container-type: inline-size; }
     .b-track { display: grid; }
-    .slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .6s, visibility .6s; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); min-height: clamp(400px, 40vw, 600px); background: var(--bg-2); }
-    .slide.no-photo { grid-template-columns: minmax(0, 1fr); }
-    .slide.no-photo picture { display: none; }
-    .slide picture { grid-column: 2; grid-row: 1; position: relative; display: block; }
-    .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 18%; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24%); mask-image: linear-gradient(90deg, transparent, #000 24%); }
-    .slide-copy { grid-column: 1; grid-row: 1; align-self: center; padding: 2rem 1rem 3.4rem max(16px, calc(50cqw - 575px)); max-width: 640px; position: relative; z-index: 1; }
-    .slide-title { font-weight: 600; font-size: clamp(2.1rem, 4vw, 3.3rem); line-height: 1.06; margin-bottom: 1rem; }
-    .slide-text { color: var(--muted); font-size: 1.08rem; max-width: 420px; margin-bottom: 1.6rem; }
+    .slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .6s, visibility .6s; min-width: 0; display: grid; background: var(--bg-2); }
     .slide.is-active { opacity: 1; visibility: visible; }
+    .slide-link { display: block; }
+    .slide-link:focus-visible { outline-offset: -6px; }
+    .slide picture { display: block; aspect-ratio: 1366 / 440; min-height: 260px; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+    .slide-copy { align-self: center; padding: 2.4rem 1rem 3.6rem max(16px, calc(50cqw - 575px)); max-width: 640px; min-height: max(260px, 32.2cqw); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; position: relative; z-index: 1; }
+    .slide-title { font-weight: 700; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.12; margin-bottom: 1rem; }
+    .slide-text { color: var(--muted); font-size: 1.08rem; max-width: 420px; margin-bottom: 1.6rem; }
     .slide.is-active .slide-copy > * { animation: rise .9s var(--ease) both; }
     .slide.is-active .slide-copy > :nth-child(2) { animation-delay: .1s; }
     .slide.is-active .slide-copy > :nth-child(3) { animation-delay: .2s; }
     @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-    .arrow { position: absolute; top: 50%; translate: 0 -50%; z-index: 2; width: 46px; height: 46px; border-radius: 4px; border: 1.5px solid var(--ctl); background: #fff; display: grid; place-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.15); transition: transform .15s var(--ease); }
+    .arrow { position: absolute; top: 50%; translate: 0 -50%; z-index: 2; width: 44px; height: 44px; border-radius: 4px; border: 1px solid var(--ctl); background: #fff; display: grid; place-items: center; transition: transform .15s var(--ease); }
     .arrow:active { transform: scale(.92); }
     .arrow svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .arrow.prev { left: 16px; }
     .arrow.next { right: 16px; }
-    .dots { position: absolute; left: 0; right: 0; bottom: .9rem; z-index: 2; display: flex; justify-content: center; gap: .1rem; }
+    .dots { position: absolute; left: 50%; translate: -50% 0; bottom: .8rem; z-index: 2; display: flex; gap: .1rem; background: #fff; border-radius: 4px; padding: 0 .35rem; }
     .dot { width: 34px; height: 28px; border: 0; background: transparent; display: grid; place-items: center; }
     .dot::after { content: ""; width: 24px; height: 3px; border-radius: 2px; background: #6f7078; transition: background .2s, width .3s var(--ease); }
     .dot[aria-current="true"]::after { background: var(--mag-2); width: 30px; height: 5px; }
     @media (max-width: 760px) {
-      .slide { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-      .slide picture { grid-column: 1; grid-row: 1; aspect-ratio: 5 / 4; }
-      .slide img { -webkit-mask-image: none; mask-image: none; object-position: center 20%; }
-      .slide-copy { grid-column: 1; grid-row: 2; padding: 1.3rem 16px 3.2rem; max-width: none; }
-      .slide-title { font-size: 2rem; }
-      .arrow { top: calc((100vw / 4 * 3 / 2) - 12px); width: 40px; height: 40px; }
+      .slide picture { aspect-ratio: 5 / 4; min-height: 0; }
+      .slide-copy { padding: 1.8rem 16px 3.6rem; max-width: none; min-height: 0; }
+      .slide-title { font-size: 1.7rem; }
+      .arrow { width: 40px; height: 40px; }
       .arrow.prev { left: 8px; }
       .arrow.next { right: 8px; }
+      .banner-pp { bottom: .7rem; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .slide, .ann-item, .dot::after { transition: none; }
+      .slide, .dot::after { transition: none; }
       .slide.is-active .slide-copy > * { animation: none; }
     }
 
@@ -987,17 +993,18 @@
       ],
       horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
       // Anuncios que rotan en la barra superior
+      // ico = nombre en ICONO
       anuncios: [
-        "Envíos a toda Colombia",
-        "Más de 10 años confeccionando uniformes médicos para mujer",
-        "Agenda tu toma de medidas en el taller, a domicilio o desde casa",
+        { ico: "truck", t: "Envíos a toda Colombia" },
+        { ico: "calendar", t: "Más de 10 años confeccionando uniformes médicos para mujer" },
+        { ico: "ruler", t: "Agenda tu toma de medidas en el taller, a domicilio o desde casa" },
       ],
       // Banner principal. placeholder: replace with the client's photos (img = escritorio, imgMovil = celular). Fotos de ejemplo revisadas: sin logos, bordados ni marcas visibles.
       portada: [
-        { img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
+        { img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&h=620&crop=top&q=70",
           imgMovil: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
           titulo: "Uniformes médicos hechos con cuidado", texto: "Conjuntos de pantalón y blusa en antifluido, cómodos para toda la jornada.", cta: "Ver catálogo", href: "#modelos" },
-        { img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=1200&h=900&crop=top&q=70",
+        { img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=1920&h=620&crop=top&q=70",
           imgMovil: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
           titulo: "Hechos a tu medida", texto: "Agenda la toma de medidas en el taller, a domicilio o desde tu casa.", cta: "Agendar medidas", href: "#agenda" },
         // Sin img: la diapositiva se muestra solo con texto hasta tener una foto propia
@@ -1037,45 +1044,41 @@
 
     // ---------- Anuncios (barra superior) ----------
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    let annTimer = null;
     const syncPP = (btn, paused, que) => {
       btn.classList.toggle("paused", paused);
       btn.setAttribute("aria-label", `${paused ? "Reanudar" : "Pausar"} ${que}`);
     };
     let annPaused = false;
+    const ANN_ICO = ["truck", "calendar", "ruler", "scissors"];
+    // Marquesina: la CSS la mueve; se pausa con el cursor, con el foco y con el botón, y queda quieta con movimiento reducido
     function renderAnuncios() {
-      clearInterval(annTimer);
       annPaused = false;
       const bar = $("ann"), track = $("ann-track"), pp = $("ann-pp");
-      track.innerHTML = NEGOCIO.anuncios.map((t, i) => `<p class="ann-item${i === 0 ? " is-active" : ""}"${i === 0 ? "" : ' aria-hidden="true"'}>${t}</p>`).join("");
-      const items = [...track.children];
-      let now = 0;
-      const go = () => {
-        const prev = now; now = (now + 1) % items.length;
-        items.forEach((el, k) => { el.classList.toggle("is-active", k === now); el.classList.toggle("out", k === prev && k !== now); el.setAttribute("aria-hidden", k !== now); });
-      };
-      const play = () => { clearInterval(annTimer); if (!reduceMotion.matches && items.length > 1 && !annPaused) annTimer = setInterval(go, 4500); };
-      const sync = () => { pp.hidden = items.length < 2 || reduceMotion.matches; syncPP(pp, annPaused, "anuncios"); };
-      pp.onclick = () => { annPaused = !annPaused; sync(); play(); };
-      bar.onmouseenter = () => clearInterval(annTimer);
-      bar.onmouseleave = play;
-      bar.onfocusin = () => clearInterval(annTimer);
-      bar.onfocusout = play;
-      reduceMotion.addEventListener("change", () => { sync(); play(); });
-      sync(); play();
+      const items = NEGOCIO.anuncios.map((a, i) => { const x = typeof a === "string" ? { t: a } : a; return `<span class="ann-item">${ICONO[x.ico] || ICONO[ANN_ICO[i % ANN_ICO.length]]}${x.t}</span>`; }).join("");
+      track.innerHTML = `<div class="ann-run">${items}</div><div class="ann-run" aria-hidden="true">${items}</div>`;
+      const sync = () => { pp.hidden = reduceMotion.matches; bar.classList.toggle("is-paused", annPaused); syncPP(pp, annPaused, "anuncios"); };
+      pp.onclick = () => { annPaused = !annPaused; bar.classList.toggle("is-run", !annPaused); sync(); };
+      bar.onfocusout = () => bar.classList.remove("is-run");
+      reduceMotion.addEventListener("change", sync);
+      sync();
     }
 
     // ---------- Banner a todo el ancho ----------
-    // Cada imagen que falla se quita y el banner queda con su texto sobre un fondo neutro.
-    const dropImg = `onerror="this.closest('.slide').classList.add('no-photo'); this.remove()"`;
+    // Con foto, la diapositiva es solo la imagen (enlaza a su destino). Si la imagen falla, se cambia por la versión de texto sobre gris.
+    const copiaTexto = p => `<div class="slide-copy"><p class="slide-title">${p.titulo}</p><p class="slide-text">${p.texto}</p><a class="btn btn-mag" href="${p.href}">${p.cta}</a></div>`;
+    function slideTexto(img) {
+      const s = img.closest(".slide");
+      s.classList.add("no-photo");
+      s.innerHTML = copiaTexto(NEGOCIO.portada[[...s.parentElement.children].indexOf(s)]);
+    }
+    const dropImg = `onerror="slideTexto(this)"`;
     let bannerCtl = null;
     function renderPortada() {
       if (bannerCtl) bannerCtl.stop();
       const track = $("banner-track"), dots = $("hero-dots");
       track.innerHTML = NEGOCIO.portada.map((p, i) => `
         <div class="slide${i === 0 ? " is-active" : ""}${p.img ? "" : " no-photo"}" role="group" aria-roledescription="diapositiva" aria-label="${i + 1} de ${NEGOCIO.portada.length}">
-          ${p.img ? `<picture>${p.imgMovil ? `<source media="(max-width: 760px)" srcset="${p.imgMovil}">` : ""}<img src="${p.img}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} ${dropImg}></picture>` : ""}
-          <div class="slide-copy"><p class="slide-title">${p.titulo}</p><p class="slide-text">${p.texto}</p><a class="btn btn-mag" href="${p.href}">${p.cta}</a></div>
+          ${p.img ? `<a class="slide-link" href="${p.href}"><picture>${p.imgMovil ? `<source media="(max-width: 760px)" srcset="${p.imgMovil}">` : ""}<img src="${p.img}" alt="${p.titulo}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} ${dropImg}></picture></a>` : copiaTexto(p)}
         </div>`).join("");
       dots.innerHTML = NEGOCIO.portada.map((p, i) => `<button type="button" class="dot" aria-label="Ir al banner ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
       const slides = [...track.children], dotEls = [...dots.children], box = $("banner");
