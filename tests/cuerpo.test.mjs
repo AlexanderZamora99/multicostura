@@ -32,13 +32,13 @@ test("a category circle without photo keeps its label and a neutral icon", () =>
 test("three 'uniforme para ti' tiles map to the price tiers with their price and delivery time", () => {
   const s = section(dom, "perfiles");
   assert.ok(s.includes("¿Cuál es el uniforme para ti?"));
-  assert.equal(count(s, 'class="tile"'), 3);
+  assert.equal(count(s, '<a class="tile'), 3);
   for (const t of ["Precio tienda", "Diseño bajo pedido", "Diseño por medida", "Entrega inmediata", "3 a 5 días hábiles", "5 a 8 días hábiles", "$175.000", "$185.000"]) {
     assert.ok(s.includes(t), `missing ${t}`);
   }
-  assert.match(s, /<a[^>]*class="tile"[^>]*href="https:\/\/wa\.me\/573217830050\?text=[^"]*"/); // tienda, fallback while tiendaOnline is empty
-  assert.match(s, /<a[^>]*class="tile"[^>]*href="#personaliza"/);
-  assert.match(s, /<a[^>]*class="tile"[^>]*href="#agenda"/);
+  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="https:\/\/wa\.me\/573217830050\?text=[^"]*"/); // tienda, fallback while tiendaOnline is empty
+  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="#personaliza"/);
+  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="#agenda"/);
 });
 
 test("the store tile links to Mecodes when tiendaOnline is set", () => {
