@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multicostura inicio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<style>
+  /* Portada: carrusel de modelos; el color elegido tiñe todo el escenario */
+  .portada { --c: #2456b8; background: color-mix(in srgb, var(--c) 16%, #f4f3f6); transition: background .5s; overflow: hidden; }
+  .portada .contenedor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; min-height: min(640px, 82vh); padding-block: 2.5rem; }
+  .portada h1 { font-size: clamp(2.5rem, 5.6vw, 4.6rem); font-weight: 800; letter-spacing: -.035em; max-width: 12ch; }
+  .portada .lead { font-size: 1.12rem; color: #48454e; margin-top: 1rem; }
+  .portada .botones { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.8rem; }
+  .ficha { margin-top: 2.4rem; padding-top: 1.2rem; border-top: 1px solid rgba(38,36,43,.18); display: grid; gap: .55rem; max-width: 420px; }
+  .ficha-nombre { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .ficha-nombre b { font: 700 1.35rem/1 var(--display); }
+  .ficha-nombre span { font-weight: 700; }
+  .ficha .color-actual { font-size: .9rem; color: #48454e; }
+  .escenario { position: relative; display: grid; grid-template-columns: 1fr 88px; gap: 14px; align-items: end; }
+  .escenario .foto { border-radius: 22px; aspect-ratio: 4 / 5; box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--c) 60%, #000); }
+  .escenario .foto img { transition: opacity .3s; }
+  .miniaturas { display: grid; gap: 10px; }
+  .miniaturas button { padding: 0; border: 0; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 5; background: #fff; opacity: .7; transition: opacity .2s, box-shadow .2s; }
+  .miniaturas button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--fucsia-2); }
+  .miniaturas img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); }
+  .control { display: flex; align-items: center; gap: .6rem; margin-top: 1.6rem; }
+  .control .icono-btn { background: rgba(255,255,255,.7); border-color: transparent; }
+  .puntos { display: flex; gap: 6px; margin-left: .4rem; }
+  .puntos button { width: 26px; height: 26px; border: 0; background: none; padding: 0; display: grid; place-items: center; }
+  .puntos button span { width: 8px; height: 8px; border-radius: 99px; background: rgba(38,36,43,.3); transition: width .3s; }
+  .puntos button[aria-current] span { width: 26px; background: var(--grafito); }
+
+  /* Tres formas de tener tu uniforme */
+  .escalera { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--grafito); }
+  .peldano { padding: 1.6rem 1.6rem 1.8rem 0; display: grid; gap: .5rem; align-content: start; }
+  .peldano + .peldano { padding-left: 1.6rem; border-left: 1px solid var(--linea); }
+  .peldano .nivel { display: flex; gap: 4px; margin-bottom: .4rem; }
+  .peldano .nivel i { width: 22px; height: 6px; border-radius: 3px; background: var(--linea); }
+  .peldano .nivel i.on { background: var(--fucsia); }
+  .peldano .valor { font: 700 1.9rem/1 var(--display); letter-spacing: -.02em; }
+  .peldano .tiempo { display: inline-flex; gap: .4rem; align-items: center; font-weight: 600; font-size: .9rem; color: var(--fucsia-2); }
+  .peldano .tiempo svg { width: 18px; height: 18px; }
+  .peldano p { margin: 0; color: var(--piedra); }
+  .peldano .btn { justify-self: start; margin-top: .6rem; }
+
+  /* Colecciones con foto real */
+  .colecciones { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
+  .coleccion { position: relative; border-radius: var(--r-m); overflow: hidden; min-height: 380px; display: flex; align-items: end; color: #fff; text-decoration: none; background: var(--grafito); }
+  .coleccion img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transform: scale(1.08); transition: transform .5s; }
+  .coleccion:hover img { transform: scale(1.13); }
+  .coleccion::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 45%, rgba(0,0,0,.7)); }
+  .coleccion div { position: relative; z-index: 1; padding: 1.4rem; }
+  .coleccion h3 { font-size: 1.6rem; }
+  .coleccion p { margin: .2rem 0 0; opacity: .9; }
+  .coleccion.sin-foto { background: var(--niebla); color: var(--grafito); }
+  .coleccion.sin-foto::after { display: none; }
+  .coleccion.sin-foto .aviso { position: absolute; top: 1.2rem; left: 1.4rem; font-size: .85rem; color: var(--piedra); }
+
+  /* Medidas */
+  .medidas { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .opciones { display: grid; gap: 12px; }
+  .opcion { display: grid; grid-template-columns: 48px 1fr auto; gap: 1rem; align-items: center; background: #fff; border: 1px solid var(--linea); border-radius: var(--r-m); padding: 1.1rem 1.2rem; }
+  .opcion svg { width: 28px; height: 28px; color: var(--fucsia-2); }
+  .opcion h3 { font-size: 1.1rem; }
+  .opcion p { margin: .15rem 0 0; color: var(--piedra); font-size: .93rem; }
+  .opcion .extra { font-weight: 700; font-size: .9rem; white-space: nowrap; }
+
+  /* Taller */
+  .taller { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  .mapa { border-radius: var(--r-m); overflow: hidden; aspect-ratio: 4 / 3; background: var(--niebla); position: relative; display: grid; place-items: center; text-align: center; color: var(--piedra); }
+  .mapa svg { width: 40px; height: 40px; color: var(--fucsia); }
+  .datos { display: grid; grid-template-columns: repeat(3, auto); gap: 1.5rem 2.5rem; margin: 1.6rem 0; justify-content: start; }
+  .datos b { display: block; font: 800 2rem/1 var(--display); letter-spacing: -.02em; }
+  .datos span { color: var(--piedra); font-size: .9rem; }
+
+  /* Mosaico de fotos */
+  .mosaico { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .mosaico .foto { border-radius: 10px; }
+  .mosaico { grid-template-columns: repeat(4, 1fr); }
+  .mosaico .foto:first-child { grid-row: span 2; aspect-ratio: auto; }
+
+  @media (max-width: 960px) {
+    .portada .contenedor { grid-template-columns: 1fr; min-height: 0; padding-block: 1.5rem 2rem; gap: 1.2rem; }
+    .portada .texto { order: 2; }
+    .portada h1 { font-size: 2.35rem; }
+    .portada .lead { font-size: 1rem; margin-top: .6rem; }
+    .portada .botones .btn { flex: 1 1 100%; }
+    .escenario { grid-template-columns: 1fr 64px; }
+    .ficha { margin-top: 1.4rem; }
+    .escalera { grid-template-columns: 1fr; }
+    .peldano, .peldano + .peldano { padding: 1.4rem 0; border-left: 0; border-bottom: 1px solid var(--linea); }
+    .colecciones { grid-template-columns: 1fr; }
+    .coleccion { min-height: 240px; }
+    .medidas, .taller { grid-template-columns: 1fr; }
+    .opcion { grid-template-columns: 36px 1fr; }
+    .opcion .extra { grid-column: 2; }
+    .mosaico { grid-template-columns: repeat(2, 1fr); }
+    .mosaico .foto:first-child { grid-column: span 2; grid-row: auto; aspect-ratio: 4/5; }
+  }
+</style>
+</head>
+<body>
+<div id="cab"></div>
+<main>
+  <section class="portada" aria-roledescription="carrusel" aria-label="Modelos destacados">
+    <div class="contenedor">
+      <div class="texto">
+        <h1 id="p-titulo">Uniformes médicos hechos para tu cuerpo</h1>
+        <p class="lead" id="p-texto">Conjuntos en antifluido para la jornada completa. Elige el modelo, míralo en tu color y pídelo a tu talla o a tu medida.</p>
+        <div class="botones">
+          <a class="btn btn-fucsia" id="p-cta" href="producto.html?m=kaill">Diseña tu uniforme</a>
+          <a class="btn btn-borde" href="catalogo.html">Ver catálogo</a>
+        </div>
+        <div class="ficha">
+          <div class="ficha-nombre"><b id="p-modelo">Kaill</b><span id="p-precio">$159.000 a $185.000</span></div>
+          <ul class="muestras" id="p-muestras" aria-label="Ver en otro color"></ul>
+          <span class="color-actual" id="p-color">Azul rey</span>
+        </div>
+        <div class="control">
+          <button class="icono-btn" id="p-ant" aria-label="Modelo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+          <button class="icono-btn" id="p-sig" aria-label="Modelo siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button class="icono-btn" id="p-pausa" aria-label="Pausar el carrusel"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="6" width="3.5" height="12" rx="1"/><rect x="13.5" y="6" width="3.5" height="12" rx="1"/></svg></button>
+          <div class="puntos" id="p-puntos"></div>
+        </div>
+      </div>
+      <div class="escenario">
+        <div class="foto"><img id="p-foto" src="img/kaill-azul-rey.webp" alt="Kaill en azul rey"></div>
+        <div class="miniaturas" id="p-minis"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="cabeza"><div><h2>Los más pedidos</h2><p class="lead">Toca un color para ver el modelo puesto en ese color.</p></div><a class="enlace" href="catalogo.html">Ver todo el catálogo</a></div>
+      <div class="grilla" id="recomendados"></div>
+    </div>
+  </section>
+
+  <section class="seccion gris">
+    <div class="contenedor">
+      <div class="cabeza"><div><h2>Tres formas de tener tu uniforme</h2><p class="lead">El mismo modelo, según cuánto lo quieras personalizar y para cuándo lo necesitas.</p></div></div>
+      <div class="escalera" id="escalera"></div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="cabeza"><h2>Explora por tipo de prenda</h2></div>
+      <div class="colecciones">
+        <a class="coleccion" href="catalogo.html"><img src="img/neru-fucsia.webp" alt=""><div><h3>Uniformes</h3><p>13 modelos de pantalón y blusa</p></div></a>
+        <a class="coleccion" href="catalogo.html"><img src="img/clasico-blanco-v.webp" alt=""><div><h3>Línea blancos</h3><p>5 modelos y batas</p></div></a>
+        <a class="coleccion sin-foto" href="catalogo.html"><span class="aviso">Foto pendiente de la clienta</span><div><h3>Gorros y medias</h3><p>Gorros quirúrgicos y medias de compresión</p></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion gris" id="medidas">
+    <div class="contenedor medidas">
+      <div>
+        <h2>Agenda tu toma de medidas</h2>
+        <p class="lead">Elige cómo te medimos, escoge el día y la hora, y te confirmamos por WhatsApp.</p>
+        <p style="margin-top:1.4rem"><a class="btn btn-fucsia" href="#">Agendar medidas</a></p>
+        <p class="lead" style="font-size:.9rem">¿No sabes tu talla? <a class="enlace" href="#">Mira la guía de tallas</a></p>
+      </div>
+      <div class="opciones">
+        <div class="opcion">${ICO.store}<div><h3>En el taller</h3><p>Vienes a Tuluá, te medimos y ves las telas en persona.</p></div><span class="extra">Sin costo</span></div>
+        <div class="opcion">${ICO.home}<div><h3>A domicilio</h3><p>Vamos a tu casa o consultorio en Tuluá.</p></div><span class="extra">+ $8.000</span></div>
+        <div class="opcion">${ICO.ruler}<div><h3>Me mido en casa</h3><p>Estás en otra ciudad: te guiamos para medirte y nos envías los datos. Si una medida queda mal tomada, el ajuste corre por tu cuenta.</p></div><span class="extra">Sin costo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor taller">
+      <div>
+        <h2>Un taller en Tuluá, no una bodega</h2>
+        <p class="lead">Multicostura confecciona uniformes médicos solo para mujer desde hace casi 10 años. La dueña atiende cada pedido, toma las medidas y responde por WhatsApp.</p>
+        <p class="lead">Lo que ves en el catálogo se corta, se cose y se borda en el mismo taller. Si algo no te queda bien, lo ajustamos.</p>
+        <p style="margin:1.6rem 0 0"></p>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap"><a class="btn btn-borde" href="#">Ver disponibles en tienda</a><a class="btn btn-wa" href="#">${ICO.wa} Escribir por WhatsApp</a></div>
+      </div>
+      <div class="mapa">${ICO.pin}<div><b style="color:var(--grafito)">Calle 24 T10-39, barrio Porvenir</b><br>Aquí va el mapa de Google embebido</div></div>
+    </div>
+  </section>
+
+  <section class="seccion gris">
+    <div class="contenedor">
+      <div class="cabeza"><div><h2>Así se ven puestos</h2><p class="lead">Fotos de nuestro catálogo 2026. Cuando nos mandes fotos de tus clientas, van aquí.</p></div><a class="enlace" href="https://www.instagram.com/multicostura_uniformes/">Síguenos en Instagram</a></div>
+      <div class="mosaico" id="mosaico"></div>
+    </div>
+  </section>
+</main>
+<div id="pie"></div>
+
+<script src="comun.js"></script>
+<script>
+  document.getElementById("cab").outerHTML = cabecera("");
+  document.getElementById("pie").outerHTML = pie();
+  document.querySelectorAll(".opcion").forEach(o => o.innerHTML = o.innerHTML.replace(/\$\{ICO\.(\w+)\}/g, (_, k) => ICO[k]));
+  document.querySelectorAll(".btn-wa").forEach(o => o.innerHTML = o.innerHTML.replace(/\$\{ICO\.(\w+)\}/g, (_, k) => ICO[k]));
+  document.querySelector(".mapa").innerHTML = document.querySelector(".mapa").innerHTML.replace(/\$\{ICO\.(\w+)\}/g, (_, k) => ICO[k]);
+
+  const porId = Object.fromEntries(MODELOS.map(m => [m.id, m]));
+  document.getElementById("recomendados").innerHTML = ["kaill", "alondra", "paris", "clasico", "durango", "mariee", "neru", "valencia"].map(id => tarjeta(porId[id])).join("");
+
+  document.getElementById("escalera").innerHTML = TIPOS.map((t, i) => `<div class="peldano">
+    <div class="nivel" aria-hidden="true">${[0, 1, 2].map(n => `<i class="${n <= i ? "on" : ""}"></i>`).join("")}</div>
+    <h3>${t.t}</h3><span class="valor">${t.precio}</span>
+    <span class="tiempo">${ICO.calendar}${t.tiempo}</span><p>${t.d}</p>
+    <a class="btn ${i === 2 ? "btn-fucsia" : "btn-borde"}" href="${i === 0 ? "#" : i === 1 ? "catalogo.html" : "#medidas"}">${["Ver disponibles en tienda", "Elegir mi modelo", "Agendar mis medidas"][i]}</a></div>`).join("");
+
+  const fotosMosaico = ["img/alondra-morado.webp", "img/kaill-lila.webp", "img/durango-rojo.webp", "img/mariee-beige.webp", "img/neru-verde-jade.webp", "img/clasico-rosa.webp", "img/valencia-gris.webp"];
+  document.getElementById("mosaico").innerHTML = fotosMosaico.map(f => `<div class="foto"><img src="${f}" alt=""></div>`).join("");
+
+  // Carrusel de la portada
+  const slides = [
+    { m: "kaill", titulo: "Uniformes médicos hechos para tu cuerpo", texto: "Conjuntos en antifluido para la jornada completa. Elige el modelo, míralo en tu color y pídelo a tu talla o a tu medida.", cta: ["Diseña tu uniforme", "producto.html?m=kaill"] },
+    { m: "alondra", titulo: "¿No está en tu talla? Lo cortamos para ti", texto: "Bajo pedido en 3 a 5 días hábiles, o a tu medida en 5 a 8. Te tomamos medidas en el taller, en tu casa o te guiamos para medirte.", cta: ["Agendar medidas", "#medidas"] },
+    { m: "clasico", titulo: "Siete colores del Clásico, y los que pidas", texto: "Cambia el color y mira cómo queda puesto. Si quieres tu nombre o tu profesión bordados, los agregamos.", cta: ["Diseña el tuyo", "producto.html?m=kaill"] },
+  ];
+  const $ = id => document.getElementById(id), portada = document.querySelector(".portada");
+  let actual = 0, color = null, pausado = matchMedia("(prefers-reduced-motion: reduce)").matches, reloj;
+  $("p-puntos").innerHTML = slides.map((s, i) => `<button aria-label="Ver ${porId[s.m].nombre}"><span></span></button>`).join("");
+  function pintar(i, c) {
+    actual = (i + slides.length) % slides.length;
+    const s = slides[actual], m = porId[s.m], cols = Object.keys(m.fotos);
+    color = c || cols[0];
+    $("p-titulo").textContent = s.titulo; $("p-texto").textContent = s.texto;
+    $("p-cta").textContent = s.cta[0]; $("p-cta").href = s.cta[1];
+    $("p-modelo").textContent = m.nombre; $("p-precio").textContent = `${pesos(m.precio)} a $185.000`;
+    $("p-color").textContent = `${color}${cols.length > 1 ? `, ${cols.length} colores con foto` : ""}`;
+    $("p-foto").src = m.fotos[color]; $("p-foto").alt = `${m.nombre} en ${color.toLowerCase()}`;
+    portada.style.setProperty("--c", COLORES[color]);
+    $("p-muestras").innerHTML = cols.map(k => `<li><button class="muestra" style="--c:${COLORES[k]}" aria-label="${k}" aria-pressed="${k === color}"><span></span></button></li>`).join("");
+    $("p-minis").innerHTML = cols.slice(0, 4).map(k => `<button aria-label="${k}" aria-pressed="${k === color}"><img src="${m.fotos[k]}" alt=""></button>`).join("");
+    [...$("p-puntos").children].forEach((b, n) => n === actual ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current"));
+  }
+  function elegir(k) { pausar(true); pintar(actual, k); }
+  $("p-muestras").onclick = e => { const b = e.target.closest("button"); if (b) elegir(b.getAttribute("aria-label")); };
+  $("p-minis").onclick = e => { const b = e.target.closest("button"); if (b) elegir(b.getAttribute("aria-label")); };
+  $("p-puntos").onclick = e => { const b = e.target.closest("button"); if (b) pintar([...$("p-puntos").children].indexOf(b)); };
+  $("p-ant").onclick = () => pintar(actual - 1);
+  $("p-sig").onclick = () => pintar(actual + 1);
+  function pausar(si) { pausado = si; clearInterval(reloj); if (!si) reloj = setInterval(() => pintar(actual + 1), 6000); $("p-pausa").setAttribute("aria-label", si ? "Reanudar el carrusel" : "Pausar el carrusel"); }
+  $("p-pausa").onclick = () => pausar(!pausado);
+  pintar(0); pausar(pausado);
+</script>
+</body>
+</html>

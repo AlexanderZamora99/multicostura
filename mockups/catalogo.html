@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multicostura catálogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<style>
+  .titulo-cat { padding: 2.5rem 0 1.5rem; }
+  .migas { font-size: .85rem; color: var(--piedra); margin-bottom: .8rem; }
+  .migas a { text-decoration: none; }
+  .titulo-cat h1 { font-size: clamp(2rem, 4vw, 3rem); }
+  .tienda-fisica { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; background: var(--tiza); border: 1px solid var(--linea); border-radius: var(--r-m); padding: 1rem 1.2rem; margin-bottom: 2rem; }
+  .tienda-fisica svg { width: 30px; height: 30px; color: var(--fucsia-2); }
+  .tienda-fisica p { margin: 0; color: var(--piedra); font-size: .93rem; }
+  .tienda-fisica b { color: var(--grafito); display: block; }
+  .catalogo { display: grid; grid-template-columns: 240px 1fr; gap: 2.5rem; align-items: start; padding-bottom: 5rem; }
+  .filtros { position: sticky; top: 96px; display: grid; gap: 1.6rem; }
+  .filtros fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: .5rem; }
+  .filtros legend { font: 700 1rem/1 var(--display); margin-bottom: .7rem; }
+  .filtros label { display: flex; align-items: center; gap: .6rem; font-size: .95rem; cursor: pointer; min-height: 30px; }
+  .filtros input[type=radio], .filtros input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--fucsia-2); margin: 0; }
+  .filtros .cuenta { margin-left: auto; color: var(--piedra); font-size: .85rem; }
+  .tallas { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tallas button { min-width: 44px; height: 40px; border: 1.5px solid var(--linea); background: #fff; border-radius: var(--r-s); font-weight: 600; }
+  .tallas button[aria-pressed="true"] { border-color: var(--grafito); background: var(--grafito); color: #fff; }
+  .filtros .muestras { gap: 4px; }
+  .barra-res { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+  .barra-res select { height: 42px; border: 1.5px solid var(--linea); border-radius: var(--r-s); padding: 0 .8rem; font: inherit; background: #fff; }
+  .chips-activos { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: .4rem; background: var(--fucsia-suave); color: var(--fucsia-2); font-weight: 600; font-size: .85rem; border-radius: 99px; padding: .3rem .75rem; border: 0; }
+  .catalogo .grilla { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .solo-prenda { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; background: var(--grafito); color: #fff; border-radius: var(--r-m); padding: 1.4rem 1.6rem; }
+  .solo-prenda h3 { font-size: 1.25rem; }
+  .solo-prenda p { margin: .2rem 0 0; color: #cfcdd4; }
+  .btn-filtros { display: none; }
+  @media (max-width: 960px) {
+    .catalogo { grid-template-columns: 1fr; }
+    .filtros { display: none; }
+    .btn-filtros { display: inline-flex; }
+    .catalogo .grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tienda-fisica { grid-template-columns: auto 1fr; }
+    .tienda-fisica .btn { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<div id="cab"></div>
+<main class="contenedor">
+  <div class="titulo-cat">
+    <div class="migas"><a href="inicio.html">Inicio</a> / Catálogo</div>
+    <h1>Catálogo de uniformes</h1>
+    <p class="lead">Todos los modelos se hacen bajo pedido en tu color y talla, o a tu medida. Lo que está listo en el taller lo ves en la tienda física.</p>
+  </div>
+  <div class="tienda-fisica">
+    <span data-ico="store"></span>
+    <p><b>¿Lo necesitas hoy?</b>Mira qué modelos, tallas y colores hay listos en el taller.</p>
+    <a class="btn btn-borde" href="#">Ver disponibles en tienda física</a>
+  </div>
+  <div class="catalogo">
+    <aside class="filtros" aria-label="Filtros">
+      <fieldset><legend>Categoría</legend>
+        <label><input type="radio" name="cat" checked> Uniformes <span class="cuenta">13</span></label>
+        <label><input type="radio" name="cat"> Línea blancos <span class="cuenta">5</span></label>
+        <label><input type="radio" name="cat"> Batas y pantalones <span class="cuenta">2</span></label>
+        <label><input type="radio" name="cat"> Gorros quirúrgicos <span class="cuenta">1</span></label>
+        <label><input type="radio" name="cat"> Medias de compresión <span class="cuenta">1</span></label>
+      </fieldset>
+      <fieldset><legend>Forma de compra</legend>
+        <label><input type="checkbox"> Listo en tienda</label>
+        <label><input type="checkbox" checked> Bajo pedido, 3 a 5 días</label>
+        <label><input type="checkbox"> A tu medida, 5 a 8 días</label>
+      </fieldset>
+      <fieldset><legend>Talla</legend>
+        <div class="tallas"><button aria-pressed="false">XS</button><button aria-pressed="false">S</button><button aria-pressed="true">M</button><button aria-pressed="false">L</button><button aria-pressed="false">XL</button><button aria-pressed="false">XXL</button></div>
+        <a class="enlace" href="#" style="justify-self:start;font-size:.9rem;margin-top:.3rem">Guía de tallas</a>
+      </fieldset>
+      <fieldset><legend>Color</legend><ul class="muestras pequenas" id="f-colores"></ul></fieldset>
+    </aside>
+    <section>
+      <div class="barra-res">
+        <div class="chips-activos"><button class="btn btn-borde btn-filtros">Filtros</button><span class="chip">Uniformes</span><span class="chip">Talla M</span><span class="chip">Bajo pedido</span></div>
+        <label><span class="sr" style="position:absolute;left:-9999px">Ordenar</span><select><option>Más pedidos</option><option>Precio menor</option><option>Precio mayor</option></select></label>
+      </div>
+      <div class="grilla" id="grilla"></div>
+    </section>
+  </div>
+</main>
+<div id="pie"></div>
+<script src="comun.js"></script>
+<script>
+  document.getElementById("cab").outerHTML = cabecera("Catálogo");
+  document.getElementById("pie").outerHTML = pie();
+  document.querySelectorAll("[data-ico]").forEach(e => e.outerHTML = ICO[e.dataset.ico]);
+  document.getElementById("f-colores").innerHTML = Object.entries(COLORES).map(([k, v]) => `<li><button class="muestra" style="--c:${v}" aria-label="${k}" aria-pressed="false"><span></span></button></li>`).join("");
+  const tarjetas = MODELOS.map(tarjeta);
+  tarjetas.splice(6, 0, `<div class="solo-prenda"><div><h3>¿Solo la blusa o solo el pantalón?</h3><p>También los hacemos por separado. Cuéntanos el modelo y te damos el precio.</p></div><a class="btn btn-wa" href="#">${ICO.wa} Preguntar por WhatsApp</a></div>`);
+  document.getElementById("grilla").innerHTML = tarjetas.join("");
+</script>
+</body>
+</html>

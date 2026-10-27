@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multicostura producto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<style>
+  .migas { font-size: .85rem; color: var(--piedra); padding: 1.6rem 0 1.2rem; }
+  .migas a { text-decoration: none; }
+  .producto { --c: #2456b8; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; padding-bottom: 4rem; }
+  .galeria { position: sticky; top: 96px; display: grid; grid-template-columns: 76px 1fr; gap: 12px; }
+  .galeria .principal { border-radius: 20px; background: color-mix(in srgb, var(--c) 14%, #f4f3f6); transition: background .4s; }
+  .galeria .principal img { transform: scale(1.06); }
+  .tiras { display: grid; gap: 10px; align-content: start; }
+  .tiras button { padding: 0; border: 0; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; opacity: .65; }
+  .tiras button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--fucsia-2); }
+  .tiras img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); }
+  .info h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); }
+  .info .desc { color: var(--piedra); margin: .8rem 0 0; max-width: 52ch; }
+  .total { display: flex; align-items: baseline; gap: .8rem; margin: 1.2rem 0 .2rem; flex-wrap: wrap; }
+  .total b { font: 800 2.1rem/1 var(--display); letter-spacing: -.02em; }
+  .total s { color: var(--piedra); }
+  .total .ahorro { color: var(--fucsia-2); font-weight: 700; font-size: .92rem; }
+  .bloque { border-top: 1px solid var(--linea); padding: 1.3rem 0; display: grid; gap: .7rem; }
+  .bloque > .rotulo { display: flex; justify-content: space-between; font-weight: 700; }
+  .bloque > .rotulo span { font-weight: 500; color: var(--piedra); }
+  .modos { display: grid; gap: 8px; }
+  .modo { display: grid; grid-template-columns: 20px 1fr auto; gap: .8rem; align-items: center; border: 1.5px solid var(--linea); border-radius: var(--r-m); padding: .85rem 1rem; cursor: pointer; }
+  .modo input { width: 18px; height: 18px; accent-color: var(--fucsia-2); margin: 0; }
+  .modo b { display: block; }
+  .modo small { color: var(--piedra); font-size: .87rem; }
+  .modo .p { font-weight: 700; text-align: right; }
+  .modo .p small { display: block; color: var(--fucsia-2); font-weight: 600; }
+  .modo:has(input:checked) { border-color: var(--fucsia-2); box-shadow: inset 0 0 0 1px var(--fucsia-2); background: #fff; }
+  .tallas { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tallas button { min-width: 52px; height: 44px; border: 1.5px solid var(--linea); background: #fff; border-radius: var(--r-s); font-weight: 600; }
+  .tallas button[aria-pressed="true"] { border-color: var(--grafito); background: var(--grafito); color: #fff; }
+  .fila { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+  .cantidad { display: inline-grid; grid-template-columns: 44px 52px 44px; border: 1.5px solid var(--linea); border-radius: var(--r-s); height: 46px; }
+  .cantidad button { border: 0; background: none; font-size: 1.2rem; }
+  .cantidad output { display: grid; place-items: center; font-weight: 700; }
+  .escala { display: flex; gap: 6px; flex-wrap: wrap; }
+  .escala span { font-size: .85rem; border: 1px dashed var(--linea); border-radius: 99px; padding: .25rem .7rem; color: var(--piedra); }
+  .escala span.on { border: 1px solid var(--fucsia-2); color: var(--fucsia-2); font-weight: 700; background: var(--fucsia-suave); }
+  .bordado { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bordado input[type=text] { height: 46px; border: 1.5px solid var(--linea); border-radius: var(--r-s); padding: 0 .9rem; font: inherit; width: 100%; }
+  .cta { display: grid; gap: .6rem; margin-top: .4rem; }
+  .cta .btn { min-height: 52px; font-size: 1rem; }
+  .mensaje { background: var(--tiza); border-radius: var(--r-m); padding: 1rem 1.1rem; font-size: .88rem; color: #48454e; white-space: pre-line; border-left: 3px solid var(--wa); }
+  details { border-top: 1px solid var(--linea); }
+  details:last-of-type { border-bottom: 1px solid var(--linea); }
+  summary { list-style: none; cursor: pointer; padding: 1.1rem 0; font-weight: 700; display: flex; justify-content: space-between; }
+  summary::after { content: "+"; font-size: 1.3rem; line-height: 1; }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0 0 1.1rem; color: var(--piedra); }
+  @media (max-width: 960px) {
+    .producto { grid-template-columns: 1fr; }
+    .galeria { position: static; grid-template-columns: 1fr; }
+    .tiras { grid-template-columns: repeat(5, 1fr); order: 2; }
+    .cta { position: sticky; bottom: 64px; background: #fff; padding: .8rem 0; box-shadow: 0 -12px 14px -12px rgba(0,0,0,.2); z-index: 5; }
+  }
+</style>
+</head>
+<body>
+<div id="cab"></div>
+<main class="contenedor">
+  <div class="migas"><a href="inicio.html">Inicio</a> / <a href="catalogo.html">Catálogo</a> / <span id="miga"></span></div>
+  <div class="producto" id="producto">
+    <div class="galeria">
+      <div class="tiras" id="tiras"></div>
+      <div class="foto principal"><img id="foto" alt=""></div>
+    </div>
+    <div class="info">
+      <h1 id="nombre"></h1>
+      <p class="desc" id="desc"></p>
+      <div class="total"><b id="total"></b><s id="antes"></s><span class="ahorro" id="ahorro"></span></div>
+      <p style="margin:0;color:var(--piedra);font-size:.9rem">Conjunto completo de blusa y pantalón. Se empieza con el 50%.</p>
+
+      <div class="bloque"><div class="rotulo">Cómo lo quieres</div>
+        <div class="modos" id="modos"></div>
+      </div>
+      <div class="bloque"><div class="rotulo">Color <span id="color-nombre"></span></div>
+        <ul class="muestras" id="muestras"></ul>
+        <small style="color:var(--piedra)">Los colores con borde tienen foto. Los demás se hacen bajo pedido.</small>
+      </div>
+      <div class="bloque" id="b-talla"><div class="rotulo">Talla <a class="enlace" href="#" style="font-weight:600;font-size:.9rem">Guía de tallas</a></div>
+        <div class="tallas" id="tallas"></div>
+      </div>
+      <div class="bloque"><div class="rotulo">Cantidad</div>
+        <div class="fila"><div class="cantidad"><button id="menos" aria-label="Quitar uno">−</button><output id="cant">1</output><button id="mas" aria-label="Agregar uno">+</button></div>
+        <div class="escala" id="escala"></div></div>
+      </div>
+      <div class="bloque"><div class="rotulo">Bordado <span>opcional</span></div>
+        <div class="bordado"><input type="text" id="b-nombre" placeholder="Tu nombre, + $12.000" aria-label="Nombre bordado"><input type="text" id="b-prof" placeholder="Profesión, + $6.000" aria-label="Profesión bordada"></div>
+      </div>
+      <div class="cta">
+        <a class="btn btn-fucsia" id="pedir" href="#">${ICO.wa} Pedir por WhatsApp</a>
+        <a class="btn btn-borde" id="agendar" href="inicio.html#medidas">Agendar mis medidas</a>
+      </div>
+      <p style="font-size:.85rem;color:var(--piedra);margin:.8rem 0 .4rem">Así le llega tu pedido a la dueña:</p>
+      <div class="mensaje" id="mensaje"></div>
+      <div style="margin-top:1.6rem">
+        <details open><summary>Tela y cuidado</summary><p>Antifluido elástico. Lavar a mano o en ciclo suave con agua fría, sin blanqueador. (Texto por confirmar con la dueña.)</p></details>
+        <details><summary>¿Solo la blusa o solo el pantalón?</summary><p>También se hacen por separado. Escríbenos por WhatsApp con el modelo y te damos el precio.</p></details>
+        <details><summary>Envíos</summary><p>Enviamos a toda Colombia. El envío se cotiza según el destino.</p></details>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="pie"></div>
+<script src="comun.js"></script>
+<script>
+  document.getElementById("cab").outerHTML = cabecera("Catálogo");
+  document.getElementById("pie").outerHTML = pie();
+  const $ = id => document.getElementById(id);
+  $("pedir").innerHTML = $("pedir").innerHTML.replace("${ICO.wa}", ICO.wa);
+  const m = MODELOS.find(x => x.id === new URLSearchParams(location.search).get("m")) || MODELOS[0];
+  const conFoto = Object.keys(m.fotos), todos = [...conFoto, ...Object.keys(COLORES).filter(c => !conFoto.includes(c))];
+  const precios = { tienda: m.precio, pedido: 175000, medida: 185000 };
+  const DESC = [[1, 0], [3, .05], [6, .10], [12, .15]];
+  const st = { modo: "pedido", color: conFoto[0], talla: "M", cant: 1 };
+  $("miga").textContent = $("nombre").textContent = m.nombre; $("desc").textContent = m.desc;
+  $("modos").innerHTML = TIPOS.map(t => `<label class="modo"><input type="radio" name="modo" value="${t.id}" ${t.id === st.modo ? "checked" : ""}><span><b>${t.t}</b><small>${t.d}</small></span><span class="p">${pesos(precios[t.id])}<small>${t.tiempo}</small></span></label>`).join("");
+  $("tallas").innerHTML = ["XS", "S", "M", "L", "XL", "XXL"].map(t => `<button aria-pressed="${t === st.talla}">${t}</button>`).join("");
+  $("escala").innerHTML = DESC.slice(1).map(([n, p]) => `<span data-n="${n}">${n}+ uniformes, ${p * 100}% menos</span>`).join("");
+  function pintar() {
+    const c = st.color, foto = m.fotos[c];
+    if (foto) { $("foto").src = foto; $("foto").alt = `${m.nombre} en ${c.toLowerCase()}`; }
+    document.getElementById("producto").style.setProperty("--c", COLORES[c]);
+    $("color-nombre").textContent = c + (foto ? "" : ", sin foto todavía");
+    $("tiras").innerHTML = conFoto.map(k => `<button aria-label="${k}" aria-pressed="${k === c}"><img src="${m.fotos[k]}" alt=""></button>`).join("");
+    $("muestras").innerHTML = todos.map(k => `<li><button class="muestra" style="--c:${COLORES[k]}${conFoto.includes(k) ? ";outline:1.5px solid var(--grafito);outline-offset:-1px" : ""}" aria-label="${k}" aria-pressed="${k === c}"><span></span></button></li>`).join("");
+    const pct = [...DESC].reverse().find(([n]) => st.cant >= n)[1];
+    const bord = ($("b-nombre").value ? 12000 : 0) + ($("b-prof").value ? 6000 : 0);
+    const bruto = (precios[st.modo] + bord) * st.cant, neto = Math.round(bruto * (1 - pct));
+    $("total").textContent = pesos(neto); $("antes").textContent = pct ? pesos(bruto) : ""; $("ahorro").textContent = pct ? `Ahorras ${pesos(bruto - neto)}` : "";
+    $("cant").textContent = st.cant;
+    document.querySelectorAll("#escala span").forEach(s => s.classList.toggle("on", +s.dataset.n === [...DESC].reverse().find(([n]) => st.cant >= n)[0]));
+    $("b-talla").hidden = st.modo === "medida";
+    $("agendar").className = "btn " + (st.modo === "medida" ? "btn-fucsia" : "btn-borde");
+    $("pedir").className = "btn " + (st.modo === "medida" ? "btn-borde" : "btn-fucsia");
+    const tipo = TIPOS.find(t => t.id === st.modo);
+    $("mensaje").textContent = `Hola, quiero pedir:\n${st.cant} × ${m.nombre}, ${c.toLowerCase()}${st.modo === "medida" ? ", a mi medida" : `, talla ${st.talla}`}\n${tipo.t} (${tipo.tiempo.toLowerCase()})${$("b-nombre").value ? `\nBordado: ${$("b-nombre").value}${$("b-prof").value ? ", " + $("b-prof").value : ""}` : ""}\nTotal estimado: ${pesos(neto)}`;
+  }
+  $("modos").onchange = e => { st.modo = e.target.value; pintar(); };
+  $("tallas").onclick = e => { const b = e.target.closest("button"); if (!b) return; st.talla = b.textContent; $("tallas").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintar(); };
+  $("muestras").onclick = $("tiras").onclick = e => { const b = e.target.closest("button"); if (b) { st.color = b.getAttribute("aria-label"); pintar(); } };
+  $("menos").onclick = () => { st.cant = Math.max(1, st.cant - 1); pintar(); };
+  $("mas").onclick = () => { st.cant++; pintar(); };
+  $("b-nombre").oninput = $("b-prof").oninput = pintar;
+  pintar();
+</script>
+</body>
+</html>

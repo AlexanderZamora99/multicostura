@@ -1,0 +1,123 @@
+/* Mockup Multicostura: sistema visual compartido */
+:root {
+  --fucsia: #d6247f;
+  --fucsia-2: #a3175f;
+  --fucsia-suave: #fbe7f1;
+  --niebla: #ecebee;
+  --tiza: #f7f6f8;
+  --linea: #dddbe0;
+  --grafito: #26242b;
+  --piedra: #636069;
+  --negro: #000;
+  --blanco: #fff;
+  --wa: #25d366;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --texto: "Figtree", system-ui, sans-serif;
+  --r-s: 6px;
+  --r-m: 14px;
+  --ancho: min(1240px, 100% - 32px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--blanco); color: var(--grafito); font: 400 1rem/1.55 var(--texto); -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--fucsia-2); outline-offset: 2px; }
+.contenedor { width: var(--ancho); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; margin: 0; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.6rem); }
+h3 { font-size: 1.2rem; letter-spacing: -.01em; }
+.lead { color: var(--piedra); max-width: 56ch; margin: .6rem 0 0; }
+
+/* Barra superior negra con los datos del negocio */
+.barra { background: var(--negro); color: #fff; font-size: .86rem; }
+.barra ul { list-style: none; margin: 0 auto; padding: 0; width: var(--ancho); display: flex; justify-content: space-between; gap: 1rem; min-height: 38px; align-items: center; }
+.barra li { display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.barra svg { width: 17px; height: 17px; }
+
+/* Encabezado */
+.cabecera { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--linea); }
+.cabecera .contenedor { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2rem; min-height: 72px; }
+.logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+.logo-m { width: 40px; height: 40px; border-radius: 50%; background: var(--fucsia-suave); display: grid; place-items: center; font: 800 1.35rem/1 var(--display); color: var(--fucsia); }
+.logo b { display: block; font: 700 1.08rem/1 var(--display); letter-spacing: .02em; }
+.logo small { display: block; font-size: .74rem; color: var(--piedra); letter-spacing: .08em; margin-top: 3px; }
+.nav { display: flex; justify-content: center; gap: 1.8rem; }
+.nav a { text-decoration: none; font-weight: 600; font-size: .95rem; padding: .4rem 0; border-bottom: 2px solid transparent; }
+.nav a:hover, .nav a[aria-current] { border-color: var(--fucsia); }
+.acciones { display: flex; gap: .5rem; align-items: center; }
+.icono-btn { width: 44px; height: 44px; border: 1px solid var(--linea); border-radius: var(--r-s); background: #fff; display: grid; place-items: center; }
+.icono-btn svg { width: 20px; height: 20px; }
+
+/* Botones */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 46px; padding: .7rem 1.4rem; border-radius: var(--r-s); font-weight: 700; font-size: .95rem; text-decoration: none; border: 1.5px solid transparent; transition: background .2s, color .2s, border-color .2s; }
+.btn-fucsia { background: var(--fucsia); color: #fff; }
+.btn-fucsia:hover { background: var(--fucsia-2); }
+.btn-borde { border-color: var(--grafito); color: var(--grafito); background: transparent; }
+.btn-borde:hover { background: var(--grafito); color: #fff; }
+.btn-wa { background: var(--wa); color: #073b1c; }
+.btn svg { width: 18px; height: 18px; }
+
+/* Muestras de color */
+.muestras { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; list-style: none; }
+.muestra { width: 30px; height: 30px; border-radius: 50%; border: 0; padding: 0; background: none; display: grid; place-items: center; }
+.muestra span { width: 20px; height: 20px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+.muestra[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--fucsia-2); }
+.muestras.pequenas .muestra { width: 24px; height: 24px; }
+.muestras.pequenas .muestra span { width: 15px; height: 15px; }
+
+/* Fotos del catálogo: el leve zoom esconde los bordes que quedaron del Canva */
+.foto { position: relative; overflow: hidden; background: var(--niebla); border-radius: var(--r-m); aspect-ratio: 4 / 5; }
+.foto img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transform: scale(1.1); transition: opacity .35s; }
+
+/* Secciones */
+.seccion { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+.seccion.gris { background: var(--tiza); }
+.cabeza { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.enlace { font-weight: 700; color: var(--fucsia-2); text-decoration: none; border-bottom: 1.5px solid currentColor; padding-bottom: 2px; }
+
+/* Tarjeta de producto */
+.grilla { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 20px; }
+.tarjeta { position: relative; }
+.tarjeta .foto { margin-bottom: .85rem; }
+.tarjeta h3 { font-size: 1.1rem; }
+.tarjeta h3 a { text-decoration: none; }
+.tarjeta h3 a::after { content: ""; position: absolute; inset: 0 0 auto; aspect-ratio: 4 / 5; }
+.precio { font-weight: 700; margin: .15rem 0 .55rem; }
+.precio small { color: var(--piedra); font-weight: 500; }
+.mas-colores { font-size: .82rem; color: var(--piedra); margin-top: .3rem; }
+.etiqueta { position: absolute; top: 12px; left: 12px; z-index: 2; background: #fff; color: var(--grafito); font-size: .78rem; font-weight: 700; padding: .3rem .6rem; border-radius: 999px; }
+.tarjeta .muestras { position: relative; z-index: 2; }
+
+/* Pie */
+.pie { background: var(--negro); color: #c9c7cf; padding: 4rem 0 6rem; font-size: .95rem; }
+.pie .contenedor { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 2rem; }
+.pie h3 { color: #fff; font-size: 1rem; margin-bottom: .9rem; }
+.pie ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .45rem; }
+.pie a { text-decoration: none; }
+.pie a:hover { color: #fff; text-decoration: underline; }
+
+/* Botones flotantes */
+.flotante { position: fixed; right: 20px; bottom: 20px; z-index: 30; width: 58px; height: 58px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.22); }
+.flotante svg { width: 28px; height: 28px; }
+
+/* Barra inferior del celular */
+.tabbar { display: none; }
+
+@media (max-width: 960px) {
+  .nav { display: none; }
+  .cabecera .contenedor { grid-template-columns: auto 1fr auto; gap: 1rem; }
+  .acciones .btn { display: none; }
+  .grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
+  .barra li:nth-child(n+2) { display: none; }
+  .barra ul { justify-content: center; }
+  .pie .contenedor { grid-template-columns: 1fr 1fr; }
+  .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; inset: auto 0 0; z-index: 40; background: #fff; border-top: 1px solid var(--linea); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+  .tabbar a { display: grid; justify-items: center; gap: 2px; font-size: .7rem; font-weight: 600; text-decoration: none; color: var(--piedra); padding: 4px 0; }
+  .tabbar a[aria-current] { color: var(--fucsia-2); }
+  .tabbar svg { width: 22px; height: 22px; }
+  .flotante { bottom: 84px; right: 14px; width: 52px; height: 52px; }
+  body { padding-bottom: 64px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
