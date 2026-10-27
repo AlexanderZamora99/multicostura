@@ -73,7 +73,7 @@
     .pp .i-play { display: none; }
     .pp.paused .i-play { display: block; }
     .pp.paused .i-pause { display: none; }
-    .ann-pp { position: absolute; right: 8px; top: 5px; z-index: 2; width: 28px; height: 28px; background: transparent; border-color: #fff; color: #fff; }
+    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: transparent; border-color: #fff; color: #fff; }
     .ann-pp svg { width: 12px; height: 12px; }
     .banner-pp { position: absolute; left: 16px; bottom: .6rem; z-index: 2; }
     .ann-item.out { transform: translateY(-100%); }
@@ -106,16 +106,17 @@
     }
 
     /* Banner a todo el ancho */
-    .banner { position: relative; padding: 0; background: #eceef0; overflow: hidden; }
-    .b-track { display: flex; transition: transform .8s var(--ease); }
-    .slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); min-height: clamp(400px, 40vw, 600px); background: linear-gradient(100deg, #f4f5f6 35%, #e3e5e8); }
+    .banner { position: relative; padding: 0; background: #eceef0; overflow: hidden; container-type: inline-size; }
+    .b-track { display: grid; }
+    .slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .6s, visibility .6s; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); min-height: clamp(400px, 40vw, 600px); background: linear-gradient(100deg, #f4f5f6 35%, #e3e5e8); }
     .slide.no-photo { grid-template-columns: minmax(0, 1fr); }
     .slide.no-photo picture { display: none; }
     .slide picture { grid-column: 2; grid-row: 1; position: relative; display: block; }
     .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 18%; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24%); mask-image: linear-gradient(90deg, transparent, #000 24%); }
-    .slide-copy { grid-column: 1; grid-row: 1; align-self: center; padding: 2rem 1rem 3.4rem max(16px, calc(50vw - 575px)); max-width: 640px; position: relative; z-index: 1; }
+    .slide-copy { grid-column: 1; grid-row: 1; align-self: center; padding: 2rem 1rem 3.4rem max(16px, calc(50cqw - 575px)); max-width: 640px; position: relative; z-index: 1; }
     .slide-title { font-family: "Jost", sans-serif; font-weight: 500; font-size: clamp(2.1rem, 4vw, 3.3rem); line-height: 1.06; margin-bottom: 1rem; }
     .slide-text { color: var(--muted); font-size: 1.08rem; max-width: 420px; margin-bottom: 1.6rem; }
+    .slide.is-active { opacity: 1; visibility: visible; }
     .slide.is-active .slide-copy > * { animation: rise .9s var(--ease) both; }
     .slide.is-active .slide-copy > :nth-child(2) { animation-delay: .1s; }
     .slide.is-active .slide-copy > :nth-child(3) { animation-delay: .2s; }
@@ -140,7 +141,7 @@
       .arrow.next { right: 8px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .b-track, .ann-item, .dot::after { transition: none; }
+      .slide, .ann-item, .dot::after { transition: none; }
       .slide.is-active .slide-copy > * { animation: none; }
     }
 
@@ -440,6 +441,7 @@
     .socials a:hover { background: #fff; color: var(--ink); text-decoration: none; }
     .socials svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
     .foot-bottom { border-top: 1px solid rgba(255,255,255,.18); padding: 1.1rem 0 6rem; font-size: .84rem; color: #9c9ca6; }
+    .fab-off .wa-float, .fab-off .chat-btn:not([aria-expanded="true"]) { visibility: hidden; opacity: 0; pointer-events: none; }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
 
@@ -889,10 +891,10 @@
       // placeholder: replace with the client's photos (sin img = icono neutro)
       categoriasCirculos: [
         { t: "Uniformes", cat: "Conjuntos", ico: "hanger" },
-        { t: "Línea blancos", cat: "Línea blancos", ico: "coat", img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+        { t: "Línea blancos", cat: "Línea blancos", ico: "coat" },
         { t: "Gorros quirúrgicos", cat: "Gorros quirúrgicos", ico: "cap" },
         { t: "Medias de compresión", cat: "Medias de compresión", ico: "sock" },
-        { t: "Batas y pantalones", cat: "Batas y pantalones", ico: "coat", img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=300&h=300&crop=top&q=70" },
+        { t: "Batas y pantalones", cat: "Batas y pantalones", ico: "coat" },
       ],
       // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
       // placeholder: replace with the client's photos
@@ -964,10 +966,10 @@
         { q: "¿Dónde están y qué horario tienen?", a: n => `Estamos en ${n.direccionTaller}. Atendemos ${n.horarioTexto.charAt(0).toLowerCase() + n.horarioTexto.slice(1)}`, claves: ["donde", "ubicacion", "ubicados", "direccion", "taller", "mapa", "tulua", "horario", "abren", "abierto"] }, // confirmar con la dueña
       ],
       bonos: [100000, 150000, 200000, 300000],
-      // Fotos de clientas. placeholder: replace with the client's photos (los dos primeros son fotos de ejemplo, el resto usa img/ y queda en gris si falta)
+      // Fotos de clientas reales. Las marcadas ejemplo: true son fotos de archivo (no son clientas) y nunca se muestran; la sección aparece cuando hay una foto real que carga.
       clientas: [
-        { foto: "https://images.unsplash.com/photo-1659353888906-adb3e0041693?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Odontóloga" },
-        { foto: "https://images.unsplash.com/photo-1674049406176-021807a2802e?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Enfermera jefe" },
+        { foto: "https://images.unsplash.com/photo-1659353888906-adb3e0041693?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Odontóloga", ejemplo: true },
+        { foto: "https://images.unsplash.com/photo-1674049406176-021807a2802e?auto=format&fit=crop&w=600&h=600&crop=top&q=70", texto: "Enfermera jefe", ejemplo: true },
         { foto: "img/clienta-3.jpg", texto: "Esteticista" },
         { foto: "img/clienta-4.jpg", texto: "Médica general" },
       ],
@@ -1078,7 +1080,6 @@
       let now = 0, timer = null;
       const show = i => {
         now = (i + slides.length) % slides.length;
-        track.style.transform = `translateX(-${now * 100}%)`;
         slides.forEach((el, k) => { el.classList.toggle("is-active", k === now); el.setAttribute("aria-hidden", k !== now); el.inert = k !== now; });
         dotEls.forEach((el, k) => (k === now ? el.setAttribute("aria-current", "true") : el.removeAttribute("aria-current")));
       };
@@ -1557,9 +1558,10 @@
       const ronda = ++clientasRonda;
       $("clientas").classList.add("hidden");
       $("clients").innerHTML = "";
-      const ok = await Promise.all(NEGOCIO.clientas.map(c => fotoCarga(c.foto)));
+      const reales = NEGOCIO.clientas.filter(c => !c.ejemplo);
+      const ok = await Promise.all(reales.map(c => fotoCarga(c.foto)));
       if (ronda !== clientasRonda) return;
-      const lista = NEGOCIO.clientas.filter((c, i) => ok[i]);
+      const lista = reales.filter((c, i) => ok[i]);
       $("clients").innerHTML = lista.map(c => `<figure><img src="${c.foto}" alt="Clienta con su uniforme Multicostura" loading="lazy"><figcaption>${c.texto}</figcaption></figure>`).join("");
       $("clientas").classList.toggle("hidden", !lista.length);
     }
@@ -1665,6 +1667,16 @@
       const g = $("guia-img");
       g.onload = () => ($("guia").hidden = false); // si no carga, la guía queda oculta
       g.src = NEGOCIO.guiaTallas;
+    }
+    // En el celular, los botones flotantes se apartan mientras hay un formulario en pantalla (no tapan campos ni el botón de envío)
+    {
+      const visibles = new Set(), movil = matchMedia("(max-width: 640px)");
+      const sync = () => document.body.classList.toggle("fab-off", movil.matches && visibles.size > 0);
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(es => { es.forEach(e => (e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target))); sync(); });
+        ["form", "biz", "bono"].forEach(id => io.observe($(id)));
+        movil.addEventListener("change", sync);
+      }
     }
     renderProfs(); renderModels(); renderRecomendados(); renderCirculos(); renderDesign(); renderPerfiles(); renderBono();
     loadBusy().then(renderAgenda);
