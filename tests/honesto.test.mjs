@@ -57,8 +57,9 @@ test("a banner slide without a photo keeps a calm text-only layout", () => {
   assert.match(section(html, "banner"), /class="slide is-active no-photo"|class="slide no-photo is-active"/);
 });
 
+// changed: section titles are now bold uppercase (reference store canon); the designer's field labels stay sentence case
 test("designer labels are sentence case, not tracked capitals", () => {
-  assert.doesNotMatch(css, /text-transform:\s*uppercase/);
+  assert.doesNotMatch(css, /\.(field|lbl|opts)[^{]*\{[^}]*text-transform/);
   assert.doesNotMatch(css, /\.field[^{]*\{[^}]*letter-spacing/);
   const s = section(dom, "personaliza");
   assert.match(s, /class="lbl"[^>]*>Modelo</);

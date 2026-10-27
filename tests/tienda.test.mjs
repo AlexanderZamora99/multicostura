@@ -18,8 +18,9 @@ test("no emoji are used as icons in the page", () => {
   assert.doesNotMatch(source, /content:\s*"[^"]*\p{Extended_Pictographic}/u);
 });
 
-test("fonts are two sans families, no script or italic display", () => {
-  assert.match(source, /fonts\.googleapis\.com\/css2\?family=Jost/);
+// changed: the reference store (worktastic.co) uses Open Sans for everything, so the Jost + Figtree pair is replaced by one family
+test("fonts are one sans family (Open Sans), no script or italic display", () => {
+  assert.match(source, /fonts\.googleapis\.com\/css2\?family=Open\+Sans/);
   assert.doesNotMatch(source, /Poppins|Cormorant|cursive|font-style:\s*italic/);
 });
 

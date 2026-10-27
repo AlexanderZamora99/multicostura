@@ -23,7 +23,7 @@ test("hero headline has no emphasized (italic) span", () => {
 test("backgrounds are neutral (no pink washes)", () => {
   assert.doesNotMatch(rule(".hero"), /radial-gradient|rgba\(214/);
   assert.match(rule(".alt"), /var\(--bg-2\)/);
-  assert.match(source, /--bg-2:\s*#f6f6f7/i);
+  assert.match(source, /--bg-2:\s*#f4f4f4/i);
   assert.doesNotMatch(rule(".box.pinkbox"), /#fbd3e5|#f7a9cc/);
 });
 
