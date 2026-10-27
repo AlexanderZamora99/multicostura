@@ -5,10 +5,10 @@ import { render } from "./render.mjs";
 const { html, stderr } = render();
 const dom = html.replace(/<script[\s\S]*?<\/script>/g, ""); // solo el DOM, sin el código fuente
 
-test("Google Maps embed uses the encoded workshop address", () => {
+test("Google Maps embed uses the workshop coordinates", () => {
   const m = dom.match(/<iframe[^>]*src="(https:\/\/www\.google\.com\/maps\?q=[^"]+)"[^>]*>/);
   assert.ok(m, "maps iframe missing");
-  assert.match(m[1], /q=Calle%2024%20T10-39/);
+  assert.match(m[1], /q=4\.092361%2C-76\.206250/);
   assert.match(m[1], /output=embed/);
   assert.match(m[0], /loading="lazy"/);
   assert.match(m[0], /title="[^"]+"/);
