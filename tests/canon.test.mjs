@@ -294,3 +294,14 @@ test("footer has Contacto, Centro de ayuda and Explora columns and invents no po
   for (const id of ["modelos", "personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
   assert.doesNotMatch(dom, /devoluci|garant[ií]a|reembolso|cambios y/i);
 });
+
+// ---- C5 QA: the no-photo silhouette matches the garment (trousers alone, long coat) ----
+test("trousers and coat cards fall back to their own silhouette, not the full set", () => {
+  const { html } = render();
+  const card = id => html.match(new RegExp(`data-id="${id}"[\\s\\S]*?</article>`))?.[0] || "";
+  assert.match(card("pantalon"), /href="#sil-pantalon"/);
+  assert.match(card("bata"), /href="#sil-bata"/);
+  assert.match(card("kaill"), /href="#scrub"/);
+  assert.match(source, /<symbol id="sil-pantalon"/);
+  assert.match(source, /<symbol id="sil-bata"/);
+});

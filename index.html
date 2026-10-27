@@ -523,6 +523,17 @@
         <path d="M60 162 L140 162" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
         <path d="M96 164 Q92 176 98 180 M104 164 Q108 176 102 180" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
       </symbol>
+      <symbol id="sil-pantalon" viewBox="0 0 200 300">
+        <path d="M46 40 L154 40 L164 286 L114 286 L100 120 L86 286 L36 286 Z"/>
+        <path d="M54 50 L146 50" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+        <path d="M96 52 Q92 66 98 70 M104 52 Q108 66 102 70" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
+      </symbol>
+      <symbol id="sil-bata" viewBox="0 0 200 300">
+        <path d="M66 16 L88 10 L100 60 L112 10 L134 16 L172 40 L194 200 L166 206 L150 92 L152 290 L48 290 L50 92 L34 206 L6 200 L28 40 Z"/>
+        <path d="M88 10 L100 60 L112 10 M100 60 L100 290" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <rect x="62" y="190" width="28" height="30" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <rect x="110" y="190" width="28" height="30" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -984,10 +995,10 @@
         { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.jpg" },
         { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.jpg" },
         { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.jpg" },
-        { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], desc: "Bata de manga larga.", foto: "img/bata.jpg" },
+        { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], sil: "sil-bata", desc: "Bata de manga larga.", foto: "img/bata.jpg" },
         { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico en antifluido, en varios estampados y colores. Consulta precio y disponibilidad.", colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Negro"], foto: "img/gorro-quirurgico.jpg" }, // confirmar con la dueña
         { id: "medias-compresion", nombre: "Medias de compresión", precio: null, cat: ["Medias de compresión"], desc: "Medias de compresión para jornadas largas de pie. Consulta tallas, precio y disponibilidad.", colores: ["Blanco", "Negro", "Café"], foto: "img/medias-compresion.jpg" }, // confirmar con la dueña
-        { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.jpg" },
+        { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], sil: "sil-pantalon", desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.jpg" },
       ],
       proceso: [
         ["Diseña", "Elige modelo, color y bordado aquí o en el catálogo."],
@@ -1082,8 +1093,8 @@
     const isoDate = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     const fromIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
     const largo = s => fromIso(s).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
-    const scrub = color => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub" style="fill:${color};stroke:${color.toLowerCase() === "#ffffff" ? "#b4b4be" : "none"};stroke-width:2"/></svg>`;
-    const photoOr = (foto, color, alt = "") => `${scrub(color)}<img src="${foto}" alt="${alt}" loading="lazy" onerror="this.remove()">`;
+    const scrub = (color, sym = "scrub") => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#${sym}" style="fill:${color};stroke:${color.toLowerCase() === "#ffffff" ? "#b4b4be" : "none"};stroke-width:2"/></svg>`;
+    const photoOr = (foto, color, alt = "", sym) => `${scrub(color, sym)}<img src="${foto}" alt="${alt}" loading="lazy" onerror="this.remove()">`;
 
     // ---------- Anuncios (barra superior) ----------
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -1173,7 +1184,7 @@
     const esUniforme = m => !m.cat.every(c => NEGOCIO.categoriasNoUniforme.includes(c));
     const swap = m => (m.foto2 ? `<img class="swap" src="${m.foto2}" alt="" loading="lazy" onerror="this.remove()">` : "");
     const altDe = (m, color) => `${esUniforme(m) ? "Uniforme " : ""}${m.nombre}, color ${color}`;
-    const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color), altDe(m, color))
+    const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color), altDe(m, color), m.sil)
       : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="${altDe(m, color)}" loading="lazy" onerror="this.remove()">`) + swap(m);
     // Precio: uno solo si no cambia con la modalidad, y un rango (tienda a medida) si cambia
     const precioTexto = m => {
@@ -1185,6 +1196,7 @@
     function modelCard(m) {
       const el = document.createElement("article");
       el.className = "model";
+      el.dataset.id = m.id;
       const lista = diseñable(m), tag = m.tag ? `<span class="tag">${m.tag}</span>` : "";
       el.innerHTML = `
         <div class="media"><div class="pic">${tag}${fotoCard(m, m.colores[0])}</div><button type="button" class="qv" aria-label="Vista rápida de ${m.nombre}">Vista rápida</button></div>
