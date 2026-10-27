@@ -956,6 +956,8 @@
         "Rosa": "#f2a7c6", "Lila": "#b39ad6", "Azul cielo": "#8dc3e8", "Verde menta": "#a8dcc8",
         "Fucsia": "#d6247f", "Azul rey": "#2456b8", "Verde jade": "#1f8a78", "Azul noche": "#1f2f5c",
         "Vinotinto": "#7a1f36", "Rojo": "#d22b3a", "Negro": "#1f1d22", "Café": "#6b4634", "Blanco": "#ffffff",
+        // Vistos en el catálogo 2026 de Canva (nombres por confirmar con la dueña)
+        "Morado": "#6b2d8c", "Petróleo": "#1f5f6e", "Beige": "#d2b48c", "Gris": "#a9adb3", "Palo de rosa": "#d9a5a0",
       },
       hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
       bordado: { nombre: 12000, profesion: 6000 },
@@ -988,29 +990,41 @@
         { ico: "card", t: "Pago 50% para empezar", d: "Con el 50% empezamos a confeccionar tu uniforme" },
       ],
       // Imagen de la guía de tallas (confirmar con la dueña)
-      guiaTallas: "img/guia-tallas.jpg",
+      guiaTallas: "img/guia-tallas.webp",
       // Sin "colores" = todos los colores de la lista de arriba
       // precio: null = se consulta por WhatsApp (no se diseña). fotos: { Color: "ruta" } = foto por color (opcional)
+      // Fotos recortadas del catálogo 2026 de Canva (img/*.webp)
       modelos: [
-        { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.jpg" },
-        { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.jpg" },
-        { id: "clasico", nombre: "Clásico", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido stretch y algodón, cuello en V. Pantalón y blusa con cuello y mangas en rib personalizado.", foto: "img/clasico.jpg" },
-        { id: "durango", nombre: "Durango", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado, escote en V y pantalón bota recta. Cuello y mangas en rib personalizado.", foto: "img/durango.jpg" },
-        { id: "neru", nombre: "Neru", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con cuello en V y mangas clásicas. Detalles que encantan.", foto: "img/neru.jpg" },
-        { id: "glam", nombre: "Glam", precio: 159000, cat: ["Conjuntos"], desc: "Conjunto de pantalón y blusa en antifluido licrado.", foto: "img/glam.jpg" },
-        { id: "mariee", nombre: "Mariee", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado y dacrón nacional, escote en pico redondeado, pantalón bota recta y 3 bolsillos.", foto: "img/mariee.jpg" },
-        { id: "luna", nombre: "Luna", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado. Blusa con escote redondo y ojal en el pecho, pantalón bota ancha.", foto: "img/luna.jpg" },
-        { id: "violet", nombre: "Violet", precio: 165000, cat: ["Conjuntos"], desc: "Diseño juvenil con bolsillos camuflados, manga corta y cuello redondo.", foto: "img/violet.jpg" },
-        { id: "paris", nombre: "París", precio: 165000, cat: ["Conjuntos", "Línea blancos"], desc: "Antifluido elástico con corte en el cuello y mangas zurcidas. Cómodo y elegante.", foto: "img/paris.jpg" },
-        { id: "lisboa", nombre: "Lisboa", precio: 165000, cat: ["Conjuntos"], desc: "Diseño exclusivo, ideal para quienes quieren lucir profesionales.", foto: "img/lisboa.jpg" },
-        { id: "jomper", nombre: "Jomper", precio: 165000, cat: ["Conjuntos"], desc: "Modelo enterizo tipo jumper.", foto: "img/jomper.jpg" },
-        { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.jpg" },
-        { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.jpg" },
-        { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.jpg" },
-        { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], sil: "sil-bata", desc: "Bata de manga larga.", foto: "img/bata.jpg" },
-        { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico en antifluido, en varios estampados y colores. Consulta precio y disponibilidad.", colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Negro"], foto: "img/gorro-quirurgico.jpg" }, // confirmar con la dueña
-        { id: "medias-compresion", nombre: "Medias de compresión", precio: null, cat: ["Medias de compresión"], desc: "Medias de compresión para jornadas largas de pie. Consulta tallas, precio y disponibilidad.", colores: ["Blanco", "Negro", "Café"], foto: "img/medias-compresion.jpg" }, // confirmar con la dueña
-        { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], sil: "sil-pantalon", desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.jpg" },
+        { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp",
+          fotos: { "Azul rey": "img/kaill-azul-rey.webp", "Lila": "img/kaill-lila.webp", "Verde jade": "img/kaill-verde-jade.webp" } },
+        { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.webp",
+          fotos: { "Azul rey": "img/alondra.webp", "Morado": "img/alondra-morado.webp", "Negro": "img/alondra-negro.webp" } },
+        { id: "clasico", nombre: "Clásico", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido stretch y algodón, cuello en V. Pantalón y blusa con cuello y mangas en rib personalizado.", foto: "img/clasico.webp",
+          fotos: { "Café": "img/clasico.webp", "Negro": "img/clasico-negro.webp", "Blanco": "img/clasico-blanco-v.webp", "Rosa": "img/clasico-rosa.webp", "Azul cielo": "img/clasico-azul-cielo.webp", "Petróleo": "img/clasico-petroleo.webp", "Morado": "img/clasico-morado.webp" } },
+        { id: "durango", nombre: "Durango", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado, escote en V y pantalón bota recta. Cuello y mangas en rib personalizado.", foto: "img/durango.webp",
+          fotos: { "Petróleo": "img/durango.webp", "Rojo": "img/durango-rojo.webp", "Negro": "img/durango-negro.webp" } },
+        { id: "neru", nombre: "Neru", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con cuello en V y mangas clásicas. Detalles que encantan.", foto: "img/neru.webp",
+          fotos: { "Azul rey": "img/neru.webp", "Fucsia": "img/neru-fucsia.webp", "Verde jade": "img/neru-verde-jade.webp" } },
+        { id: "glam", nombre: "Glam", precio: 159000, cat: ["Conjuntos"], desc: "Conjunto de pantalón y blusa en antifluido licrado.", foto: "img/glam.webp" },
+        { id: "mariee", nombre: "Mariee", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado y dacrón nacional, escote en pico redondeado, pantalón bota recta y 3 bolsillos.", foto: "img/mariee.webp",
+          fotos: { "Negro": "img/mariee.webp", "Vinotinto": "img/mariee-vinotinto.webp", "Beige": "img/mariee-beige.webp", "Petróleo": "img/mariee-petroleo.webp" } },
+        { id: "luna", nombre: "Luna", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado. Blusa con escote redondo y ojal en el pecho, pantalón bota ancha.", foto: "img/luna.webp",
+          fotos: { "Café": "img/luna.webp", "Petróleo": "img/luna-petroleo.webp" } },
+        { id: "violet", nombre: "Violet", precio: 165000, cat: ["Conjuntos"], desc: "Diseño juvenil con bolsillos camuflados, manga corta y cuello redondo.", foto: "img/violet.webp" },
+        { id: "paris", nombre: "París", precio: 165000, cat: ["Conjuntos", "Línea blancos"], desc: "Antifluido elástico con corte en el cuello y mangas zurcidas. Cómodo y elegante.", foto: "img/paris.webp",
+          fotos: { "Lila": "img/paris.webp", "Rosa": "img/paris-rosa.webp", "Negro": "img/paris-negro.webp" } },
+        { id: "lisboa", nombre: "Lisboa", precio: 165000, cat: ["Conjuntos"], desc: "Diseño exclusivo, ideal para quienes quieren lucir profesionales.", foto: "img/lisboa.webp" },
+        { id: "valencia", nombre: "Valencia", precio: 169000, cat: ["Conjuntos"], desc: "Diseño moderno, blusa sin bolsillos.", foto: "img/valencia.webp", // nombre por confirmar: en el catálogo se lee "...ENCIA"
+          fotos: { "Azul rey": "img/valencia.webp", "Gris": "img/valencia-gris.webp" } },
+        { id: "jomper", nombre: "Jomper", precio: 165000, cat: ["Conjuntos"], desc: "Modelo enterizo tipo jumper.", foto: "img/jomper.webp" }, // no aparece en el catálogo 2026: falta foto
+        { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.webp" },
+        { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.webp" },
+        { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.webp" },
+        { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], sil: "sil-bata", desc: "Bata de manga larga.", foto: "img/bata.webp",
+          fotos: { "Negro": "img/bata.webp", "Palo de rosa": "img/bata-palo-rosa.webp" } },
+        { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico en antifluido, en varios estampados y colores. Consulta precio y disponibilidad.", colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Negro"], foto: "img/gorro-quirurgico.webp" }, // confirmar con la dueña
+        { id: "medias-compresion", nombre: "Medias de compresión", precio: null, cat: ["Medias de compresión"], desc: "Medias de compresión para jornadas largas de pie. Consulta tallas, precio y disponibilidad.", colores: ["Blanco", "Negro", "Café"], foto: "img/medias-compresion.webp" }, // confirmar con la dueña
+        { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], sil: "sil-pantalon", desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.webp" },
       ],
       proceso: [
         ["Diseña", "Elige modelo, color y bordado aquí o en el catálogo."],
@@ -1078,6 +1092,8 @@
     };
     // ==========================================================
     NEGOCIO.modelos.forEach(m => (m.colores ||= Object.keys(NEGOCIO.colores)));
+    // Los colores con foto van primero: así el color inicial de cada modelo coincide con su foto
+    NEGOCIO.modelos.forEach(m => { const f = Object.keys(m.fotos || {}); m.colores = [...f, ...m.colores.filter(c => !f.includes(c))]; });
 
     // Iconos de línea (sin emojis)
     const ICONO = {

@@ -10,18 +10,21 @@ const dom = strip(render().html);
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
 const tag = (d, id) => d.match(new RegExp(`<[^>]*id="${id}"[^>]*>`))[0];
 const PIX = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E";
+// Simula que ningún modelo tiene foto (img/ ya trae las fotos reales del catálogo)
+const NOFOTOS = `NEGOCIO.modelos.forEach(m => { m.foto = "img/no-existe.webp"; delete m.fotos; });`;
 
 // changed: recommended is the canon store section, so it shows with the calm silhouette while no product photo exists
 // changed: 4 cards (not 8) while no photo exists; the full 8 need a loaded photo
 test("recommended grid shows with the silhouette fallback while no product photo exists", () => {
-  assert.doesNotMatch(tag(dom, "reco"), /\bhidden\b/);
-  assert.equal(count(section(dom, "reco"), '<article class="model"'), 4);
-  assert.doesNotMatch(section(dom, "reco"), /<img src="img\//);
+  const sin = strip(render({ inject: `${NOFOTOS} renderRecomendados();` }).html);
+  assert.doesNotMatch(tag(sin, "reco"), /\bhidden\b/);
+  assert.equal(count(section(sin, "reco"), '<article class="model"'), 4);
+  assert.doesNotMatch(section(sin, "reco"), /<img src="img\//);
 });
 
 // changed: cards no longer wait for their photo; a photo that loads replaces the silhouette on that card only
 test("recommended cards use the photo that loaded and keep the silhouette for the rest", () => {
-  const html = strip(render({ inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto = "${PIX}"; renderRecomendados();` }).html);
+  const html = strip(render({ inject: `${NOFOTOS} NEGOCIO.modelos.find(m => m.id === "kaill").foto = "${PIX}"; renderRecomendados();` }).html);
   const s = section(html, "reco");
   assert.equal(count(s, '<article class="model"'), 8);
   assert.match(s.split('<article class="model"')[1], /<img src="data:image/);

@@ -163,7 +163,7 @@ test("product card: 4:5 media, name, price range, color names and a Vista rápid
   assert.equal(c("pic-ar"), "4 / 5");
   const kaill = cardOf(dom, "Kaill");
   assert.match(kaill, /class="price">\$159\.000 - \$185\.000</);
-  assert.match(kaill, /<p class="cols">Rosa, Lila, Azul cielo \+10<\/p>/);
+  assert.match(kaill, /<p class="cols">Azul rey, Lila, Verde jade \+15<\/p>/); // colores con foto primero
   assert.match(kaill, /<button[^>]*class="qv"[^>]*>Vista rápida<\/button>/);
   assert.match(cardOf(dom, "Alondra blanco"), /<p class="cols">Blanco<\/p>/);
   assert.match(cardOf(dom, "Pantalón"), /class="price">\$90\.000</, "fixed-price items show one price");
@@ -237,7 +237,7 @@ test("EXPLORA NUESTRAS COLECCIONES: three large tiles with name, item count and 
   assert.match(s, /<h2>Explora nuestras colecciones<\/h2>/);
   assert.equal(count(s, 'class="col-tile'), 3);
   assert.deepEqual([...s.matchAll(/<h3>([^<]+)<\/h3>/g)].map(m => m[1]), ["Uniformes", "Línea blancos", "Gorros y medias"]);
-  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["12 modelos", "5 modelos", "2 modelos"]);
+  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["13 modelos", "5 modelos", "2 modelos"]);
   assert.equal(count(s, 'class="ver-todo" href="#modelos"'), 3);
   assert.doesNotMatch(s, /<img/, "no stock posing as product: a calm grey tile until a photo is configured");
 });
@@ -254,7 +254,7 @@ test("Ver todo filters the catalog, including the Gorros y medias group", () => 
   const caps = click("#colecciones .ver-todo", 2);
   assert.equal(models(caps), 2);
   assert.match(caps, /<button type="button" class="on" aria-pressed="true">Gorros y medias<\/button>/);
-  assert.equal(models(click("#colecciones .ver-todo", 0)), 12);
+  assert.equal(models(click("#colecciones .ver-todo", 0)), 13); // 12 conjuntos + Valencia
 });
 
 test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the business data, on light grey", () => {

@@ -47,7 +47,8 @@ const desk = render({ inject: probe }).html;
 const phone = render({ width: 390, height: 900, inject: probe }).html;
 
 test("recommended grid shows 4 cards without photos and the full 8 once a photo loads", () => {
-  assert.equal(count(section(strip(render().html), "reco"), '<article class="model"'), 4);
+  const sinFotos = `NEGOCIO.modelos.forEach(m => { m.foto = "img/no-existe.webp"; delete m.fotos; }); renderRecomendados();`;
+  assert.equal(count(section(strip(render({ inject: sinFotos }).html), "reco"), '<article class="model"'), 4);
   const withPhotos = `NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "${PIX}")); renderRecomendados();`;
   assert.equal(count(section(strip(render({ inject: withPhotos }).html), "reco"), '<article class="model"'), 8);
   assert.match(section(strip(render().html), "reco"), /Ver todo el catálogo/);
