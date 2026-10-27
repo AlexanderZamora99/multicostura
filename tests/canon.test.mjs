@@ -205,9 +205,9 @@ test("Personalizar jumps to the designer with the model, mode and color preselec
   assert.equal(c("pers-closed"), "true");
 });
 
-test("NUESTROS RECOMENDADOS is a grid of 8 cards that shows even with no photos, then Ver todo el catálogo", () => {
+test("NUESTROS RECOMENDADOS is a grid of 4 cards without photos (8 with photos) that always shows, then Ver todo el catálogo", () => {
   assert.doesNotMatch(dom.match(/<section[^>]*id="reco"[^>]*>/)[0], /hidden/);
-  assert.equal(c("reco-n"), "8");
+  assert.equal(c("reco-n"), "4"); // changed: 4 cards while no product photo exists, so the grid does not repeat the catalog below
   assert.equal(c("reco-cols"), "4");
   const reco = section(dom, "reco");
   assert.ok(reco.includes('href="#scrub"'), "calm silhouette fallback while photos are missing");

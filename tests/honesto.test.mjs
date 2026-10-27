@@ -12,9 +12,10 @@ const tag = (d, id) => d.match(new RegExp(`<[^>]*id="${id}"[^>]*>`))[0];
 const PIX = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E";
 
 // changed: recommended is the canon store section, so it shows with the calm silhouette while no product photo exists
+// changed: 4 cards (not 8) while no photo exists; the full 8 need a loaded photo
 test("recommended grid shows with the silhouette fallback while no product photo exists", () => {
   assert.doesNotMatch(tag(dom, "reco"), /\bhidden\b/);
-  assert.equal(count(section(dom, "reco"), '<article class="model"'), 8);
+  assert.equal(count(section(dom, "reco"), '<article class="model"'), 4);
   assert.doesNotMatch(section(dom, "reco"), /<img src="img\//);
 });
 

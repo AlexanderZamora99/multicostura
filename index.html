@@ -72,6 +72,9 @@
 
     /* Barra de anuncios: marquesina negra con un icono por mensaje */
     .ann { background: #000; color: #fff; font-size: .86rem; position: relative; overflow: hidden; }
+    /* La vista recorta la marquesina: se desvanece en los bordes y termina antes del botón de pausa */
+    .ann-view { overflow: hidden; margin-right: calc(max(16px, (100% - 1150px) / 2) + 28px + 12px);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
     .ann-track { display: flex; width: max-content; animation: marquee 50s linear infinite; }
     .ann-run { display: flex; flex: none; align-items: center; justify-content: space-around; gap: 3.5rem; min-width: 100vw; padding-right: 3.5rem; height: 38px; }
     .ann-item { display: inline-flex; align-items: center; gap: .55rem; white-space: nowrap; }
@@ -83,10 +86,11 @@
     .pp .i-play { display: none; }
     .pp.paused .i-play { display: block; }
     .pp.paused .i-pause { display: none; }
-    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: #000; border-color: #fff; color: #fff; box-shadow: -16px 0 14px 6px #000; }
+    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: #000; border-color: #fff; color: #fff; }
     .ann-pp svg { width: 12px; height: 12px; }
     .banner-pp { position: absolute; left: 16px; bottom: .6rem; z-index: 2; }
     @media (prefers-reduced-motion: reduce) {
+      .ann-view { margin-right: 0; -webkit-mask-image: none; mask-image: none; }
       .ann-track { animation: none; width: auto; }
       .ann-run[aria-hidden] { display: none; }
       .ann-run { flex-wrap: wrap; justify-content: center; gap: .3rem 2rem; min-width: 0; height: auto; padding: .5rem 16px; }
@@ -127,7 +131,7 @@
     .slide-link { display: block; }
     .slide-link:focus-visible { outline-offset: -6px; }
     .slide picture { display: block; aspect-ratio: 1366 / 440; min-height: 260px; }
-    .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
     .slide-copy { align-self: center; padding: 2.4rem 1rem 3.6rem max(16px, calc(50cqw - 575px)); max-width: 640px; min-height: max(260px, 32.2cqw); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; position: relative; z-index: 1; }
     .slide-title { font-weight: 700; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.12; margin-bottom: 1rem; }
     .slide-text { color: var(--muted); font-size: 1.08rem; max-width: 420px; margin-bottom: 1.6rem; }
@@ -169,11 +173,16 @@
     .ver-todo { display: inline-flex; align-items: center; min-height: 44px; padding: .6rem 1.4rem; border-radius: 4px; background: var(--text); color: #fff; font-weight: 600; transition: background .15s; }
     .ver-todo::after { content: ""; position: absolute; inset: 0; }
     .col-tile:hover .ver-todo { background: #000; }
+    .col-ico { width: 2rem; height: 2rem; color: var(--text); margin-bottom: .5rem; }
+    .col-tile.has-photo .col-ico { display: none; }
+    /* Sin foto: tesela compacta (icono, nombre, cantidad), sin recuadro de imagen vacío */
+    .col-tile:not(.has-photo) { aspect-ratio: auto; }
+    .col-tile:not(.has-photo) .col-body { padding: 1.4rem; }
     .col-tile.has-photo { border-color: transparent; color: #fff; }
     .col-tile.has-photo .col-body { padding-top: 5rem; background: linear-gradient(transparent, rgba(0,0,0,.72)); }
     .col-tile.has-photo .col-n { color: #e4e4e8; }
     .col-tile.has-photo .ver-todo { background: #fff; color: var(--text); }
-    @media (max-width: 760px) { .col-grid { grid-template-columns: minmax(0, 1fr); } .col-tile { aspect-ratio: 16 / 10; } }
+    @media (max-width: 760px) { .col-grid { grid-template-columns: minmax(0, 1fr); } .col-tile.has-photo { aspect-ratio: 16 / 10; } }
 
     /* ¿Cuál es el uniforme para ti?: tres modalidades */
     .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
@@ -214,7 +223,7 @@
     @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     /* Modelos */
-    .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
+    .profs { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.6rem; }
     .profs button { border: 1.5px solid var(--ctl); background: var(--card); border-radius: 4px; padding: .5rem 1rem; min-height: 40px; font-size: .92rem; }
     .profs button.on { background: var(--mag-2); border-color: var(--mag-2); color: #fff; }
     /* Tarjeta de producto: medios 4:5, segunda foto al pasar el cursor, precio, nombres de color y vista rápida */
@@ -252,6 +261,7 @@
 
     /* Vista rápida */
     html.qv-open { overflow: hidden; }
+    html.qv-open .wa-float, html.qv-open .chat-btn { display: none; }
     .qv-dialog { border: 0; padding: 0; width: min(900px, 100% - 32px); max-width: none; max-height: min(720px, 100dvh - 32px); margin: auto; border-radius: 4px; background: #fff; color: var(--text); overflow: auto; }
     .qv-dialog::backdrop { background: rgba(0,0,0,.55); }
     .qv-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -268,7 +278,7 @@
     .qv-tipo[aria-pressed="true"] { border-color: var(--mag-2); box-shadow: inset 0 0 0 1px var(--mag-2); background: var(--bg-3); }
     .qv-info .lbl { display: block; font-size: .95rem; font-weight: 600; margin-bottom: .45rem; }
     .qv-info .opts button { min-height: 36px; padding: .3rem .7rem; font-size: .88rem; }
-    .qv-actions { display: flex; flex-wrap: wrap; gap: .6rem; position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--line); padding: .8rem 0; }
+    .qv-actions { display: flex; flex-wrap: wrap; gap: .6rem; position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -12px 14px -10px rgba(0,0,0,.18); padding: .8rem 0; }
     .qv-actions .btn { flex: 1 1 150px; padding-inline: 1rem; }
     .qv-close { position: absolute; top: .6rem; right: .6rem; z-index: 3; width: 44px; height: 44px; border-radius: 4px; border: 1px solid var(--ctl); background: #fff; display: grid; place-items: center; }
     .qv-close svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
@@ -279,7 +289,7 @@
       .qv-info { padding: 1.4rem 16px 0; }
     }
 
-    .stock { margin-top: 1.2rem; }
+    .stock { margin-top: 1.2rem; text-align: center; }
     .about-text { max-width: 760px; }
     .about-text .addr { margin-top: 1rem; font-weight: 600; }
     .map { margin-top: 2rem; }
@@ -428,6 +438,8 @@
     .box.pinkbox { background: var(--bg-2); border: 1px solid var(--line); }
     .box.dark .req { color: #d4d4da; }
     .box label > input[type="checkbox"] { flex: 0 0 24px; width: 24px; height: 24px; min-height: 0; padding: 0; accent-color: var(--mag); }
+    input[type="checkbox"] { accent-color: var(--mag); }
+    input[type="date"] { height: 3.2rem; }
     .box input { width: 100%; min-height: 48px; border: 1.5px solid var(--ctl); border-radius: 4px; padding: .75rem .9rem; font: inherit; font-size: 1rem; background: #fff; color: var(--text); }
     .gift { background: #fff; border-radius: 4px; padding: 1.2rem; border: 1px solid var(--line); display: grid; gap: .3rem; position: relative; overflow: hidden; }
         .gift b { font-size: 1.5rem; color: var(--text); }
@@ -538,7 +550,7 @@
   </svg>
 
   <div class="ann" id="ann" role="region" aria-label="Anuncios de Multicostura">
-    <div class="ann-track" id="ann-track"></div>
+    <div class="ann-view"><div class="ann-track" id="ann-track"></div></div>
     <button type="button" class="pp ann-pp" id="ann-pp" aria-label="Pausar anuncios"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
   </div>
 
@@ -957,9 +969,9 @@
       // "Explora nuestras colecciones": cats = categorías del catálogo que filtra "Ver todo" (varias = un grupo con el nombre de la colección).
       // placeholder: replace with the client's photos (img = foto de la colección; sin img = tesela gris con el nombre y la cantidad)
       colecciones: [
-        { t: "Uniformes", cats: ["Conjuntos"] },
-        { t: "Línea blancos", cats: ["Línea blancos"] },
-        { t: "Gorros y medias", cats: ["Gorros quirúrgicos", "Medias de compresión"] },
+        { t: "Uniformes", ico: "hanger", cats: ["Conjuntos"] },
+        { t: "Línea blancos", ico: "coat", cats: ["Línea blancos"] },
+        { t: "Gorros y medias", ico: "cap", cats: ["Gorros quirúrgicos", "Medias de compresión"] },
       ],
       // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
       // placeholder: replace with the client's photos
@@ -1281,12 +1293,17 @@
       if (!fotosCargadas.has(src)) fotosCargadas.set(src, new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; }));
       return fotosCargadas.get(src);
     };
-    // Recomendados: hasta 8 tarjetas iguales a las del catálogo; sin fotos se ve la silueta, no se oculta la sección
+    // Recomendados: 4 tarjetas mientras no haya fotos (con silueta, para no repetir el catálogo de abajo);
+    // en cuanto carga la foto de algún modelo se completan hasta 8. Si no hay fotos la sección no se oculta.
+    let recoTurno = 0;
     function renderRecomendados() {
+      const turno = ++recoTurno;
       const lista = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean).slice(0, 8);
       $("reco").classList.toggle("hidden", !lista.length);
       $("recomendados").innerHTML = "";
-      lista.forEach(m => { const c = modelCard(m); c.setAttribute("role", "listitem"); $("recomendados").appendChild(c); });
+      const poner = ms => ms.forEach(m => { const c = modelCard(m); c.setAttribute("role", "listitem"); $("recomendados").appendChild(c); });
+      poner(lista.slice(0, 4));
+      if (lista.length > 4) Promise.all(lista.map(m => fotoCarga(m.foto))).then(r => { if (turno === recoTurno && r.some(Boolean)) poner(lista.slice(4)); });
     }
     $("reco-all").onclick = () => { cat = "Todos"; renderProfs(); renderModels(); };
     // Flechas del carrusel de desplazamiento (testimonios)
@@ -1302,7 +1319,7 @@
       $("cols").innerHTML = NEGOCIO.colecciones.map(c => {
         const n = NEGOCIO.modelos.filter(m => c.cats.some(x => m.cat.includes(x))).length;
         return `<article class="col-tile${c.img ? " has-photo" : ""}">${c.img ? `<img src="${c.img}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-photo'); this.remove()">` : ""}
-          <div class="col-body"><h3>${c.t}</h3><p class="col-n">${n} ${n === 1 ? "modelo" : "modelos"}</p><a class="ver-todo" href="#modelos">Ver todo</a></div></article>`;
+          <div class="col-body">${(ICONO[c.ico] || "").replace('class="ico"', 'class="ico col-ico"')}<h3>${c.t}</h3><p class="col-n">${n} ${n === 1 ? "modelo" : "modelos"}</p><a class="ver-todo" href="#modelos">Ver todo</a></div></article>`;
       }).join("");
       [...$("cols").querySelectorAll(".ver-todo")].forEach((a, i) => (a.onclick = () => {
         const c = NEGOCIO.colecciones[i];
@@ -1420,7 +1437,9 @@
     // ---------- Agenda: datos (Google Sheets o modo demo) ----------
     const DEMO_KEY = "multicostura-demo-citas";
     const demo = !NEGOCIO.apiUrl;
-    if (demo) $("demo-note").classList.remove("hidden");
+    // La nota de modo demostración es para quien desarrolla: se ve solo con ?dev en la dirección
+    const mostrarNotaDemo = () => $("demo-note").classList.toggle("hidden", !(demo && /[?&]dev\b/.test(location.search)));
+    mostrarNotaDemo();
     const demoRead = () => { try { return JSON.parse(localStorage.getItem(DEMO_KEY)) || []; } catch { return []; } };
     const demoWrite = l => { try { localStorage.setItem(DEMO_KEY, JSON.stringify(l)); } catch {} };
 
@@ -1674,7 +1693,8 @@
         $("amounts").appendChild(b);
       });
       $("g-amount").textContent = pesos(bono);
-      $("g-names").textContent = `Para ${$("g-to").value.trim() || "..."}, de ${$("g-from").value.trim() || "..."}`;
+      const para = $("g-to").value.trim(), de = $("g-from").value.trim();
+      $("g-names").textContent = para && de ? `Para ${para}, de ${de}` : "Escribe para quién es y de parte de quién";
     }
     ["g-to", "g-from"].forEach(id => $(id).addEventListener("input", renderBono));
     $("bono").addEventListener("submit", e => {
