@@ -18,9 +18,6 @@ const probe = `
   const mid = r(document.documentElement).width / 2, span = els => { const rs = els.map(r); return (Math.min(...rs.map(x => x.left)) + Math.max(...rs.map(x => x.right))) / 2; };
   set("chips-off", Math.abs(span([...document.querySelectorAll("#profs button")]) - mid) < 3 ? "centered" : "off:" + span([...document.querySelectorAll("#profs button")]));
   set("stock-off", Math.abs(span([document.getElementById("stock-btn")]) - mid) < 3 ? "centered" : "off");
-  const view = document.querySelector(".ann-view");
-  set("ann-mask", view ? (cs(view).maskImage || cs(view).webkitMaskImage) : "none");
-  set("ann-gap", view ? Math.round(document.getElementById("ann-pp").getBoundingClientRect().left - r(view).right) : "-1");
   set("hero-pos", cs(document.querySelector(".slide img")).objectPosition);
   set("demo-hidden", document.getElementById("demo-note").classList.contains("hidden"));
   set("gift", document.getElementById("g-names").textContent);
@@ -77,11 +74,6 @@ test("gift preview asks for both names instead of showing dots", () => {
 
 test("hero image keeps faces: object-position sits lower than the top", () => {
   assert.match(attr(desk, "hero-pos"), /^50% (2[5-9]|3\d|4\d)%$/);
-});
-
-test("marquee fades at both edges and stops before the pause button", () => {
-  assert.match(attr(desk, "ann-mask"), /linear-gradient/);
-  assert.ok(Number(attr(desk, "ann-gap")) >= 8, `gap to pause button ${attr(desk, "ann-gap")}`);
 });
 
 test("catalog chips and the store-stock button are centred under the title", () => {

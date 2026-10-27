@@ -40,8 +40,8 @@
     button { font: inherit; cursor: pointer; color: inherit; }
     img { max-width: 100%; display: block; }
     :focus-visible { outline: 3px solid var(--mag-2); outline-offset: 2px; }
-    .ann :focus-visible, footer.site :focus-visible, .box.dark :focus-visible, .chat-head :focus-visible, .has-photo :focus-visible { outline-color: #fff; }
-    .tile:focus-visible, .ann-pp:focus-visible { outline-offset: -4px; }
+    footer.site :focus-visible, .box.dark :focus-visible, .chat-head :focus-visible, .has-photo :focus-visible { outline-color: #fff; }
+    .tile:focus-visible { outline-offset: -4px; }
     .col-tile:has(.ver-todo:focus-visible) { outline: 3px solid var(--mag-2); outline-offset: 2px; }
     ::placeholder { color: #6b6b73; opacity: 1; }
     .skip { position: absolute; left: 8px; top: -80px; z-index: 100; background: #000; color: #fff; padding: .8rem 1.1rem; border-radius: var(--radius); font-weight: 600; }
@@ -70,31 +70,12 @@
     .btn-wa { background: var(--wa); color: #08260f; }
     .ico-line { width: 1.4em; height: 1.4em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-    /* Barra de anuncios: marquesina negra con un icono por mensaje */
-    .ann { background: #000; color: #fff; font-size: .86rem; position: relative; overflow: hidden; }
-    /* La vista recorta la marquesina: se desvanece en los bordes y termina antes del botón de pausa */
-    .ann-view { overflow: hidden; margin-right: calc(max(16px, (100% - 1150px) / 2) + 28px + 12px);
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
-    .ann-track { display: flex; width: max-content; animation: marquee 50s linear infinite; }
-    .ann-run { display: flex; flex: none; align-items: center; justify-content: space-around; gap: 3.5rem; min-width: 100vw; padding-right: 3.5rem; height: 38px; }
-    .ann-item { display: inline-flex; align-items: center; gap: .55rem; white-space: nowrap; }
-    .ann-item .ico { width: 1.3em; height: 1.3em; flex: none; }
-    @keyframes marquee { to { transform: translateX(-50%); } }
-    .ann:hover .ann-track, .ann:focus-within:not(.is-run) .ann-track, .ann.is-paused .ann-track { animation-play-state: paused; }
     .pp { width: 40px; height: 40px; border-radius: 4px; border: 1.5px solid var(--ctl); background: #fff; color: var(--text); display: grid; place-items: center; }
     .pp svg { width: 16px; height: 16px; fill: currentColor; grid-area: 1 / 1; }
     .pp .i-play { display: none; }
     .pp.paused .i-play { display: block; }
     .pp.paused .i-pause { display: none; }
-    .ann-pp { position: absolute; right: max(16px, calc((100% - 1150px) / 2)); top: 5px; z-index: 2; width: 28px; height: 28px; background: #000; border-color: #fff; color: #fff; }
-    .ann-pp svg { width: 12px; height: 12px; }
     .banner-pp { position: absolute; left: 16px; bottom: .6rem; z-index: 2; }
-    @media (prefers-reduced-motion: reduce) {
-      .ann-view { margin-right: 0; -webkit-mask-image: none; mask-image: none; }
-      .ann-track { animation: none; width: auto; }
-      .ann-run[aria-hidden] { display: none; }
-      .ann-run { flex-wrap: wrap; justify-content: center; gap: .3rem 2rem; min-width: 0; height: auto; padding: .5rem 16px; }
-    }
 
     /* Cabecera de tienda */
     header { position: sticky; top: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--line); }
@@ -556,11 +537,6 @@
       </symbol>
     </defs>
   </svg>
-
-  <div class="ann" id="ann" role="region" aria-label="Anuncios de Multicostura">
-    <div class="ann-view"><div class="ann-track" id="ann-track"></div></div>
-    <button type="button" class="pp ann-pp" id="ann-pp" aria-label="Pausar anuncios"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
-  </div>
 
   <header>
     <div class="wrap nav" id="nav">
@@ -1080,13 +1056,6 @@
         { nombre: "Nombre de la clienta", oficio: "Médica general", texto: "Me midí en casa con la guía y el pantalón quedó del largo justo.", ejemplo: true },
       ],
       horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
-      // Anuncios que rotan en la barra superior
-      // ico = nombre en ICONO
-      anuncios: [
-        { ico: "truck", t: "Envíos a toda Colombia" },
-        { ico: "calendar", t: "Más de 10 años confeccionando uniformes médicos para mujer" },
-        { ico: "ruler", t: "Agenda tu toma de medidas en el taller, a domicilio o desde casa" },
-      ],
       // Banner principal. placeholder: replace with the client's photos (img = escritorio, imgMovil = celular). Fotos de ejemplo revisadas: sin logos, bordados ni marcas visibles.
       portada: [
         { img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&h=620&crop=top&q=70",
@@ -1141,26 +1110,12 @@
     const scrub = (color, sym = "scrub") => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#${sym}" style="fill:${color};stroke:${color.toLowerCase() === "#ffffff" ? "#b4b4be" : "none"};stroke-width:2"/></svg>`;
     const photoOr = (foto, color, alt = "", sym) => `${scrub(color, sym)}<img src="${foto}" alt="${alt}" loading="lazy" onerror="this.remove()">`;
 
-    // ---------- Anuncios (barra superior) ----------
+    // Botones de pausa (carrusel)
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const syncPP = (btn, paused, que) => {
       btn.classList.toggle("paused", paused);
       btn.setAttribute("aria-label", `${paused ? "Reanudar" : "Pausar"} ${que}`);
     };
-    let annPaused = false;
-    const ANN_ICO = ["truck", "calendar", "ruler", "scissors"];
-    // Marquesina: la CSS la mueve; se pausa con el cursor, con el foco y con el botón, y queda quieta con movimiento reducido
-    function renderAnuncios() {
-      annPaused = false;
-      const bar = $("ann"), track = $("ann-track"), pp = $("ann-pp");
-      const items = NEGOCIO.anuncios.map((a, i) => { const x = typeof a === "string" ? { t: a } : a; return `<span class="ann-item">${ICONO[x.ico] || ICONO[ANN_ICO[i % ANN_ICO.length]]}${x.t}</span>`; }).join("");
-      track.innerHTML = `<div class="ann-run">${items}</div><div class="ann-run" aria-hidden="true">${items}</div>`;
-      const sync = () => { pp.hidden = reduceMotion.matches; bar.classList.toggle("is-paused", annPaused); syncPP(pp, annPaused, "anuncios"); };
-      pp.onclick = () => { annPaused = !annPaused; bar.classList.toggle("is-run", !annPaused); sync(); };
-      bar.onfocusout = () => bar.classList.remove("is-run");
-      reduceMotion.addEventListener("change", sync);
-      sync();
-    }
 
     // ---------- Banner a todo el ancho ----------
     // Con foto, la diapositiva es solo la imagen (enlaza a su destino). Si la imagen falla, se cambia por la versión de texto sobre gris.
@@ -1205,7 +1160,7 @@
       show(0); sync(); play();
       bannerCtl = { stop };
     }
-    renderAnuncios(); renderPortada();
+    renderPortada();
     $("menu-btn").onclick = () => { const o = $("nav").classList.toggle("open"); $("menu-btn").setAttribute("aria-expanded", o); };
     $("nav-list").addEventListener("click", e => { if (e.target.closest("a")) { $("nav").classList.remove("open"); $("menu-btn").setAttribute("aria-expanded", false); } });
 

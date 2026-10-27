@@ -60,15 +60,9 @@ test("decorative devices are gone: dashed borders and pink washes", () => {
 // ---- C2: store header and first viewport ----
 const count = (h, f) => h.split(f).length - 1;
 const PIX = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E";
-const barOf = h => h.slice(h.indexOf('id="ann"'), h.indexOf("</header>"));
-
 const probe2 = `
 (() => {
   const b = document.body, cs = el => getComputedStyle(el), r = el => el.getBoundingClientRect(), set = (k, v) => b.setAttribute("data-" + k, v);
-  const track = document.querySelector("#ann .ann-track");
-  set("m-anim", cs(track).animationName); set("m-state", cs(track).animationPlayState); set("m-bg", cs(document.getElementById("ann")).backgroundColor);
-  document.getElementById("ann-pp").click();
-  set("m-state-paused", cs(track).animationPlayState);
   const ul = document.getElementById("nav-list"), logo = document.querySelector("header .logo"), act = document.querySelector(".nav-actions");
   set("h-logo-l", r(logo).left); set("h-ul-c", (r(ul).left + r(ul).right) / 2); set("h-act-r", r(act).right); set("h-vw", innerWidth);
   set("h-bg", cs(document.querySelector("header")).backgroundColor); set("h-blur", cs(document.querySelector("header")).backdropFilter);
@@ -77,27 +71,11 @@ const probe2 = `
 const p2 = render({ inject: probe2 }).html;
 const b = k => p2.match(new RegExp(`data-${k}="([^"]*)"`))[1];
 
-test("announcement bar is a black marquee: an icon per message, looped copy hidden from assistive tech", () => {
-  const html = strip(render({ inject: 'NEGOCIO.anuncios = ["Uno", "Dos"]; renderAnuncios();' }).html);
-  const bar = barOf(html);
-  assert.match(bar, /class="ann-track"/);
-  const runs = bar.match(/<div class="ann-run"[^>]*>[\s\S]*?<\/div>/g);
-  assert.equal(runs.length, 2, "a real run and a looped copy");
-  assert.doesNotMatch(runs[0].match(/^<div[^>]*>/)[0], /aria-hidden/);
-  assert.match(runs[1].match(/^<div[^>]*>/)[0], /aria-hidden="true"/);
-  assert.equal(count(runs[0], 'class="ann-item"'), 2);
-  assert.equal(count(runs[0], "<svg"), 2, "one line icon per message");
-  assert.ok(runs[0].includes("Uno") && runs[0].includes("Dos"));
-  assert.equal(b("m-bg"), "rgb(0, 0, 0)");
-});
-
-test("the marquee scrolls, pauses with the pause button, and is static under reduced motion", () => {
-  assert.notEqual(b("m-anim"), "none");
-  assert.equal(b("m-state"), "running");
-  assert.equal(b("m-state-paused"), "paused");
-  assert.match(css, /\.ann:hover \.ann-track[^{]*\{[^}]*animation-play-state:\s*paused/);
-  assert.match(css, /\.ann:focus-within[^{]*\.ann-track/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.ann-track\s*\{[^}]*animation:\s*none/);
+// changed: the client asked to remove the announcement bar above the header
+test("there is no announcement bar above the header", () => {
+  assert.ok(!dom.includes('id="ann"'));
+  assert.doesNotMatch(css, /\.ann\b|marquee/);
+  assert.ok(dom.indexOf("<header") < dom.indexOf('id="banner"'));
 });
 
 test("header: logo left, nav centered, WhatsApp and Agendar medidas right, solid white", () => {

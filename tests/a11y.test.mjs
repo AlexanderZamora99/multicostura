@@ -75,12 +75,10 @@ test("every image has an alt attribute and product photos describe the garment",
   assert.match(withPhoto, /<img src="data:image[^>]*alt="Uniforme Kaill, color Azul rey"/);
 });
 
-test("banner and announcement bar have a visible pause button that toggles autoplay", () => {
+test("banner has a visible pause button that toggles autoplay", () => {
   assert.match(dom, /id="banner-pp"[^>]*aria-label="Pausar carrusel"/);
-  assert.match(dom, /id="ann-pp"[^>]*aria-label="Pausar anuncios"/);
-  const html = strip(render({ inject: 'document.getElementById("banner-pp").click(); document.getElementById("ann-pp").click();' }).html);
+  const html = strip(render({ inject: 'document.getElementById("banner-pp").click();' }).html);
   assert.match(html, /id="banner-pp"[^>]*aria-label="Reanudar carrusel"/);
-  assert.match(html, /id="ann-pp"[^>]*aria-label="Reanudar anuncios"/);
 });
 
 test("carousels expose region, roledescription and labelled slides", () => {

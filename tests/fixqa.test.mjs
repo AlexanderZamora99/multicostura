@@ -20,9 +20,6 @@ const bannerProbe = `
   b.setAttribute("data-copyr", r(act.querySelector(".slide-copy")).right);
   b.setAttribute("data-prevr", r(document.getElementById("banner-prev")).right);
   b.setAttribute("data-others", [...document.querySelectorAll(".slide:not(.is-active)")].map(s => getComputedStyle(s).opacity).join(","));
-  const pp = r(document.getElementById("ann-pp")); b.setAttribute("data-ppr", pp.right);
-  b.setAttribute("data-navr", r(document.querySelector("header .nav")).right);
-  b.setAttribute("data-wrapr", r(document.querySelector("header .nav")).right);
 `;
 
 test("desktop banner: active slide fills the banner and its text lines up with the header logo", () => {
@@ -33,11 +30,6 @@ test("desktop banner: active slide fills the banner and its text lines up with t
   assert.ok(attr(h, "tl") >= attr(h, "prevr"), "text starts after the prev arrow");
   assert.ok(attr(h, "copyr") <= attr(h, "br"));
   assert.ok(h.match(/data-others="([^"]*)"/)[1].split(",").every(o => o === "0"), "inactive slides are invisible, not peeking in");
-});
-
-test("announcement pause button sits inside the page container", () => {
-  const h = render({ width: 1366, height: 900, inject: bannerProbe }).html;
-  assert.ok(attr(h, "ppr") <= attr(h, "navr") + 1, `pause ends at ${attr(h, "ppr")}, container at ${attr(h, "navr")}`);
 });
 
 test("photo grid hides stock-photo examples until real client photos are configured", () => {

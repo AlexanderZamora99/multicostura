@@ -24,14 +24,6 @@ test("fonts are one sans family (Open Sans), no script or italic display", () =>
   assert.doesNotMatch(source, /Poppins|Cormorant|cursive|font-style:\s*italic/);
 });
 
-// changed: the rotating bar became a marquee with a looped, aria-hidden copy, so each message appears twice and nothing is "is-active"
-test("announcement bar renders one message per NEGOCIO.anuncios", () => {
-  const html = strip(render({ inject: 'NEGOCIO.anuncios = ["Uno", "Dos"]; renderAnuncios();' }).html);
-  const bar = html.slice(html.indexOf('id="ann"'), html.indexOf("</header>"));
-  assert.equal(count(bar, 'class="ann-item"'), 4, "two messages, shown in a real run and a looped copy");
-  assert.ok(bar.includes("Uno") && bar.includes("Dos"));
-});
-
 test("header keeps Catálogo, Diseña, Agenda medidas, Empresas, Bonos regalo and has a WhatsApp icon", () => {
   const head = dom.slice(dom.indexOf("<header"), dom.indexOf("</header>"));
   for (const t of ["Catálogo", "Diseña", "Agenda medidas", "Empresas", "Bonos regalo"]) assert.ok(head.includes(`>${t}</a>`), t);
