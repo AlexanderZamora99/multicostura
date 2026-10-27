@@ -21,10 +21,9 @@ test("non-uniform products show a neutral placeholder, not the scrub mock-up", (
   assert.ok(!cardOf("Kaill").includes("Foto próximamente"));
 });
 
-test("recommended row is a horizontal scroll-snap row on phones", () => {
-  const m = media("max-width: 640px");
-  assert.match(m, /#recomendados[^}]*scroll-snap-type/);
-  assert.match(m, /#recomendados[^}]*overflow-x:\s*auto/);
+// changed: the recommended row is a 2-column grid on phones now (canon), not a scroll-snap row; covered in canon.test.mjs
+test("recommended grid drops to two columns on phones", () => {
+  assert.match(media("max-width: 900px"), /\.reco-grid\s*\{[^}]*repeat\(2,/);
 });
 
 test("color swatches keep a small dot but the button itself is a 24px touch target", () => {

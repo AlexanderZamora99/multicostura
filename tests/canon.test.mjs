@@ -122,3 +122,101 @@ test("a slide with img is image-only: picture inside one link, alt from titulo, 
   assert.match(slides[1], /class="slide-title">Solo texto/);
   assert.match(slides[1], /<a class="btn btn-mag" href="#agenda">Ir<\/a>/);
 });
+
+// ---- C3: product cards, quick view and the recommended grid ----
+const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
+const dom = strip(render().html);
+const cardOf = (d, nombre) => (d.split('<article class="model"').slice(1).find(c => c.includes(`<b>${nombre}</b>`)) || "");
+
+const probe3 = `
+(() => {
+  const b = document.body, cs = el => getComputedStyle(el), r = el => el.getBoundingClientRect(), set = (k, v) => b.setAttribute("data-" + k, v);
+  const card = [...document.querySelectorAll("#models .model")].find(c => c.textContent.includes("Kaill"));
+  set("pic-ar", cs(card.querySelector(".pic")).aspectRatio);
+  set("reco-cols", cs(document.getElementById("recomendados")).gridTemplateColumns.split(" ").length);
+  set("reco-n", document.querySelectorAll("#recomendados .model").length);
+  set("reco-h2-b", r(document.querySelector("#reco h2")).bottom);
+  set("reco-card-t", r(document.querySelector("#recomendados .model")).top);
+  const btn = card.querySelector(".qv"); btn.focus(); btn.click();
+  const dlg = document.getElementById("qv");
+  set("qv-open", dlg.open); set("qv-role", dlg.getAttribute("role")); set("qv-modal", dlg.getAttribute("aria-modal"));
+  set("qv-wa", dlg.querySelector("#qv-wa").href);
+  set("qv-text", dlg.textContent.replace(/\\s+/g, " "));
+  set("qv-pers", !!dlg.querySelector("#qv-pers"));
+  set("qv-modes", dlg.querySelectorAll(".qv-tipo").length);
+  dlg.querySelectorAll(".qv-tipo")[1].click();
+  dlg.querySelector("#qv-colors button:nth-child(2)").click();
+  set("qv-wa2", decodeURIComponent(dlg.querySelector("#qv-wa").href));
+  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  set("qv-open-esc", dlg.open); set("qv-focus", document.activeElement === btn);
+  btn.click(); dlg.querySelectorAll(".qv-tipo")[1].click(); dlg.querySelector("#qv-colors button:nth-child(2)").click(); dlg.querySelector("#qv-pers").click();
+  set("pers-model", document.getElementById("s-model").value);
+  set("pers-tipo", document.querySelector("#s-tipo button.on").textContent);
+  set("pers-color", document.getElementById("s-color-name").textContent);
+  set("pers-closed", !dlg.open);
+})();
+`;
+const p3 = render({ inject: probe3 }).html;
+const c = k => p3.match(new RegExp(`data-${k}="([^"]*)"`))[1];
+
+test("product card: 4:5 media, name, price range, color names and a Vista rápida button", () => {
+  assert.equal(c("pic-ar"), "4 / 5");
+  const kaill = cardOf(dom, "Kaill");
+  assert.match(kaill, /class="price">\$159\.000 - \$185\.000</);
+  assert.match(kaill, /<p class="cols">Rosa, Lila, Azul cielo \+10<\/p>/);
+  assert.match(kaill, /<button[^>]*class="qv"[^>]*>Vista rápida<\/button>/);
+  assert.match(cardOf(dom, "Alondra blanco"), /<p class="cols">Blanco<\/p>/);
+  assert.match(cardOf(dom, "Pantalón"), /class="price">\$90\.000</, "fixed-price items show one price");
+  assert.match(cardOf(dom, "Gorro quirúrgico"), /class="price ask">Consultar</);
+  const articles = dom.split('<article class="model"').length - 1;
+  assert.equal(count(dom, 'class="qv"'), articles, "every card has its quick view");
+  assert.ok(count(kaill, 'data-color="') >= 3, "swatch dots stay beside the color names");
+});
+
+test("a second photo swaps in on hover when the model has foto2", () => {
+  const html = strip(render({ inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto2 = "${PIX}"; renderModels(); renderRecomendados();` }).html);
+  assert.match(cardOf(html, "Kaill"), /<img class="swap" src="data:image/);
+  assert.match(css, /\.pic:hover \.swap/);
+});
+
+test("quick view is a modal dialog with the buying modes, colors, WhatsApp and Personalizar", () => {
+  assert.equal(c("qv-open"), "true");
+  assert.equal(c("qv-role"), "dialog");
+  assert.equal(c("qv-modal"), "true");
+  assert.equal(c("qv-modes"), "3");
+  const t = c("qv-text");
+  for (const x of ["Kaill", "Precio tienda", "$159.000", "Entrega inmediata", "$175.000", "3 a 5 días hábiles", "$185.000", "5 a 8 días hábiles", "Pedir por WhatsApp", "Personalizar"]) assert.ok(t.includes(x), x);
+  assert.match(c("qv-wa"), /^https:\/\/wa\.me\/573217830050\?text=.*Kaill/);
+  assert.equal(c("qv-pers"), "true");
+});
+
+test("quick view WhatsApp message follows the chosen mode and color; Escape closes it and returns focus", () => {
+  const msg = c("qv-wa2");
+  assert.match(msg, /Kaill \(diseño bajo pedido\), color lila/);
+  assert.ok(msg.includes("$175.000") && msg.includes("3 a 5 días hábiles"));
+  assert.equal(c("qv-open-esc"), "false");
+  assert.equal(c("qv-focus"), "true");
+});
+
+test("Personalizar jumps to the designer with the model, mode and color preselected", () => {
+  assert.equal(c("pers-model"), "kaill");
+  assert.equal(c("pers-tipo"), "Diseño bajo pedido");
+  assert.equal(c("pers-color"), "Lila");
+  assert.equal(c("pers-closed"), "true");
+});
+
+test("NUESTROS RECOMENDADOS is a grid of 8 cards that shows even with no photos, then Ver todo el catálogo", () => {
+  assert.doesNotMatch(dom.match(/<section[^>]*id="reco"[^>]*>/)[0], /hidden/);
+  assert.equal(c("reco-n"), "8");
+  assert.equal(c("reco-cols"), "4");
+  const reco = section(dom, "reco");
+  assert.ok(reco.includes('href="#scrub"'), "calm silhouette fallback while photos are missing");
+  assert.match(reco, /<a class="btn btn-dark" id="reco-all" href="#modelos">Ver todo el catálogo<\/a>/);
+  const phone = render({ width: 390, height: 900, inject: 'document.body.setAttribute("data-rc", getComputedStyle(document.getElementById("recomendados")).gridTemplateColumns.split(" ").length);' }).html;
+  assert.equal(phone.match(/data-rc="(\d+)"/)[1], "2");
+});
+
+test("first viewport on desktop reaches the top of NUESTROS RECOMENDADOS", () => {
+  assert.ok(Number(c("reco-h2-b")) < 900, `title bottom at ${c("reco-h2-b")}`);
+  assert.ok(Number(c("reco-card-t")) < 900, `first card top at ${c("reco-card-t")}`);
+});

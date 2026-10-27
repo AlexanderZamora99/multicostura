@@ -11,17 +11,20 @@ const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i
 const tag = (d, id) => d.match(new RegExp(`<[^>]*id="${id}"[^>]*>`))[0];
 const PIX = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E";
 
-test("recommended row stays hidden while no product photo exists", () => {
-  assert.match(tag(dom, "reco"), /class="[^"]*\bhidden\b/);
-  assert.equal(count(section(dom, "reco"), '<article class="model"'), 0);
+// changed: recommended is the canon store section, so it shows with the calm silhouette while no product photo exists
+test("recommended grid shows with the silhouette fallback while no product photo exists", () => {
+  assert.doesNotMatch(tag(dom, "reco"), /\bhidden\b/);
+  assert.equal(count(section(dom, "reco"), '<article class="model"'), 8);
+  assert.doesNotMatch(section(dom, "reco"), /<img src="img\//);
 });
 
-test("recommended row shows only the products whose photo loaded", () => {
-  const html = strip(render({ inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto = "${PIX}"; NEGOCIO.modelos.find(m => m.id === "paris").foto = "${PIX}"; renderRecomendados();` }).html);
-  assert.doesNotMatch(tag(html, "reco"), /\bhidden\b/);
+// changed: cards no longer wait for their photo; a photo that loads replaces the silhouette on that card only
+test("recommended cards use the photo that loaded and keep the silhouette for the rest", () => {
+  const html = strip(render({ inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto = "${PIX}"; renderRecomendados();` }).html);
   const s = section(html, "reco");
-  assert.equal(count(s, '<article class="model"'), 2);
-  assert.ok(s.includes("<b>Kaill</b>") && s.includes("<b>París</b>") && !s.includes("<b>Violet</b>"));
+  assert.equal(count(s, '<article class="model"'), 8);
+  assert.match(s.split('<article class="model"')[1], /<img src="data:image/);
+  assert.doesNotMatch(s.split('<article class="model"')[2], /<img src="/);
 });
 
 test("photo grid renders only tiles whose photo loaded and hides itself when none did", () => {
@@ -68,12 +71,14 @@ test("designer labels are sentence case, not tracked capitals", () => {
   assert.match(s, />Nombre bordado </);
 });
 
-test("catalog media is short and the grid has two columns on phones", () => {
-  assert.doesNotMatch(css, /\.model \.pic\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*5/);
+// changed: product media is the canon 4:5 frame now (it was a short 5:4 crop while photos were missing); two columns on phones stay
+test("catalog media is 4:5 and the grid has two columns on phones", () => {
+  assert.match(css, /\.pic\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*5/);
   const probe = `const g = document.getElementById("models"); const p = g.querySelector(".pic"); document.body.setAttribute("data-cols", getComputedStyle(g).gridTemplateColumns.split(" ").length); document.body.setAttribute("data-pich", Math.round(p.getBoundingClientRect().height)); document.body.setAttribute("data-picw", Math.round(p.getBoundingClientRect().width));`;
   const h = render({ width: 500, height: 900, inject: probe }).html;
   assert.equal(h.match(/data-cols="(\d+)"/)[1], "2");
-  assert.ok(Number(h.match(/data-pich="(\d+)"/)[1]) <= 230, "phone card media must be short");
+  const w = Number(h.match(/data-picw="(\d+)"/)[1]), ph = Number(h.match(/data-pich="(\d+)"/)[1]);
+  assert.ok(Math.abs(ph - w * 1.25) <= 2, `media ${w}x${ph} is 4:5`);
 });
 
 test("how it works is a calm numbered sequence, not bordered cards", () => {

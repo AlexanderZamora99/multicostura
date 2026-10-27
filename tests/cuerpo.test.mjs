@@ -48,12 +48,12 @@ test("the store tile links to Mecodes when tiendaOnline is set", () => {
 
 const ALL_PHOTOS = `NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E")); renderRecomendados();`;
 // changed: cards render only with a loaded photo, so the test supplies photos
-test("recommended carousel has labelled arrows, one card per id and scroll-snap", () => {
+// changed: recommended is now a grid of up to 8 cards (canon store section), no carousel arrows; the scroll rail stays for testimonials
+test("recommended grid has one card per id (up to 8) and no carousel arrows", () => {
   const s = section(strip(render({ inject: ALL_PHOTOS }).html), "reco");
   assert.ok(s.includes("Nuestros recomendados"));
-  assert.match(s, /aria-label="Recomendados anteriores"/);
-  assert.match(s, /aria-label="Recomendados siguientes"/);
-  assert.equal(count(s, '<article class="model"'), 4);
+  assert.doesNotMatch(s, /Recomendados (anteriores|siguientes)/);
+  assert.equal(count(s, '<article class="model"'), 8);
   assert.match(source, /\.rail\s*\{[^}]*scroll-snap-type/);
 });
 

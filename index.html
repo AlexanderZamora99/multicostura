@@ -189,19 +189,16 @@
     .tile.no-photo .tile-cta { background: var(--text); color: #fff; }
     @media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile { aspect-ratio: 1 / 1.1; } }
 
-    /* Recomendados: carrusel */
+    /* Carrusel de desplazamiento (testimonios) */
     .rail-wrap { position: relative; }
     .rail:focus-visible { outline-offset: 4px; }
     .rail { display: flex; gap: 1.1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: .4rem; }
     .rail::-webkit-scrollbar { display: none; }
-    .rail .model { flex: 0 0 calc((100% - 3.3rem) / 4); scroll-snap-align: start; }
-    .rail .model p { display: none; }
     .rail-btn { position: absolute; top: 38%; translate: 0 -50%; z-index: 2; width: 44px; height: 44px; border-radius: 4px; border: 1.5px solid var(--ctl); background: #fff; display: grid; place-items: center; transition: transform .15s var(--ease); }
     .rail-btn:active { transform: scale(.92); }
     .rail-btn svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .rail-btn.prev { left: -14px; }
     .rail-btn.next { right: -14px; }
-    @media (max-width: 1000px) { .rail .model { flex-basis: calc((100% - 2.2rem) / 3); } }
     @media (max-width: 640px) { .rail-btn { display: none; } }
 
     /* Confianza */
@@ -219,37 +216,66 @@
     .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
     .profs button { border: 1.5px solid var(--ctl); background: var(--card); border-radius: 4px; padding: .5rem 1rem; min-height: 40px; font-size: .92rem; }
     .profs button.on { background: var(--mag-2); border-color: var(--mag-2); color: #fff; }
-    .models { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
+    /* Tarjeta de producto: medios 4:5, segunda foto al pasar el cursor, precio, nombres de color y vista rápida */
+    .models { display: grid; gap: 2rem 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
+    .reco-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 0; }
+    .sec-cta { text-align: center; margin-top: 2.4rem; }
     .model { background: transparent; display: flex; flex-direction: column; min-width: 0; }
-    .model .pic { aspect-ratio: 5/4; position: relative; display: grid; place-items: center; background: var(--bg-2); border-radius: var(--radius); overflow: hidden; }
-    .model .pic .swap { opacity: 0; transition: opacity .45s var(--ease); }
-    .model .pic:hover .swap, .model:focus-within .pic .swap { opacity: 1; }
-    .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .model .pic svg { width: 40%; opacity: .75; }
-    .model .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
-    .model .pic .ph svg { width: 44px; height: 44px; }
+    .media { position: relative; }
+    .pic { aspect-ratio: 4 / 5; position: relative; display: grid; place-items: center; background: var(--bg-2); border-radius: var(--radius); overflow: hidden; }
+    .pic .swap { opacity: 0; transition: opacity .45s var(--ease); }
+    .pic:hover .swap, .model:focus-within .pic .swap { opacity: 1; }
+    .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .pic svg { width: 46%; opacity: .75; }
+    .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
+    .pic .ph svg { width: 44px; height: 44px; }
+    .model .qv { position: absolute; left: .6rem; right: .6rem; bottom: .6rem; z-index: 2; min-height: 44px; background: #fff; color: var(--text); border: 1px solid var(--text); border-radius: 4px; font-weight: 600; font-size: .88rem; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .25s var(--ease), background .15s, color .15s; }
+    .model:hover .qv, .model:focus-within .qv { opacity: 1; transform: none; }
+    .model .qv:hover { background: var(--text); color: #fff; }
+    @media (hover: none) { .model .qv { opacity: 1; transform: none; } }
+    .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .78rem; font-weight: 600; padding: .2rem .65rem; border-radius: 4px; }
+    .model .info { padding: .9rem 0 0; display: grid; gap: .3rem; flex: 1; align-content: start; }
+    .model .info b { font-weight: 600; font-size: 1rem; }
     .model .price { font-weight: 700; }
     .model .price.ask { color: var(--muted); font-weight: 600; }
-    @media (max-width: 640px) {
-      .models { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem .8rem; }
-      .model .pic { aspect-ratio: 4 / 3; }
-      .model .info b { font-size: 1rem; }
-      .model .info p { font-size: .85rem; }
-    }
-    @media (max-width: 640px) { #recomendados { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: .8rem; padding-bottom: .6rem; } #recomendados .model { flex: 0 0 75%; scroll-snap-align: start; } }
-        .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .78rem; font-weight: 600; padding: .2rem .65rem; border-radius: 4px; }
-    .model .info { padding: .9rem .1rem 0; display: grid; gap: .35rem; flex: 1; align-content: start; }
-    .model .info b { font-weight: 600; font-size: 1.1rem; }
-    .model .info p { color: var(--muted); font-size: .88rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .model .row { display: grid; gap: .6rem; margin-top: .4rem; }
-    .model .row button { background: transparent; color: var(--text); border: 1.5px solid var(--text); border-radius: 4px; padding: .55rem 1rem; min-height: 44px; font-weight: 600; font-size: .88rem; transition: transform .15s var(--ease), background .15s, color .15s; }
-    .model .row button:hover { background: var(--text); color: #fff; }
-    .model .row button:active { transform: scale(.97); }
-    .swatches { display: flex; gap: .15rem; flex-wrap: wrap; align-items: center; }
+    .model .cols { color: var(--muted); font-size: .85rem; line-height: 1.35; }
+    .swatches { display: flex; gap: .15rem; flex-wrap: wrap; align-items: center; margin-left: -4px; }
     .swatches button { position: relative; width: 24px; height: 24px; border-radius: 50%; border: 0; padding: 0; background: transparent; }
     .swatches button::before { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--c); border: 1px solid var(--ctl); }
     .swatches button.on::before { outline: 2px solid var(--mag-2); outline-offset: 1px; }
-    .swatches small { font-size: .82rem; color: var(--muted); align-self: center; margin-left: .2rem; }
+    @media (max-width: 900px) { .reco-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) {
+      .models { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 12px; }
+      .model .info b { font-size: .95rem; }
+    }
+
+    /* Vista rápida */
+    html.qv-open { overflow: hidden; }
+    .qv-dialog { border: 0; padding: 0; width: min(900px, 100% - 32px); max-width: none; max-height: min(720px, 100dvh - 32px); margin: auto; border-radius: 4px; background: #fff; color: var(--text); overflow: auto; }
+    .qv-dialog::backdrop { background: rgba(0,0,0,.55); }
+    .qv-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .qv-dialog .pic { border-radius: 0; height: 100%; aspect-ratio: auto; min-height: 420px; }
+    .qv-info { padding: 2.2rem 1.8rem 1.8rem; display: grid; gap: 1.1rem; align-content: start; min-width: 0; }
+    .qv-info h2 { text-transform: none; letter-spacing: 0; font-size: 1.6rem; margin: 0; }
+    .qv-price { font-weight: 700; font-size: 1.15rem; }
+    .qv-desc { color: var(--muted); font-size: .95rem; }
+    .qv-tipos { display: grid; gap: .5rem; }
+    .qv-tipo { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-align: left; border: 1px solid var(--ctl); background: #fff; border-radius: 4px; padding: .65rem .9rem; min-height: 56px; }
+    .qv-tipo b { font-weight: 600; display: block; }
+    .qv-tipo small { color: var(--muted); font-size: .85rem; }
+    .qv-tipo strong { white-space: nowrap; }
+    .qv-tipo[aria-pressed="true"] { border-color: var(--mag-2); box-shadow: inset 0 0 0 1px var(--mag-2); background: var(--bg-3); }
+    .qv-info .lbl { display: block; font-size: .95rem; font-weight: 600; margin-bottom: .45rem; }
+    .qv-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .qv-actions .btn { flex: 1 1 180px; }
+    .qv-close { position: absolute; top: .6rem; right: .6rem; z-index: 3; width: 44px; height: 44px; border-radius: 4px; border: 1px solid var(--ctl); background: #fff; display: grid; place-items: center; }
+    .qv-close svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
+    @media (max-width: 760px) {
+      .qv-dialog { width: 100%; max-height: 94dvh; margin: auto 0 0; border-radius: 4px 4px 0 0; }
+      .qv-body { grid-template-columns: minmax(0, 1fr); }
+      .qv-dialog .pic { aspect-ratio: 4 / 3; min-height: 0; height: auto; }
+      .qv-info { padding: 1.4rem 16px 1.6rem; }
+    }
 
     .stock { margin-top: 1.2rem; }
     .about-text { max-width: 760px; }
@@ -533,6 +559,14 @@
     <button type="button" class="pp banner-pp" id="banner-pp" aria-label="Pausar carrusel"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
   </section>
 
+  <section id="reco">
+    <div class="wrap">
+      <div class="sec-head"><h2>Nuestros recomendados</h2><p class="lead">Modelos de pantalón y blusa en antifluido, con el precio y los colores a la vista.</p></div>
+      <div class="models reco-grid" id="recomendados" role="list" aria-label="Productos recomendados"></div>
+      <div class="sec-cta"><a class="btn btn-dark" id="reco-all" href="#modelos">Ver todo el catálogo</a></div>
+    </div>
+  </section>
+
   <section class="colecciones" id="colecciones">
     <div class="wrap">
       <div class="sec-head"><h2>Explora nuestras colecciones</h2><p class="lead">Elige por tipo de prenda.</p></div>
@@ -547,17 +581,6 @@
         <p class="lead">Elige según cuándo lo necesitas y cuánto quieres personalizarlo.</p>
       </div>
       <div class="tiles" id="tiles"></div>
-    </div>
-  </section>
-
-  <section id="reco" class="alt hidden">
-    <div class="wrap">
-      <div class="sec-head"><h2>Nuestros recomendados</h2><p class="lead">Modelos de pantalón y blusa en antifluido, con el precio y los colores a la vista.</p></div>
-      <div class="rail-wrap">
-        <button type="button" class="rail-btn prev" id="reco-prev" aria-label="Recomendados anteriores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-        <div class="rail" id="recomendados" role="region" aria-roledescription="carrusel" aria-label="Productos recomendados" tabindex="0"></div>
-        <button type="button" class="rail-btn next" id="reco-next" aria-label="Recomendados siguientes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-      </div>
     </div>
   </section>
 
@@ -816,6 +839,11 @@
     <div class="wrap foot-bottom" id="f-copy"></div>
   </footer>
 
+  <dialog id="qv" class="qv-dialog" role="dialog" aria-modal="true" aria-labelledby="qv-title">
+    <button type="button" class="qv-close" id="qv-close" aria-label="Cerrar vista rápida"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="qv-body" id="qv-body"></div>
+  </dialog>
+
   <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
     <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.2Z"/></svg>
   </a>
@@ -895,10 +923,10 @@
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
-      // Ids de los modelos de la fila "Recomendados" (confirmar con la dueña)
+      // Ids de los modelos de "Nuestros recomendados": hasta 8 (confirmar con la dueña)
       // Categorías que no son uniformes: sin foto muestran un recuadro neutro, no el uniforme en SVG
       categoriasNoUniforme: ["Gorros quirúrgicos", "Medias de compresión"],
-      recomendados: ["kaill", "paris", "violet", "alondra"],
+      recomendados: ["kaill", "alondra", "paris", "violet", "clasico", "durango", "luna", "lisboa"],
       // Círculos de "Explora nuestras colecciones". cat = categoría del catálogo que filtran.
       // placeholder: replace with the client's photos (sin img = icono neutro)
       categoriasCirculos: [
@@ -1129,26 +1157,89 @@
     const altDe = (m, color) => `${esUniforme(m) ? "Uniforme " : ""}${m.nombre}, color ${color}`;
     const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color), altDe(m, color))
       : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="${altDe(m, color)}" loading="lazy" onerror="this.remove()">`) + swap(m);
+    // Precio: uno solo si no cambia con la modalidad, y un rango (tienda a medida) si cambia
+    const precioTexto = m => {
+      if (!diseñable(m)) return "Consultar";
+      const v = NEGOCIO.tipos.map(t => precio(m, t)), a = Math.min(...v), z = Math.max(...v);
+      return a === z ? pesos(a) : `${pesos(a)} - ${pesos(z)}`;
+    };
+    const nombresColor = m => m.colores.slice(0, 3).join(", ") + (m.colores.length > 3 ? ` +${m.colores.length - 3}` : "");
     function modelCard(m) {
       const el = document.createElement("article");
       el.className = "model";
-      const extra = m.colores.length - 8;
-      const lista = diseñable(m);
+      const lista = diseñable(m), tag = m.tag ? `<span class="tag">${m.tag}</span>` : "";
       el.innerHTML = `
-        <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${fotoCard(m, m.colores[0])}</div>
-        <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
-          <div class="swatches">${m.colores.slice(0, 8).map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="Color ${c}" aria-pressed="${i === 0}"></button>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
-          <div class="row"><strong class="price${lista ? "" : " ask"}">${lista ? pesos(m.precio) : "Consultar"}</strong><button type="button" class="go">${lista ? "Diseñar" : "Preguntar"}</button></div>
+        <div class="media"><div class="pic">${tag}${fotoCard(m, m.colores[0])}</div><button type="button" class="qv" aria-label="Vista rápida de ${m.nombre}">Vista rápida</button></div>
+        <div class="info"><b>${m.nombre}</b><strong class="price${lista ? "" : " ask"}">${precioTexto(m)}</strong>
+          <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${m.colores.slice(0, 6).map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="Color ${c}" aria-pressed="${i === 0}"></button>`).join("")}</div>
+          <p class="cols">${nombresColor(m)}</p>
         </div>`;
       el.querySelectorAll(".swatches button").forEach(b => b.onclick = () => {
         el.querySelectorAll(".swatches button").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
-        el.querySelector(".pic").innerHTML = (m.tag ? `<span class="tag">${m.tag}</span>` : "") + fotoCard(m, b.dataset.color);
+        el.querySelector(".pic").innerHTML = tag + fotoCard(m, b.dataset.color);
       });
-      el.querySelector(".go").onclick = lista
-        ? () => { $("s-model").value = m.id; design.color = (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); }
-        : () => openWa(`Hola Multicostura 💗 quiero consultar el precio y la disponibilidad de: ${m.nombre}`);
+      const abrir = () => quickView(m, (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0], el.querySelector(".qv"));
+      el.querySelector(".qv").onclick = abrir;
+      el.querySelector(".pic").onclick = abrir;
       return el;
     }
+
+    // ---------- Vista rápida (diálogo modal) ----------
+    const qv = { m: null, color: null, tipo: "tienda", opener: null };
+    function qvResumen() {
+      const { m, color } = qv, t = NEGOCIO.tipos.find(x => x.id === qv.tipo);
+      if (!diseñable(m)) return `Hola Multicostura 💗 quiero consultar el precio y la disponibilidad de: ${m.nombre}, color ${color.toLowerCase()}`;
+      return `Hola Multicostura 💗 quiero pedir este modelo:\n• ${m.nombre} (${t.t.toLowerCase()}), color ${color.toLowerCase()}\n• Precio: ${pesos(precio(m, t))}\n• Entrega: ${t.tiempo.toLowerCase()}`;
+    }
+    function qvSync() {
+      const { m, color } = qv;
+      $("qv-colname").textContent = color;
+      $("qv-colors").querySelectorAll("button").forEach(b => { const on = b.dataset.color === color; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+      $("qv-tipos")?.querySelectorAll("button").forEach(b => { const on = b.dataset.tipo === qv.tipo; b.setAttribute("aria-pressed", on); });
+      $("qv-pic").innerHTML = fotoCard(m, color);
+      $("qv-wa").href = waLink(qvResumen());
+    }
+    function quickView(m, color, opener) {
+      Object.assign(qv, { m, color, tipo: "tienda", opener });
+      const lista = diseñable(m);
+      $("qv-body").innerHTML = `
+        <div class="pic" id="qv-pic"></div>
+        <div class="qv-info">
+          <h2 id="qv-title">${m.nombre}</h2>
+          <p class="qv-price">${precioTexto(m)}</p>
+          <p class="qv-desc">${m.desc}</p>
+          ${lista ? `<div><span class="lbl" id="qv-l-tipo">Cómo lo quieres</span><div class="qv-tipos" id="qv-tipos" role="group" aria-labelledby="qv-l-tipo">${NEGOCIO.tipos.map(t => `<button type="button" class="qv-tipo" data-tipo="${t.id}" aria-pressed="false"><span><b>${t.t}</b><small>${t.tiempo}</small></span><strong>${pesos(precio(m, t))}</strong></button>`).join("")}</div></div>` : ""}
+          <div><span class="lbl" id="qv-l-color">Color: <b id="qv-colname"></b></span><div class="opts" id="qv-colors" role="group" aria-labelledby="qv-l-color">${m.colores.map(c => `<button type="button" data-color="${c}" aria-pressed="false"><i style="background:${C(c)}"></i>${c}</button>`).join("")}</div></div>
+          <div class="qv-actions"><a class="btn btn-mag" id="qv-wa" target="_blank" rel="noopener">${lista ? "Pedir por WhatsApp" : "Preguntar por WhatsApp"}</a>${lista ? `<button type="button" class="btn btn-ghost" id="qv-pers">Personalizar</button>` : ""}</div>
+        </div>`;
+      $("qv-colors").querySelectorAll("button").forEach(b => (b.onclick = () => { qv.color = b.dataset.color; qvSync(); }));
+      $("qv-tipos")?.querySelectorAll("button").forEach(b => (b.onclick = () => { qv.tipo = b.dataset.tipo; qvSync(); }));
+      if (lista) $("qv-pers").onclick = () => {
+        $("s-model").value = m.id; design.color = qv.color; design.tipo = qv.tipo; renderDesign(); renderAgenda();
+        quickViewClose(false); $("personaliza").scrollIntoView();
+      };
+      qvSync();
+      document.documentElement.classList.add("qv-open");
+      if (!$("qv").open) $("qv").showModal();
+      $("qv-close").focus();
+    }
+    function quickViewClose(volver = true) {
+      if ($("qv").open) $("qv").close();
+      document.documentElement.classList.remove("qv-open");
+      if (volver && qv.opener) qv.opener.focus();
+    }
+    $("qv-close").onclick = () => quickViewClose();
+    $("qv").addEventListener("click", e => { if (e.target === $("qv")) quickViewClose(); });
+    $("qv").addEventListener("cancel", e => { e.preventDefault(); quickViewClose(); });
+    $("qv").addEventListener("keydown", e => {
+      if (e.key !== "Tab") return;
+      const f = [...$("qv").querySelectorAll("button, a[href]")].filter(x => x.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && $("qv").open) quickViewClose(); });
     function renderModels() {
       $("models").innerHTML = "";
       NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => $("models").appendChild(modelCard(m)));
@@ -1160,25 +1251,20 @@
       if (!fotosCargadas.has(src)) fotosCargadas.set(src, new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; }));
       return fotosCargadas.get(src);
     };
-    let recoRonda = 0;
-    async function renderRecomendados() {
-      const ronda = ++recoRonda;
-      const candidatos = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean);
-      $("reco").classList.add("hidden");
-      $("recomendados").innerHTML = "";
-      const ok = await Promise.all(candidatos.map(m => fotoCarga(fotoDe(m, m.colores[0]))));
-      if (ronda !== recoRonda) return;
-      const lista = candidatos.filter((m, i) => ok[i]);
+    // Recomendados: hasta 8 tarjetas iguales a las del catálogo; sin fotos se ve la silueta, no se oculta la sección
+    function renderRecomendados() {
+      const lista = NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean).slice(0, 8);
       $("reco").classList.toggle("hidden", !lista.length);
-      lista.forEach((m, i) => { const c = modelCard(m); c.setAttribute("role", "group"); c.setAttribute("aria-roledescription", "diapositiva"); c.setAttribute("aria-label", `${i + 1} de ${lista.length}`); $("recomendados").appendChild(c); });
+      $("recomendados").innerHTML = "";
+      lista.forEach(m => { const c = modelCard(m); c.setAttribute("role", "listitem"); $("recomendados").appendChild(c); });
     }
-    // Flechas de los carruseles de desplazamiento (recomendados, testimonios)
+    $("reco-all").onclick = () => { cat = "Todos"; renderProfs(); renderModels(); };
+    // Flechas del carrusel de desplazamiento (testimonios)
     const railNav = (rail, prev, next) => {
       const paso = dir => $(rail).scrollBy({ left: dir * $(rail).clientWidth * .85, behavior: reduceMotion.matches ? "auto" : "smooth" });
       $(prev).onclick = () => paso(-1);
       $(next).onclick = () => paso(1);
     };
-    railNav("recomendados", "reco-prev", "reco-next");
     railNav("testi", "testi-prev", "testi-next");
 
     // ---------- Colecciones (círculos) ----------

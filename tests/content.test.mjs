@@ -31,7 +31,7 @@ test("videos section stays hidden while NEGOCIO.videos is empty", () => {
 });
 
 test("each price tier shows its delivery time", () => {
-  const tipos = dom.slice(dom.indexOf('id="perfiles"'), dom.indexOf('id="reco"'));
+  const tipos = dom.slice(dom.indexOf('id="perfiles"'), dom.indexOf('id="modelos"')); // changed: recommended now comes first on the page, so the tiers section ends where the catalog begins
   for (const t of ["Entrega inmediata", "3 a 5 días hábiles", "5 a 8 días hábiles"]) {
     assert.ok(tipos.includes(t), `missing ${t}`);
   }

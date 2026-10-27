@@ -11,12 +11,12 @@ test("category chips include surgical caps and compression stockings", () => {
   assert.match(dom, />Medias de compresión<\/button>/);
 });
 
-// changed: cards render only with a loaded photo, so the test supplies photos
-test("recommended row renders one card per NEGOCIO.recomendados id with a photo", () => {
+// changed: cards render without a photo now (silhouette), and the list holds up to 8 ids
+test("recommended grid renders one card per NEGOCIO.recomendados id", () => {
   assert.ok(dom.includes('id="recomendados"'));
   const html = render({ inject: 'NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E")); renderRecomendados();' }).html.replace(/<script[\s\S]*?<\/script>/g, "");
   const row = html.slice(html.indexOf('id="recomendados"'), html.indexOf('id="profs"'));
-  assert.equal(count(row, '<article class="model"'), 4);
+  assert.equal(count(row, '<article class="model"'), 8);
 });
 
 test("products without price show 'Consultar' and are not designable", () => {

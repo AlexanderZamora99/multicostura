@@ -85,7 +85,7 @@ test("banner and announcement bar have a visible pause button that toggles autop
 
 test("carousels expose region, roledescription and labelled slides", () => {
   assert.match(dom, /id="banner"[^>]*aria-roledescription="carrusel"/);
-  assert.match(dom, /class="rail"[^>]*id="recomendados"[^>]*role="region"[^>]*aria-roledescription="carrusel"[^>]*aria-label=/);
+  assert.match(dom, /id="recomendados"[^>]*role="list"[^>]*aria-label=/); // changed: recommended is a labelled list now, not a carousel
   assert.match(dom, /class="rail"[^>]*id="testi"[^>]*role="region"[^>]*aria-roledescription="carrusel"[^>]*aria-label=/);
 });
 
