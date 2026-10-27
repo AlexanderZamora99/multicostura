@@ -310,6 +310,14 @@
     .pvbox img { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
     .pvbox.has-photo img { display: block; }
     .pvbox.has-photo svg { visibility: hidden; }
+    /* Parche con el bordado sobre la foto: tela del color elegido, hilo elegido */
+    .pvbox .bordado { display: none; position: absolute; right: 4%; bottom: 4%; width: 64%; padding: .65rem .6rem .7rem; border-radius: 6px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 8px 20px rgba(0,0,0,.3); container-type: inline-size; }
+    .pvbox .bordado::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--hilo); border-radius: 4px; opacity: .35; pointer-events: none; }
+    .pvbox.has-photo .bordado { display: block; }
+    .bordado small { display: block; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; opacity: .75; margin-bottom: .3rem; }
+    .bordado .b-n { display: block; font-weight: 600; white-space: nowrap; font-size: min(1.05rem, calc(165cqi / var(--len, 10))); }
+    .bordado .b-r { display: block; white-space: nowrap; text-transform: uppercase; letter-spacing: .08em; margin-top: .15rem; font-size: min(.72rem, calc(130cqi / var(--len, 12))); }
+    .bordado .b-r:empty { display: none; }
     .preview .cap { font-size: .85rem; color: var(--muted); text-align: center; }
     .panel { display: grid; gap: 1.2rem; }
     .field > .lbl { display: block; font-size: .95rem; font-weight: 600; color: var(--text); margin-bottom: .45rem; }
@@ -663,6 +671,7 @@
               <text id="pv-role" x="125" y="73" font-family="Open Sans, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
             </svg>
             <img id="pv-photo" alt="Foto del modelo en el color elegido">
+            <div class="bordado" id="pv-bord" aria-hidden="true"><small>Tu bordado</small><span class="b-n" id="pv-bn"></span><span class="b-r" id="pv-br"></span></div>
           </div>
           <span class="cap" id="pv-cap"></span>
         </div>
@@ -1016,7 +1025,6 @@
         { id: "lisboa", recolor: true, nombre: "Lisboa", precio: 165000, cat: ["Conjuntos"], desc: "Diseño exclusivo, ideal para quienes quieren lucir profesionales.", foto: "img/lisboa.webp" },
         { id: "valencia", recolor: true, nombre: "Valencia", precio: 169000, cat: ["Conjuntos"], desc: "Diseño moderno, blusa sin bolsillos.", foto: "img/valencia.webp", // nombre por confirmar: en el catálogo se lee "...ENCIA"
           fotos: { "Azul rey": "img/valencia.webp", "Gris": "img/valencia-gris.webp" } },
-        { id: "jomper", nombre: "Jomper", precio: 165000, cat: ["Conjuntos"], desc: "Modelo enterizo tipo jumper.", foto: "img/jomper.webp" }, // no aparece en el catálogo 2026: falta foto
         { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.webp" },
         { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.webp" },
         { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.webp" },
@@ -1423,7 +1431,7 @@
       $("s-color-name").textContent = design.color;
       $("q").textContent = design.qty;
 
-      // Foto real del color elegido (si hay): se muestra sin el nombre bordado encima
+      // Foto del color elegido (si hay): el bordado se muestra en el parche #pv-bord encima
       const foto = (m.fotos || {})[design.color], box = $("pv-box"), img = $("pv-photo");
       if (!foto) { box.classList.remove("has-photo"); img.removeAttribute("src"); }
       else if (img.getAttribute("src") !== foto) { box.classList.remove("has-photo"); img.src = foto; }
@@ -1438,6 +1446,16 @@
       $("pv-name").textContent = d.name || "Tu nombre";
       $("pv-name").style.opacity = d.name ? 1 : .45;
       $("pv-role").textContent = d.role.toUpperCase();
+      // Sobre la foto el bordado va en un parche con la tela y el hilo elegidos
+      const bord = $("pv-bord"), nombreB = d.name || "Tu nombre";
+      bord.style.setProperty("--tela", fill);
+      bord.style.setProperty("--hilo", thread);
+      $("pv-bn").textContent = nombreB;
+      $("pv-bn").style.opacity = d.name ? 1 : .5;
+      $("pv-bn").style.setProperty("--len", Math.max(10, nombreB.length));
+      $("pv-br").textContent = d.role;
+      $("pv-br").style.setProperty("--len", Math.max(12, Math.ceil(d.role.length * 1.25)));
+      img.alt = `${m.nombre} en color ${design.color.toLowerCase()}` + (d.name || d.role ? `, con el bordado ${[d.name, d.role].filter(Boolean).join(", ")}` : "");
       $("pv-cap").textContent = `${m.nombre}, ${design.color.toLowerCase()}, ${d.t.t.toLowerCase()}` +
         ((m.simulados || []).includes(design.color) ? ". Color de referencia: el tono real de la tela puede variar." : "");
 

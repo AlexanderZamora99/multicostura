@@ -102,6 +102,20 @@ test("Tuluá appears only where it informs: title, about, address, home-visit co
   assert.ok(section(dom, "nosotros").includes("Tuluá"));
 });
 
+test("with a product photo the embroidered name and profession show on a patch over the photo", () => {
+  const inject = `const n = document.getElementById("s-name"), r = document.getElementById("s-role");
+    document.getElementById("s-model").value = "kaill"; design.color = "Rojo"; design.hilo = "Dorado";
+    n.value = "Dra. Camila Ruiz"; n.dispatchEvent(new Event("input")); r.value = "Odontóloga"; r.dispatchEvent(new Event("input"));
+    document.getElementById("pv-box").classList.add("has-photo"); // la foto cargó (headless no espera la descarga)
+    const b = document.getElementById("pv-bord");
+    document.body.setAttribute("data-bord", getComputedStyle(b).display + "|" + b.style.getPropertyValue("--tela") + "|" + b.style.getPropertyValue("--hilo"));`;
+  const html = render({ inject }).html;
+  assert.match(html, /id="pv-bn"[^>]*>Dra\. Camila Ruiz</);
+  assert.match(html, /id="pv-br"[^>]*>Odontóloga</);
+  assert.equal(html.match(/data-bord="([^"]*)"/)[1], "block|#d22b3a|#d4a64a", "patch visible in the fabric and thread colors");
+  assert.match(html, /id="pv-photo"[^>]*alt="Kaill en color rojo, con el bordado Dra\. Camila Ruiz, Odontóloga"|alt="Kaill en color rojo, con el bordado Dra\. Camila Ruiz, Odontóloga"[^>]*id="pv-photo"/);
+});
+
 test("no-photo state runs without uncaught errors", () => {
   assert.doesNotMatch(render().stderr, /Uncaught/);
 });

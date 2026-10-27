@@ -237,7 +237,7 @@ test("EXPLORA NUESTRAS COLECCIONES: three large tiles with name, item count and 
   assert.match(s, /<h2>Explora nuestras colecciones<\/h2>/);
   assert.equal(count(s, 'class="col-tile'), 3);
   assert.deepEqual([...s.matchAll(/<h3>([^<]+)<\/h3>/g)].map(m => m[1]), ["Uniformes", "Línea blancos", "Gorros y medias"]);
-  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["13 modelos", "5 modelos", "2 modelos"]);
+  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["12 modelos", "5 modelos", "2 modelos"]);
   assert.equal(count(s, 'class="ver-todo" href="#modelos"'), 3);
   assert.doesNotMatch(s, /<img/, "no stock posing as product: a calm grey tile until a photo is configured");
 });
@@ -254,7 +254,7 @@ test("Ver todo filters the catalog, including the Gorros y medias group", () => 
   const caps = click("#colecciones .ver-todo", 2);
   assert.equal(models(caps), 2);
   assert.match(caps, /<button type="button" class="on" aria-pressed="true">Gorros y medias<\/button>/);
-  assert.equal(models(click("#colecciones .ver-todo", 0)), 13); // 12 conjuntos + Valencia
+  assert.equal(models(click("#colecciones .ver-todo", 0)), 12); // conjuntos del catálogo 2026 (con Valencia, sin Jomper)
 });
 
 test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the business data, on light grey", () => {
