@@ -1,0 +1,109 @@
+<title>Multicostura mockups v4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Sala de revisión v4: control arriba, sitio vivo en marco de computador o celular, lista de requisitos al lado. Un solo tema (marca de la clienta). */
+  :root { --fondo: #e4e2e7; --tinta: #26242b; --suave: #5f5c66; --fucsia: #d6247f; --fucsia-2: #a3175f; --papel: #ffffff; --linea: #d3d0d8; --ok: #1d7a4f; color-scheme: light; --fuente: "Open Sans", system-ui, sans-serif; }
+  body { background: var(--fondo); color: var(--tinta); font: 400 14.5px/1.5 var(--fuente); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+  .marco { max-width: 1480px; margin: 0 auto; display: grid; gap: 14px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+  h1 { font: 800 clamp(1.4rem, 3vw, 2rem)/1.1 var(--fuente); text-transform: uppercase; margin: 0; }
+  header p { margin: .35rem 0 0; color: var(--suave); max-width: 70ch; }
+  .controles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .grupo { display: inline-flex; flex-wrap: wrap; background: var(--papel); border: 1px solid var(--linea); border-radius: 8px; padding: 3px; gap: 2px; }
+  .grupo button { border: 0; background: none; font: 600 13.5px var(--fuente); color: var(--suave); padding: 8px 12px; border-radius: 6px; cursor: pointer; min-height: 38px; }
+  .grupo button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+  .grupo button:focus-visible { outline: 3px solid var(--fucsia-2); outline-offset: 1px; }
+  .escena { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+  .pantalla { background: var(--papel); border-radius: 12px; overflow: hidden; border: 1px solid var(--linea); display: grid; justify-items: center; }
+  .pantalla.cel { background: transparent; border: 0; }
+  iframe { border: 0; width: 100%; height: 80vh; min-height: 560px; display: block; background: var(--papel); }
+  .cel iframe { width: 390px; max-width: 100%; height: 800px; border-radius: 28px; border: 10px solid var(--tinta); }
+  aside { background: var(--papel); border: 1px solid var(--linea); border-radius: 12px; padding: 16px; display: grid; gap: 14px; font-size: 13.5px; max-height: 80vh; overflow: auto; }
+  aside h2 { font: 700 .95rem/1.2 var(--fuente); text-transform: uppercase; margin: 0 0 6px; }
+  aside ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+  .req li::marker { content: "✓  "; color: var(--ok); }
+  .pend li::marker { color: var(--fucsia-2); }
+  @media (max-width: 1000px) { .escena { grid-template-columns: 1fr; } aside { max-height: none; } }
+</style>
+
+<div class="marco">
+  <header>
+    <div>
+      <h1>Multicostura, mockups v4</h1>
+      <p>Sitio completo y navegable con las fotos reales: estructura de Worktastic, lo que pidió la clienta en la reunión y las reglas de diseño de las skills nuevas. Todo pedido termina en un mensaje de WhatsApp ya escrito.</p>
+    </div>
+    <div class="controles">
+      <div class="grupo" role="group" aria-label="Página" id="paginas">
+        <button id="p-inicio" data-p="inicio" aria-pressed="true">Inicio</button>
+        <button id="p-catalogo" data-p="catalogo" aria-pressed="false">Catálogo</button>
+        <button id="p-ficha" data-p="ficha" aria-pressed="false">Ficha</button>
+        <button id="p-disena" data-p="disena" aria-pressed="false">Diseña</button>
+        <button id="p-agenda" data-p="agenda" aria-pressed="false">Agenda</button>
+        <button id="p-regalo" data-p="regalo" aria-pressed="false">Bono y empresas</button>
+        <button id="p-compara" data-p="compara" aria-pressed="false">Compara</button>
+      </div>
+      <div class="grupo" role="group" aria-label="Dispositivo">
+        <button id="d-esc" data-d="esc" aria-pressed="true">Computador</button>
+        <button id="d-cel" data-d="cel" aria-pressed="false">Celular</button>
+      </div>
+    </div>
+  </header>
+  <div class="escena">
+    <div class="pantalla" id="pantalla"><iframe id="vista" title="Mockup del sitio" src="inicio.html"></iframe></div>
+    <aside>
+      <div><h2>Lo que pidió la clienta</h2>
+        <ul class="req">
+          <li>Banner que rota solo, con puntos y pausa</li>
+          <li>Franja negra con los datos (10 años, envíos)</li>
+          <li>Recomendados, videos, fotos de uniformes abajo</li>
+          <li>Ubicación, redes, descripción y WhatsApp</li>
+          <li>Menú: Diseña, Agenda medidas, Empresas, Bonos regalo</li>
+          <li>Uniformes, gorros y medias; sin hombre/mujer</li>
+          <li>Solo blusa o solo pantalón por WhatsApp</li>
+          <li>Tres precios con tiempo de entrega</li>
+          <li>Guía de tallas con su imagen y calculadora</li>
+          <li>Diseña: modelo, color con foto, nombre solo sobre la ilustración, descuento por cantidad</li>
+          <li>Vistas de frente, espalda y lado (se activan con las fotos)</li>
+          <li>Agenda: taller, domicilio o en casa con aviso; día, hora y datos</li>
+          <li>Bono: valor, para quién y de quién</li>
+          <li>Chatbot de preguntas que pasa a WhatsApp, sin depender de él</li>
+          <li>Botón a la tienda física (Mecodes)</li>
+          <li>Fondos grises, fucsia en botones, tipografía como Worktastic, primero celular</li>
+          <li>SEO: una página por modelo, datos para Google y vista previa en WhatsApp</li>
+        </ul></div>
+      <div><h2>De las skills nuevas</h2>
+        <ul>
+          <li>Cinco efectos y uno protagonista: el fondo toma el color del uniforme.</li>
+          <li>Cabecera que se vuelve sólida, franja en movimiento, botón que se levanta y zoom lento del banner.</li>
+          <li>Páginas generadas desde los datos, con fichas y comparador, como la skill de afiliados.</li>
+          <li>El contenido se ve aunque falle JavaScript.</li>
+        </ul></div>
+      <div><h2>Falta de la clienta</h2>
+        <ul class="pend">
+          <li>Logo, foto del local, gorros y medias</li>
+          <li>Videos y reseñas reales</li>
+          <li>Enlace de Mecodes</li>
+          <li>Datos marcados "Por confirmar" en el comparador</li>
+        </ul></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  const paginas = { inicio: "inicio.html", catalogo: "catalogo.html", ficha: "modelo-kaill.html", disena: "disena.html", agenda: "agenda.html", regalo: "regalo.html", compara: "compara.html" };
+  const vista = document.getElementById("vista"), pantalla = document.getElementById("pantalla");
+  function ir(p) {
+    if (!paginas[p]) p = "inicio";
+    vista.src = paginas[p];
+    document.querySelectorAll("[data-p]").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === p));
+  }
+  document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { location.hash = b.dataset.p; });
+  document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => {
+    pantalla.classList.toggle("cel", b.dataset.d === "cel");
+    document.querySelectorAll("[data-d]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  });
+  addEventListener("hashchange", () => ir(location.hash.slice(1)));
+  ir(location.hash.slice(1));
+</script>

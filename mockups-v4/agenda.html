@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agenda tu toma de medidas | Multicostura Tuluá</title>
+<meta name="description" content="Agenda la toma de medidas para tu uniforme médico: en el taller en Tuluá, a domicilio o midiéndote en casa con nuestra guía. Confirmación por WhatsApp.">
+<link rel="canonical" href="https://kevin9zamora9sanche-cloud.github.io/multicostura/agenda.html">
+<meta property="og:type" content="website"><meta property="og:locale" content="es_CO">
+<meta property="og:title" content="Agenda tu toma de medidas | Multicostura Tuluá"><meta property="og:description" content="Agenda la toma de medidas para tu uniforme médico: en el taller en Tuluá, a domicilio o midiéndote en casa con nuestra guía. Confirmación por WhatsApp.">
+<meta property="og:image" content="https://kevin9zamora9sanche-cloud.github.io/multicostura/img/kaill-azul-rey.webp">
+<meta name="theme-color" content="#d6247f">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+
+</head>
+<body data-pagina="agenda">
+<a class="sr" href="#contenido">Saltar al contenido</a>
+<div class="barra">Agenda tu toma de medidas: en el taller, a domicilio en Tuluá o desde tu casa</div>
+<header class="cabecera"><div class="contenedor">
+  <a class="logo" href="inicio.html" aria-label="Multicostura, inicio"><span class="logo-m" aria-hidden="true">m</span><span><b>MULTICOSTURA</b><small>Uniformes médicos</small></span></a>
+  <nav class="nav" aria-label="Principal"><a href="catalogo.html">Catálogo</a><a href="disena.html">Diseña</a><a href="agenda.html" aria-current="page">Agenda medidas</a><a href="regalo.html#empresas">Empresas</a><a href="regalo.html">Bonos regalo</a></nav>
+  <div class="acciones">
+    <a class="icono-btn" href="https://wa.me/573217830050" aria-label="Escribir por WhatsApp" style="color:#128c4b"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></a>
+    <a class="btn btn-fucsia" href="agenda.html">Agendar medidas</a>
+  </div>
+</div></header>
+<main id="contenido">
+<div class="contenedor">
+  <div class="migas"><a href="inicio.html">Inicio</a> / Agenda tus medidas</div>
+  <div class="titulo" style="text-align:left;margin:0 0 1.4rem"><h1 class="h2">Agenda tu toma de medidas</h1><p>Elige cómo te medimos, el día y la hora. Te confirmamos por WhatsApp. Para una persona son unos 30 minutos.</p></div>
+  <div class="agenda">
+    <form class="pasos" id="a-form" novalidate>
+      <section class="paso"><h2>¿Cómo te medimos?</h2>
+        <div class="opciones">
+          <label class="opcion"><input type="radio" name="a-modo" value="taller" checked><b>En el taller <em>Sin costo</em></b><small>Calle 24 T10-39, Tuluá. Ves las telas en persona.</small></label>
+          <label class="opcion"><input type="radio" name="a-modo" value="domicilio"><b>A domicilio <em>+ $8.000</em></b><small>Vamos a tu casa o consultorio en Tuluá.</small></label>
+          <label class="opcion"><input type="radio" name="a-modo" value="casa"><b>Me mido en casa <em>Sin costo</em></b><small>Estás en otra ciudad: te guiamos y nos envías tus medidas.</small></label>
+        </div>
+      </section>
+      <section class="paso" id="a-paso-fecha"><h2>Día y hora</h2>
+        <div class="campo"><label for="a-personas">¿Cuántas personas?</label><div class="cantidad"><button type="button" data-d="-1" aria-label="Una persona menos">−</button><output id="a-personas">1</output><button type="button" data-d="1" aria-label="Una persona más">+</button></div></div>
+        <div class="dias" id="a-dias" role="group" aria-label="Día"></div>
+        <div class="horas" id="a-horas" role="group" aria-label="Hora"></div>
+        <small class="lead" id="a-dur">Duración: 30 minutos. Las horas tachadas ya están ocupadas (ejemplo).</small>
+      </section>
+      <section class="paso" id="a-paso-medidas" hidden><h2>Tus medidas</h2>
+        <div class="aviso">Mídete con un metro de costura, sin apretar. Si una medida queda mal tomada, el ajuste corre por tu cuenta.</div>
+        <img src="img/guia-tallas.webp" alt="Guía de medidas de Multicostura" loading="lazy" style="border-radius:8px;max-height:420px;object-fit:contain;background:var(--gris-1)">
+        <div class="campos" style="grid-template-columns:1fr 1fr"><div class="campo"><label for="a-m-busto">Busto</label><div class="entrada"><input id="a-m-busto" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">Por la parte más llena</small></div><div class="campo"><label for="a-m-cintura">Cintura</label><div class="entrada"><input id="a-m-cintura" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">En la parte más angosta</small></div><div class="campo"><label for="a-m-cadera">Cadera</label><div class="entrada"><input id="a-m-cadera" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">En la parte más ancha</small></div><div class="campo"><label for="a-m-manga">Largo de manga</label><div class="entrada"><input id="a-m-manga" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">Del hombro a donde termine</small></div><div class="campo"><label for="a-m-pantalon">Largo de pantalón</label><div class="entrada"><input id="a-m-pantalon" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">De la cintura al tobillo</small></div><div class="campo"><label for="a-m-hombros">Ancho de hombros</label><div class="entrada"><input id="a-m-hombros" type="number" inputmode="decimal"><span>cm</span></div><small class="lead">De punta a punta por la espalda</small></div></div>
+      </section>
+      <section class="paso"><h2>Tus datos</h2>
+        <div class="campos">
+          <div class="campo"><label for="a-nombre">Nombre <span class="req">(obligatorio)</span></label><div class="entrada"><input id="a-nombre" autocomplete="name" required></div></div>
+          <div class="campo"><label for="a-cel">Celular <span class="req">(obligatorio)</span></label><div class="entrada"><input id="a-cel" type="tel" inputmode="tel" autocomplete="tel" required placeholder="300 123 4567"></div></div>
+          <div class="campo" id="a-c-dir" hidden><label for="a-dir">Dirección en Tuluá</label><div class="entrada"><input id="a-dir" autocomplete="street-address"></div></div>
+          <div class="campo"><label for="a-diseno">Diseño que te interesa</label><div class="entrada"><select id="a-diseno"><option value="">Aún no sé</option><option>Kaill</option><option>Alondra</option><option>París</option><option>Clásico</option><option>Durango</option><option>Mariee</option><option>Neru</option><option>Valencia</option><option>Luna</option><option>Violet</option><option>Lisboa</option><option>Glam</option><option>Clásico blanco</option><option>Bata manga larga</option><option>Pantalón</option></select></div></div>
+        </div>
+      </section>
+    </form>
+    <aside class="lado caja">
+      <p class="rotulo" style="margin:0">Resumen</p>
+      <div class="resumen" id="a-resumen"></div>
+      <p class="lead" id="a-falta" style="font-size:.88rem"></p>
+      <a class="btn btn-fucsia btn-ancho" id="a-enviar" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>Confirmar por WhatsApp</a>
+    </aside>
+  </div>
+</div>
+</main>
+<footer class="pie"><div class="contenedor">
+  <div><a class="logo" href="inicio.html"><span class="logo-m" aria-hidden="true">m</span><span><b>MULTICOSTURA</b><small>Uniformes médicos</small></span></a>
+    <p style="margin-top:.8rem;max-width:34ch">Taller de uniformes médicos para mujer en Tuluá, Valle. Cortamos, cosemos y bordamos en el mismo lugar.</p></div>
+  <div><h3>Comprar</h3><ul><li><a href="catalogo.html">Catálogo</a></li><li><a href="compara.html">Compara modelos</a></li><li><a href="disena.html">Diseña tu uniforme</a></li><li><a href="regalo.html">Bonos regalo</a></li></ul></div>
+  <div><h3>Ayuda</h3><ul><li><a href="inicio.html#talla">Guía y calculadora de tallas</a></li><li><a href="agenda.html">Agenda tus medidas</a></li><li><a href="inicio.html#preguntas">Preguntas frecuentes</a></li><li><a href="regalo.html#empresas">Uniformes para empresas</a></li></ul></div>
+  <div><h3>Contacto</h3><ul><li>Calle 24 T10-39, barrio Porvenir, Tuluá</li><li>Lunes a viernes 8 a 12 y 2 a 6; sábados 8 a 1</li><li><a href="https://wa.me/573217830050">WhatsApp 321 783 0050</a></li><li><a href="https://www.instagram.com/multicostura_uniformes/">Instagram</a> · <a href="https://www.tiktok.com/@uniformes_multicostura">TikTok</a></li></ul></div>
+  <p class="final">© 2026 Multicostura. Uniformes médicos para mujer hechos en Tuluá.</p>
+</div></footer>
+<div class="flotantes">
+  <button class="f-chat" id="abrir-chat" aria-label="Abrir preguntas frecuentes" aria-expanded="false" aria-controls="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg></button>
+  <a class="f-wa" href="https://wa.me/573217830050" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></a>
+</div>
+<section class="chat" id="chat" hidden aria-label="Preguntas frecuentes">
+  <header><b>¿En qué te ayudamos?</b><button id="cerrar-chat" aria-label="Cerrar">×</button></header>
+  <div class="log" id="chat-log" aria-live="polite"></div>
+  <form id="chat-form"><label class="sr" for="chat-q">Escribe tu pregunta</label><input id="chat-q" placeholder="Escribe tu pregunta" autocomplete="off"><button class="btn btn-fucsia" type="submit">Enviar</button></form>
+</section>
+<nav class="tabbar" aria-label="Accesos rápidos"><a href="inicio.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7M5.5 9.5V20h13V9.5"/></svg>Inicio</a><a href="catalogo.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>Catálogo</a><a href="disena.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4"/></svg>Diseña</a><a href="agenda.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Medidas</a><a href="regalo.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"/></svg>Bonos</a></nav>
+<script src="datos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
