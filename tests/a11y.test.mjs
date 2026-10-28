@@ -84,7 +84,12 @@ test("banner has a visible pause button that toggles autoplay", () => {
 test("carousels expose region, roledescription and labelled slides", () => {
   assert.match(dom, /id="banner"[^>]*aria-roledescription="carrusel"/);
   assert.match(dom, /id="recomendados"[^>]*role="list"[^>]*aria-label=/); // changed: recommended is a labelled list now, not a carousel
-  assert.match(dom, /class="rail"[^>]*id="testi"[^>]*role="region"[^>]*aria-roledescription="carrusel"[^>]*aria-label=/);
+  // changed: when every testimonial fits there is no carousel, so the rail drops the roledescription and its arrows
+  assert.match(dom, /class="rail fits"[^>]*id="testi"[^>]*role="region"[^>]*aria-label=/);
+  assert.doesNotMatch(dom.match(/<div class="rail[^>]*id="testi"[^>]*>/)[0], /aria-roledescription/);
+  assert.match(dom, /id="testi-next"[^>]*hidden/);
+  const muchos = render({ inject: 'NEGOCIO.testimonios = Array.from({ length: 6 }, (_, i) => ({ nombre: "N" + i, oficio: "O", texto: "Texto " + i })); renderTestimonios();' }).html;
+  assert.match(muchos, /class="rail"[^>]*id="testi"[^>]*aria-roledescription="carrusel"/);
 });
 
 test("FAQ accordion uses buttons with aria-expanded and aria-controls", () => {

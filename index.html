@@ -192,6 +192,8 @@
     .rail-btn svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .rail-btn.prev { left: -14px; }
     .rail-btn.next { right: -14px; }
+    .rail-btn[hidden] { display: none; }
+    .rail.fits { justify-content: center; }
     @media (max-width: 640px) { .rail-btn { display: none; } }
 
     /* Confianza */
@@ -282,8 +284,15 @@
     .vids figcaption { font-size: .9rem; color: var(--muted); }
     /* Videos verticales de TikTok e Instagram */
     .vids.vert-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
-    .vids iframe.vert { aspect-ratio: 9 / 16; background: var(--bg-2); }
-    .vids iframe.ig { aspect-ratio: 9 / 17.5; background: #fff; border: 1px solid var(--line); }
+    /* Misma altura para TikTok e Instagram: los bordes inferiores quedan alineados */
+    .vids iframe.vert { aspect-ratio: 9 / 17.5; background: #000; }
+    .vids iframe.ig { background: #fff; border: 1px solid var(--line); }
+    /* En celular los videos verticales se deslizan de lado en vez de apilarse */
+    @media (max-width: 640px) {
+      .vids.vert-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: .9rem; margin-inline: -16px; padding: 0 16px .4rem; scroll-padding-inline: 16px; }
+      .vids.vert-grid::-webkit-scrollbar { display: none; }
+      .vids.vert-grid figure { flex: 0 0 72%; scroll-snap-align: start; }
+    }
 
     /* Personalizador */
     .studio { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 2.5rem; align-items: start; margin-top: 2.2rem; }
@@ -479,7 +488,9 @@
     @media (max-width: 520px) { .foot-grid { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; } }
     footer.site h3 { color: #fff; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .8rem; }
     footer.site ul { list-style: none; display: grid; gap: .2rem; }
-    footer.site ul a { display: inline-block; padding: .2rem 0; min-height: 28px; }
+    footer.site ul a, footer.site p a { display: inline-flex; align-items: center; padding: .2rem 0; min-height: 28px; }
+    /* En celular los enlaces del pie se tocan con el dedo: 44px de alto */
+    @media (max-width: 640px) { footer.site ul a, footer.site p a { min-height: 44px; } }
     footer.site a:hover { color: #fff; text-decoration: underline; }
     .foot-grid p + p { margin-top: .5rem; }
     .socials { display: flex; gap: .6rem; margin-top: 1rem; }
@@ -911,7 +922,7 @@
         { tiktok: "7686901923747745044", titulo: "Mini vlog: un día en Multicostura" },
         { instagram: "Dd_whrdjdQ2", titulo: "Viernes de producción en el taller" },
         { instagram: "DemTNC_AaFr", titulo: "Detrás de cada uniforme hay manos y dedicación" },
-        { tiktok: "7569248020286557447", titulo: "Uniformes Multicostura" },
+        { tiktok: "7632789467396394261", titulo: "Uniformes Multicostura" },
       ],
 
       // ---- Agenda de toma de medidas ----
@@ -1737,7 +1748,16 @@
       const reales = NEGOCIO.testimonios.filter(t => !t.ejemplo);
       $("testimonios").classList.toggle("hidden", !reales.length);
       $("testi").innerHTML = reales.map(t => `<figure class="quote-card" role="group" aria-roledescription="diapositiva"><blockquote>${t.texto}</blockquote><figcaption><b>${t.nombre}</b><span>${t.oficio}</span></figcaption></figure>`).join("");
+      requestAnimationFrame(ajustarRail);
     }
+    // Si todas las opiniones caben, no hay carrusel: se centran y las flechas se ocultan
+    function ajustarRail() {
+      const r = $("testi"), cabe = r.scrollWidth <= r.clientWidth + 1;
+      r.classList.toggle("fits", cabe);
+      $("testi-prev").hidden = $("testi-next").hidden = cabe;
+      if (cabe) r.removeAttribute("aria-roledescription"); else r.setAttribute("aria-roledescription", "carrusel");
+    }
+    addEventListener("resize", ajustarRail);
     renderTestimonios();
     function renderFooter() {
       $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;

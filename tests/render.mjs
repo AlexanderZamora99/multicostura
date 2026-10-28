@@ -33,6 +33,8 @@ export function render({ width = 1366, height = 900, inject = "" } = {}) {
   const run = spawnSync(chromeBin(), [
     "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
     "--enable-logging=stderr", "--v=0",
+    // Los videos incrustados (TikTok, Instagram) no se cargan en las pruebas: hacen lentas y frágiles las corridas en paralelo
+    "--host-resolver-rules=MAP tiktok.com ~NOTFOUND, MAP *.tiktok.com ~NOTFOUND, MAP *.tiktokcdn.com ~NOTFOUND, MAP instagram.com ~NOTFOUND, MAP *.instagram.com ~NOTFOUND, MAP *.cdninstagram.com ~NOTFOUND",
     "--virtual-time-budget=5000", `--window-size=${width},${height}`,
     "--dump-dom", page,
   ], { encoding: "utf8", timeout: 60000 });
