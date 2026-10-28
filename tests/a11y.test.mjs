@@ -22,7 +22,7 @@ const probe = `
   out.lockedMsg = textRatio("#st-day .lock-msg");
   const border = sel => { let min = 99; document.querySelectorAll(sel).forEach(el => { const cs = getComputedStyle(el); const c = rgb(cs.borderTopColor); if (c && parseFloat(cs.borderTopWidth) > 0) min = Math.min(min, ratio(c.c, bgOf(el.parentElement))); }); return min; };
   out.inputBorder = border(".panel input, .panel select, .agenda input, .agenda textarea, .box input[type=text], .chat-form input");
-  out.chipBorder = border(".opts button, .profs button, .mode, .qty button, .amounts button");
+  out.chipBorder = border(".opts button, .chips-f button, .orden select, .mode, .qty button, .amounts button");
   const ph = document.querySelector("#f-name"); out.placeholder = ratio(rgb(getComputedStyle(ph, "::placeholder").color).c, bgOf(ph));
   const unl = []; document.querySelectorAll("input,select,textarea").forEach(el => { if (el.type === "hidden") return; if (!(el.labels && el.labels.length) && !el.getAttribute("aria-label") && !el.getAttribute("aria-labelledby")) unl.push(el.id || el.name || el.tagName); });
   out.unlabeled = unl.join(",");

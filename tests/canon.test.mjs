@@ -231,7 +231,7 @@ test("Ver todo filters the catalog, including the Gorros y medias group", () => 
   assert.equal(models(click("#colecciones .ver-todo", 1)), 5); // París, Alondra/Clásico/Durango blanco, Bata
   const caps = click("#colecciones .ver-todo", 2);
   assert.equal(models(caps), 2);
-  assert.match(caps, /<button type="button" class="on" aria-pressed="true">Gorros y medias<\/button>/);
+  assert.match(caps, /<input type="radio" name="cat" value="Gorros y medias" checked(="")?>/);
   assert.equal(models(click("#colecciones .ver-todo", 0)), 12); // conjuntos del catálogo 2026 (con Valencia, sin Jomper)
 });
 

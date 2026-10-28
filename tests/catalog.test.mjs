@@ -6,9 +6,9 @@ const { html, stderr } = render();
 const dom = html.replace(/<script[\s\S]*?<\/script>/g, ""); // solo el DOM, sin el código fuente
 const between = (a, b) => dom.slice(dom.indexOf(a), dom.indexOf(b));
 
-test("category chips include surgical caps and compression stockings", () => {
-  assert.match(dom, />Gorros quirúrgicos<\/button>/);
-  assert.match(dom, />Medias de compresión<\/button>/);
+test("category filter includes surgical caps and compression stockings", () => {
+  assert.match(dom, /name="cat" value="Gorros quirúrgicos"[^>]*>Gorros quirúrgicos<span class="cuenta">\d+<\/span>/);
+  assert.match(dom, /name="cat" value="Medias de compresión"[^>]*>Medias de compresión<span class="cuenta">\d+<\/span>/);
 });
 
 // changed: cards render without a photo now (silhouette), and the list holds up to 8 ids
@@ -21,7 +21,7 @@ test("recommended grid renders one card per NEGOCIO.recomendados id", () => {
 
 test("products without price show 'Consultar' and are not designable", () => {
   assert.ok(dom.includes("Consultar"));
-  const select = between('<select id="s-model"', "</select>");
+  const i = dom.indexOf('<select id="s-model"'), select = dom.slice(i, dom.indexOf("</select>", i));
   assert.doesNotMatch(select, /Gorro|Medias/);
   assert.match(select, /Kaill/);
 });

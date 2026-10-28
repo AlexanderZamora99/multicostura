@@ -214,11 +214,49 @@
     @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     /* Modelos */
-    .profs { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.6rem; }
-    .profs button { border: 1.5px solid var(--ctl); background: var(--card); border-radius: 4px; padding: .5rem 1rem; min-height: 40px; font-size: .92rem; }
-    .profs button.on { background: var(--mag-2); border-color: var(--mag-2); color: #fff; }
+    /* Menú lateral de filtros: columna fija en escritorio y cajón fuera de pantalla en celular */
+    .con-filtros { display: grid; gap: 1.2rem; margin-top: 1.6rem; }
+    .stock { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; background: var(--bg-2); border-radius: var(--radius); padding: 1.1rem 1.4rem; }
+    .stock p { margin-right: auto; line-height: 1.4; }
+    .stock .lead { font-size: .92rem; }
+    .stock-ico { display: grid; place-items: center; color: var(--text); }
+    .stock-ico .ico { width: 30px; height: 30px; }
+    .barra-res { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .barra-res .lead { margin-right: auto; font-size: .92rem; }
+    .orden select { min-height: 44px; border: 1.5px solid var(--ctl); border-radius: var(--radius); padding: 0 .7rem; background: var(--card); font: inherit; }
+    .btn-filtros { padding-block: .5rem; }
+    .panel-filtros { position: fixed; inset: 0 auto 0 0; z-index: 50; width: min(340px, 88vw); background: var(--card); box-shadow: 8px 0 40px rgba(0,0,0,.2); display: grid; grid-template-rows: auto 1fr auto; transform: translateX(-105%); visibility: hidden; transition: transform .35s var(--ease), visibility 0s .35s; }
+    .panel-filtros.abierto { transform: none; visibility: visible; transition: transform .35s var(--ease), visibility 0s; }
+    .pf-cabeza { display: flex; justify-content: space-between; align-items: center; padding: .8rem 1rem; border-bottom: 1px solid var(--line); font-size: 1.05rem; }
+    .pf-cuerpo { overflow-y: auto; padding: 1rem; display: grid; gap: 1.5rem; align-content: start; }
+    .pf-pie { padding: .8rem 1rem calc(.8rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
+    .pf-pie .btn { width: 100%; }
+    .pf-cuerpo fieldset { border: 0; display: grid; gap: .35rem; min-width: 0; }
+    .pf-cuerpo legend { font-weight: 700; margin-bottom: .6rem; padding: 0; text-transform: uppercase; font-size: .85rem; letter-spacing: .04em; }
+    .pf-cuerpo legend .lead { text-transform: none; letter-spacing: 0; font-weight: 600; font-size: .85rem; }
+    .pf-cuerpo label { display: flex; align-items: center; gap: .6rem; min-height: 36px; cursor: pointer; font-size: .95rem; }
+    .pf-cuerpo input[type=radio] { width: 24px; height: 24px; margin: 0; accent-color: var(--mag); flex: none; }
+    .pf-cuerpo .cuenta { margin-left: auto; color: var(--muted); font-size: .85rem; }
+    .pf-cuerpo small.lead { font-size: .85rem; margin-top: .3rem; }
+    .pf-cuerpo .enlace { font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; margin-top: .4rem; width: fit-content; min-height: 28px; display: inline-flex; align-items: center; }
+    .chips-f { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chips-f button { min-width: 48px; min-height: 44px; padding: 0 .8rem; border: 1.5px solid var(--ctl); background: var(--card); border-radius: var(--radius); font-weight: 600; }
+    .chips-f button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: #fff; }
+    .muestras-f { display: flex; flex-wrap: wrap; gap: 2px; }
+    .muestras-f button { position: relative; width: 32px; height: 32px; border-radius: 50%; border: 0; padding: 0; background: transparent; }
+    .muestras-f button::before { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--c); border: 1px solid var(--ctl); }
+    .muestras-f button[aria-pressed="true"]::before { outline: 2px solid var(--mag-2); outline-offset: 2px; }
+    .velo { position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,.4); }
+    html.filtros-open { overflow: hidden; }
+    @media (min-width: 960px) {
+      .con-filtros { grid-template-columns: 250px minmax(0, 1fr); gap: 2.4rem; align-items: start; }
+      .panel-filtros { position: sticky; top: 96px; inset: auto; width: auto; transform: none; visibility: visible; box-shadow: none; display: block; z-index: 1; max-height: calc(100vh - 110px); overflow-y: auto; transition: none; }
+      .pf-cabeza, .pf-pie, .btn-filtros { display: none; }
+      .pf-cuerpo { padding: 0; overflow: visible; }
+    }
+    @media (prefers-reduced-motion: reduce) { .panel-filtros, .panel-filtros.abierto { transition: none; } }
     /* Tarjeta de producto: medios 4:5, segunda foto al pasar el cursor, precio, nombres de color y vista rápida */
-    .models { display: grid; gap: 2rem 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
+    .models { display: grid; gap: 2rem 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
     .reco-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 0; }
     .sec-cta { text-align: center; margin-top: 2.4rem; }
     .model { background: transparent; display: flex; flex-direction: column; min-width: 0; }
@@ -238,6 +276,7 @@
     .model .info { padding: .9rem 0 0; display: grid; gap: .3rem; flex: 1; align-content: start; }
     .model .info b { font-weight: 600; font-size: 1rem; }
     .model .price { font-weight: 700; }
+    .model .price small { font-weight: 400; font-size: .82rem; color: var(--muted); }
     .model .price.ask { color: var(--muted); font-weight: 600; }
     .model .cols { color: var(--muted); font-size: .85rem; line-height: 1.35; }
     .swatches { display: flex; gap: .15rem; flex-wrap: wrap; align-items: center; margin-left: -4px; }
@@ -280,7 +319,6 @@
       .qv-info { padding: 1.4rem 16px 0; }
     }
 
-    .stock { margin-top: 1.2rem; text-align: center; }
     .about-text { max-width: 760px; }
     .about-text .addr { margin-top: 1rem; font-weight: 600; }
     .map { margin-top: 2rem; }
@@ -684,9 +722,28 @@
         <h2>Encuentra tu próximo uniforme</h2>
         <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch, línea de blancos, batas y pantalones.</p>
       </div>
-      <div class="stock"><a class="btn btn-ghost" id="stock-btn" target="_blank" rel="noopener">Ver disponibles en tienda física</a></div>
-      <div class="profs" id="profs" role="group" aria-label="Filtrar por categoría"></div>
-      <div class="models" id="models"></div>
+      <div class="stock" id="stock"><span class="stock-ico" aria-hidden="true" id="stock-ico"></span><p><b>¿Lo necesitas hoy?</b><br><span class="lead">Mira qué modelos, tallas y colores hay listos en el taller.</span></p><a class="btn btn-ghost" id="stock-btn" target="_blank" rel="noopener">Ver disponibles en tienda física</a></div>
+      <div class="con-filtros">
+        <aside class="panel-filtros" id="panel-filtros" aria-label="Filtros">
+          <div class="pf-cabeza"><b>Filtros</b><button type="button" class="icon-btn" id="cerrar-filtros" aria-label="Cerrar filtros">&times;</button></div>
+          <form id="filtros" class="pf-cuerpo">
+            <fieldset><legend>Categoría</legend><div id="profs" role="radiogroup" aria-label="Filtrar por categoría"></div></fieldset>
+            <fieldset><legend>Forma de compra</legend><div id="f-forma"></div><small class="lead">Cambia el precio que ves en cada modelo.</small></fieldset>
+            <fieldset><legend>Talla</legend><div class="chips-f" id="f-talla"></div><a class="enlace" href="#calc">Calcula tu talla</a></fieldset>
+            <fieldset><legend>Color <span class="lead" id="f-color-n"></span></legend><div class="muestras-f" id="f-colores"></div><small class="lead">Muestra los modelos que tienen foto en ese color. Todos se hacen en cualquier color bajo pedido.</small></fieldset>
+            <button type="reset" class="btn btn-ghost" id="f-reset">Quitar filtros</button>
+          </form>
+          <div class="pf-pie"><button type="button" class="btn btn-dark" id="ver-resultados">Ver modelos</button></div>
+        </aside>
+        <div class="resultados">
+          <div class="barra-res">
+            <button type="button" class="btn btn-ghost btn-filtros" id="abrir-filtros" aria-controls="panel-filtros" aria-expanded="false">Filtros</button>
+            <p class="lead" id="res-cuenta" aria-live="polite"></p>
+            <label class="orden"><span class="sr-only">Ordenar</span><select id="orden"><option value="">Más pedidos</option><option value="asc">Precio menor</option><option value="desc">Precio mayor</option></select></label>
+          </div>
+          <div class="models" id="models"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1033,9 +1090,9 @@
       // precio: null = el precio tienda de cada modelo. Los modelos con precioFijo no cambian de precio.
       // tiempo: tiempos de entrega de ejemplo, confirmar con la dueña
       tipos: [
-        { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null, tiempo: "Entrega inmediata" },
-        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000, tiempo: "3 a 5 días hábiles" },
-        { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000, tiempo: "5 a 8 días hábiles" },
+        { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null, tiempo: "Entrega inmediata", forma: "Listo en tienda", dias: "hoy" },
+        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000, tiempo: "3 a 5 días hábiles", forma: "Bajo pedido", dias: "3 a 5 días" },
+        { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000, tiempo: "5 a 8 días hábiles", forma: "A tu medida", dias: "5 a 8 días" },
       ],
       // Colores de ejemplo: confirmar con la dueña
       colores: {
@@ -1296,14 +1353,30 @@
     // Una colección con varias categorías (Gorros y medias) filtra por el conjunto; su nombre aparece como filtro activo
     const gruposCat = () => Object.fromEntries(NEGOCIO.colecciones.filter(c => c.cats.length > 1).map(c => [c.t, c.cats]));
     const enCat = (m, c) => c === "Todos" || m.cat.includes(c) || (gruposCat()[c] || []).some(x => m.cat.includes(x));
+    // Estado de los demás filtros (la categoría vive en `cat`)
+    const filtros = { forma: "", talla: "", color: "", orden: "" };
+    const tipoDe = id => NEGOCIO.tipos.find(t => t.id === id);
+    const tieneFoto = (m, c) => !!(m.fotos && m.fotos[c]);
     function renderProfs() {
-      $("profs").innerHTML = "";
-      (NEGOCIO.categorias.includes(cat) ? NEGOCIO.categorias : [...NEGOCIO.categorias, cat]).forEach(p => {
-        const b = document.createElement("button");
-        b.type = "button"; b.textContent = p; b.className = p === cat ? "on" : ""; b.setAttribute("aria-pressed", p === cat);
-        b.onclick = () => { cat = p; renderProfs(); renderModels(); };
-        $("profs").appendChild(b);
-      });
+      $("profs").innerHTML = (NEGOCIO.categorias.includes(cat) ? NEGOCIO.categorias : [...NEGOCIO.categorias, cat]).map(p =>
+        `<label><input type="radio" name="cat" value="${p}"${p === cat ? " checked" : ""}>${p}<span class="cuenta">${NEGOCIO.modelos.filter(m => enCat(m, p)).length}</span></label>`).join("");
+    }
+    // Forma de compra, tallas y colores salen de los datos; se dibujan una sola vez
+    function renderFiltros() {
+      $("f-forma").innerHTML = NEGOCIO.tipos.map(t => `<label><input type="radio" name="forma" value="${t.id}">${t.forma}<span class="cuenta">${t.dias}</span></label>`).join("");
+      $("f-talla").innerHTML = NEGOCIO.tallas.orden.map(t => `<button type="button" data-talla="${t}" aria-pressed="false">${t}</button>`).join("");
+      const orden = Object.keys(NEGOCIO.colores);
+      const colores = [...new Set(NEGOCIO.modelos.flatMap(m => Object.keys(m.fotos || {})))].sort((x, y) => orden.indexOf(x) - orden.indexOf(y));
+      $("f-colores").innerHTML = colores.map(c => `<button type="button" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="${c}" aria-pressed="false"></button>`).join("");
+    }
+    function syncFiltros(n) {
+      document.querySelectorAll('#filtros input[name="forma"]').forEach(r => (r.checked = r.value === filtros.forma));
+      document.querySelectorAll("#f-talla button").forEach(b => b.setAttribute("aria-pressed", b.dataset.talla === filtros.talla));
+      document.querySelectorAll("#f-colores button").forEach(b => b.setAttribute("aria-pressed", b.dataset.color === filtros.color));
+      $("f-color-n").textContent = filtros.color ? `· ${filtros.color}` : "";
+      const activos = [cat !== "Todos", filtros.forma, filtros.talla, filtros.color].filter(Boolean).length;
+      $("abrir-filtros").textContent = activos ? `Filtros (${activos})` : "Filtros";
+      $("ver-resultados").textContent = `Ver ${n} ${n === 1 ? "modelo" : "modelos"}`;
     }
     // Foto del modelo para un color: la del color si existe, si no la general, y si no el uniforme en SVG
     const fotoDe = (m, color) => (m.fotos && m.fotos[color]) || m.foto;
@@ -1314,39 +1387,44 @@
     const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color), altDe(m, color), m.sil)
       : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="${altDe(m, color)}" loading="lazy" onerror="this.remove()">`) + swap(m);
     // Precio: uno solo si no cambia con la modalidad, y un rango (tienda a medida) si cambia
-    const precioTexto = m => {
+    const precioTexto = (m, forma) => {
       if (!diseñable(m)) return "Consultar";
+      if (forma) { const t = tipoDe(forma); return pesos(precio(m, t)) + (m.precioFijo ? "" : ` <small>${t.forma.toLowerCase()}</small>`); }
       const v = NEGOCIO.tipos.map(t => precio(m, t)), a = Math.min(...v), z = Math.max(...v);
       return a === z ? pesos(a) : `${pesos(a)} - ${pesos(z)}`;
     };
     const nombresColor = m => m.colores.slice(0, 3).join(", ") + (m.colores.length > 3 ? ` +${m.colores.length - 3}` : "");
-    function modelCard(m) {
+    // op: forma / color / talla elegidos en el menú de filtros (las tarjetas de Recomendados no los usan)
+    function modelCard(m, op = {}) {
       const el = document.createElement("article");
       el.className = "model";
       el.dataset.id = m.id;
       const lista = diseñable(m), tag = m.tag ? `<span class="tag">${m.tag}</span>` : "";
+      const elegido = op.color && tieneFoto(m, op.color) ? op.color : null, inicial = elegido || m.colores[0];
+      const cols = (elegido ? [elegido, ...m.colores.filter(c => c !== elegido)] : m.colores).slice(0, 6);
       el.innerHTML = `
-        <div class="media"><div class="pic">${tag}${fotoCard(m, m.colores[0])}</div><button type="button" class="qv" aria-label="Vista rápida de ${m.nombre}">Vista rápida</button></div>
-        <div class="info"><b>${m.nombre}</b><strong class="price${lista ? "" : " ask"}">${precioTexto(m)}</strong>
-          <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${m.colores.slice(0, 6).map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="Color ${c}" aria-pressed="${i === 0}"></button>`).join("")}</div>
+        <div class="media"><div class="pic">${tag}${fotoCard(m, inicial)}</div><button type="button" class="qv" aria-label="Vista rápida de ${m.nombre}">Vista rápida</button></div>
+        <div class="info"><b>${m.nombre}</b><strong class="price${lista ? "" : " ask"}">${precioTexto(m, op.forma)}</strong>
+          <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${cols.map((c, i) => `<button type="button" class="${i === 0 ? "on" : ""}" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="Color ${c}" aria-pressed="${i === 0}"></button>`).join("")}</div>
           <p class="cols">${nombresColor(m)}</p>
         </div>`;
       el.querySelectorAll(".swatches button").forEach(b => b.onclick = () => {
         el.querySelectorAll(".swatches button").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
         el.querySelector(".pic").innerHTML = tag + fotoCard(m, b.dataset.color);
       });
-      const abrir = () => quickView(m, (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0], el.querySelector(".qv"));
+      const abrir = () => quickView(m, (el.querySelector(".swatches button.on") || {}).dataset?.color || m.colores[0], el.querySelector(".qv"), { tipo: op.forma, talla: op.talla });
       el.querySelector(".qv").onclick = abrir;
       el.querySelector(".pic").onclick = abrir;
       return el;
     }
 
     // ---------- Vista rápida (diálogo modal) ----------
-    const qv = { m: null, color: null, tipo: "tienda", opener: null };
+    const qv = { m: null, color: null, tipo: "tienda", talla: "", opener: null };
     function qvResumen() {
       const { m, color } = qv, t = NEGOCIO.tipos.find(x => x.id === qv.tipo);
-      if (!diseñable(m)) return `Hola Multicostura 💗 quiero consultar el precio y la disponibilidad de: ${m.nombre}, color ${color.toLowerCase()}`;
-      return `Hola Multicostura 💗 quiero pedir este modelo:\n• ${m.nombre} (${t.t.toLowerCase()}), color ${color.toLowerCase()}\n• Precio: ${pesos(precio(m, t))}\n• Entrega: ${t.tiempo.toLowerCase()}`;
+      const talla = qv.talla ? `, talla ${qv.talla}` : "";
+      if (!diseñable(m)) return `Hola Multicostura 💗 quiero consultar el precio y la disponibilidad de: ${m.nombre}, color ${color.toLowerCase()}${talla}`;
+      return `Hola Multicostura 💗 quiero pedir este modelo:\n• ${m.nombre} (${t.t.toLowerCase()}), color ${color.toLowerCase()}${qv.talla ? `\n• Talla: ${qv.talla}` : ""}\n• Precio: ${pesos(precio(m, t))}\n• Entrega: ${t.tiempo.toLowerCase()}`;
     }
     function qvSync() {
       const { m, color } = qv;
@@ -1356,14 +1434,16 @@
       $("qv-pic").innerHTML = fotoCard(m, color);
       $("qv-wa").href = waLink(qvResumen());
     }
-    function quickView(m, color, opener) {
-      Object.assign(qv, { m, color, tipo: "tienda", opener });
+    // pre: forma de compra y talla elegidas en el menú de filtros, para no pedírselas dos veces
+    function quickView(m, color, opener, pre = {}) {
       const lista = diseñable(m);
+      Object.assign(qv, { m, color, tipo: lista && tipoDe(pre.tipo) ? pre.tipo : "tienda", talla: pre.talla || "", opener });
       $("qv-body").innerHTML = `
         <div class="pic" id="qv-pic"></div>
         <div class="qv-info">
           <h2 id="qv-title">${m.nombre}</h2>
           <p class="qv-price">${precioTexto(m)}</p>
+          ${qv.talla ? `<p class="qv-talla">Talla elegida: <b>${qv.talla}</b></p>` : ""}
           <p class="qv-desc">${m.desc}</p>
           ${lista ? `<div><span class="lbl" id="qv-l-tipo">Cómo lo quieres</span><div class="qv-tipos" id="qv-tipos" role="group" aria-labelledby="qv-l-tipo">${NEGOCIO.tipos.map(t => `<button type="button" class="qv-tipo" data-tipo="${t.id}" aria-pressed="false"><span><b>${t.t}</b><small>${t.tiempo}</small></span><strong>${pesos(precio(m, t))}</strong></button>`).join("")}</div></div>` : ""}
           <div><span class="lbl" id="qv-l-color">Color: <b id="qv-colname"></b></span><div class="opts" id="qv-colors" role="group" aria-labelledby="qv-l-color">${m.colores.map(c => `<button type="button" data-color="${c}" aria-pressed="false"><i style="background:${C(c)}"></i>${c}</button>`).join("")}</div></div>
@@ -1398,9 +1478,69 @@
     });
     document.addEventListener("keydown", e => { if (e.key === "Escape" && $("qv").open) quickViewClose(); });
     function renderModels() {
-      $("models").innerHTML = "";
-      NEGOCIO.modelos.filter(m => enCat(m, cat)).forEach(m => $("models").appendChild(modelCard(m)));
+      const f = filtros, precioOrden = m => (diseñable(m) ? precio(m, tipoDe(f.forma || "tienda")) : null);
+      let lista = NEGOCIO.modelos.filter(m => enCat(m, cat) && (!f.color || tieneFoto(m, f.color)));
+      if (f.orden) {
+        const dir = f.orden === "asc" ? 1 : -1; // sin precio siempre al final; el orden es estable
+        lista = [...lista].sort((x, y) => { const a = precioOrden(x), b = precioOrden(y); return a == null ? (b == null ? 0 : 1) : b == null ? -1 : (a - b) * dir; });
+      }
+      $("models").innerHTML = lista.length ? "" : '<p class="lead empty">No hay modelos con esos filtros. Prueba quitar alguno.</p>';
+      lista.forEach(m => $("models").appendChild(modelCard(m, { forma: f.forma, color: f.color, talla: f.talla })));
+      $("res-cuenta").textContent = `${lista.length} ${lista.length === 1 ? "modelo" : "modelos"}`;
+      syncFiltros(lista.length);
     }
+    renderFiltros();
+    $("stock-ico").innerHTML = ICONO.store;
+    $("filtros").addEventListener("change", e => {
+      if (e.target.name === "cat") cat = e.target.value;
+      if (e.target.name === "forma") filtros.forma = e.target.value;
+      renderModels();
+    });
+    $("filtros").addEventListener("click", e => {
+      const t = e.target.closest("#f-talla button"), c = e.target.closest("#f-colores button");
+      if (t) filtros.talla = filtros.talla === t.dataset.talla ? "" : t.dataset.talla;
+      if (c) filtros.color = filtros.color === c.dataset.color ? "" : c.dataset.color;
+      if (t || c) renderModels();
+      if (e.target.closest(".enlace")) cerrarFiltros(false);
+    });
+    $("filtros").addEventListener("reset", e => {
+      e.preventDefault();
+      cat = "Todos"; Object.assign(filtros, { forma: "", talla: "", color: "", orden: "" });
+      $("orden").value = "";
+      renderProfs(); renderModels();
+    });
+    $("filtros").addEventListener("submit", e => e.preventDefault());
+    $("orden").addEventListener("change", e => { filtros.orden = e.target.value; renderModels(); });
+    // En celular el menú es un cajón con velo; Escape, la X, el velo y "Ver N modelos" lo cierran y el foco vuelve al botón
+    let velo = null;
+    function cerrarFiltros(volver = true) {
+      if (!$("panel-filtros").classList.contains("abierto")) return;
+      $("panel-filtros").classList.remove("abierto");
+      $("abrir-filtros").setAttribute("aria-expanded", "false");
+      document.documentElement.classList.remove("filtros-open");
+      velo && velo.remove(); velo = null;
+      if (volver) $("abrir-filtros").focus();
+    }
+    $("abrir-filtros").onclick = () => {
+      $("panel-filtros").classList.add("abierto");
+      $("abrir-filtros").setAttribute("aria-expanded", "true");
+      document.documentElement.classList.add("filtros-open");
+      velo = document.createElement("div"); velo.className = "velo"; velo.onclick = () => cerrarFiltros();
+      document.body.appendChild(velo);
+      $("cerrar-filtros").focus();
+    };
+    $("cerrar-filtros").onclick = () => cerrarFiltros();
+    $("ver-resultados").onclick = () => cerrarFiltros();
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && $("panel-filtros").classList.contains("abierto") && !$("qv").open) cerrarFiltros(); });
+    $("panel-filtros").addEventListener("keydown", e => {
+      if (e.key !== "Tab" || !$("panel-filtros").classList.contains("abierto")) return;
+      const f = [...$("panel-filtros").querySelectorAll("button, a[href], input")].filter(x => x.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    matchMedia("(min-width: 960px)").addEventListener("change", e => { if (e.matches) cerrarFiltros(false); });
     // true si la foto carga: las secciones que dependen de fotos solo muestran las que existen
     const fotosCargadas = new Map();
     const fotoCarga = src => {

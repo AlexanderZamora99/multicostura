@@ -16,8 +16,11 @@ const probe = `
   set("col-h", Math.round(Math.max(...cols.map(c => r(c).height))));
   set("col-ico", cols.every(c => c.querySelector("svg.col-ico")));
   const mid = r(document.documentElement).width / 2, span = els => { const rs = els.map(r); return (Math.min(...rs.map(x => x.left)) + Math.max(...rs.map(x => x.right))) / 2; };
-  set("chips-off", Math.abs(span([...document.querySelectorAll("#profs button")]) - mid) < 3 ? "centered" : "off:" + span([...document.querySelectorAll("#profs button")]));
-  set("stock-off", Math.abs(span([document.getElementById("stock-btn")]) - mid) < 3 ? "centered" : "off");
+  const side = r(document.getElementById("panel-filtros")), grid = r(document.getElementById("models")), banner = r(document.getElementById("stock")), wrap = r(document.querySelector("#modelos .wrap"));
+  set("side-left", side.right <= grid.left && side.left < grid.left && side.width >= 240 && side.width <= 260);
+  set("banner-full", Math.abs(banner.width - wrap.width) < 2);
+  set("banner-above", banner.bottom <= grid.top);
+  set("drawer", cs(document.getElementById("panel-filtros")).visibility + "/" + (side.right <= 0 ? "off" : "on"));
   set("hero-pos", cs(document.querySelector(".slide img")).objectPosition);
   set("demo-hidden", document.getElementById("demo-note").classList.contains("hidden"));
   set("gift", document.getElementById("g-names").textContent);
@@ -76,10 +79,12 @@ test("hero image keeps faces: object-position sits lower than the top", () => {
   assert.match(attr(desk, "hero-pos"), /^50% (2[5-9]|3\d|4\d)%$/);
 });
 
-test("catalog chips and the store-stock button are centred under the title", () => {
-  assert.equal(attr(desk, "chips-off"), "centered");
-  assert.equal(attr(desk, "stock-off"), "centered");
-  assert.equal(attr(phone, "stock-off"), "centered");
+test("catalog: filter sidebar sits left of the grid under a full-width store banner; on phones it is an off-canvas drawer", () => {
+  assert.equal(attr(desk, "side-left"), "true");
+  assert.equal(attr(desk, "banner-full"), "true");
+  assert.equal(attr(desk, "banner-above"), "true");
+  assert.equal(attr(phone, "banner-full"), "true");
+  assert.equal(attr(phone, "drawer"), "hidden/off");
 });
 
 test("quick view opens on the card's selected color, hides the floating buttons and shows a scroll shadow", () => {
