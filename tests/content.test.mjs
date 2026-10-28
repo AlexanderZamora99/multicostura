@@ -31,6 +31,14 @@ test("videos section stays hidden while NEGOCIO.videos is empty", () => {
   assert.match(html, /<section id="videos" class="hidden"/);
 });
 
+test("a product with a video shows a Video badge on its card and plays the Instagram embed in quick view", () => {
+  const i = dom.indexOf('data-id="gorro-quirurgico"'), card = dom.slice(i, dom.indexOf("</article>", i));
+  assert.match(card, /<span class="video-badge">/);
+  const { html: qv } = render({ inject: 'quickView(NEGOCIO.modelos.find(m => m.id === "gorro-quirurgico"), "Azul cielo", document.body);' });
+  assert.match(qv, /id="qv-pic"[^>]*class="pic has-video"|class="pic has-video"[^>]*id="qv-pic"/);
+  assert.match(qv, /<iframe class="qv-video"[^>]*src="https:\/\/www\.instagram\.com\/p\/DFVMFzGOKOD\/embed\/"/);
+});
+
 test("TikTok and Instagram videos are embedded vertically, without hosting the files", () => {
   const s = dom.slice(dom.indexOf('id="videos"'), dom.indexOf("</section>", dom.indexOf('id="videos"')));
   assert.doesNotMatch(dom.match(/<section id="videos"[^>]*>/)[0], /hidden/);

@@ -230,6 +230,11 @@
     .pic svg { width: 46%; opacity: .75; }
     .pic .ph { display: grid; justify-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 600; }
     .pic .ph svg { width: 44px; height: 44px; }
+    /* Producto con video: etiqueta en la tarjeta y video vertical en la vista rápida */
+    .video-badge { position: absolute; left: .6rem; bottom: .6rem; z-index: 2; display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .6rem; border-radius: 4px; background: rgba(0,0,0,.72); color: #fff; font-size: .78rem; font-weight: 600; pointer-events: none; }
+    .video-badge svg { width: 10px; height: 10px; fill: currentColor; }
+    .qv-dialog .pic.has-video { background: #fff; }
+    .qv-video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .model .qv { position: absolute; left: .6rem; right: .6rem; bottom: .6rem; z-index: 2; min-height: 44px; background: #fff; color: var(--text); border: 1px solid var(--text); border-radius: 4px; font-weight: 600; font-size: .88rem; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .25s var(--ease), background .15s, color .15s; }
     .model:hover .qv, .model:focus-within .qv { opacity: 1; transform: none; }
     .model .qv:hover { background: var(--text); color: #fff; }
@@ -277,6 +282,7 @@
       .qv-dialog { width: 100%; max-height: 94dvh; margin: auto 0 0; border-radius: 4px 4px 0 0; }
       .qv-body { grid-template-columns: minmax(0, 1fr); }
       .qv-dialog .pic { aspect-ratio: 4 / 3; min-height: 0; height: auto; }
+      .qv-dialog .pic.has-video { aspect-ratio: 9 / 16; max-height: 75vh; }
       .qv-info { padding: 1.4rem 16px 0; }
     }
 
@@ -1038,7 +1044,7 @@
         { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.webp" },
         { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], sil: "sil-bata", desc: "Bata de manga larga.", colores: ["Negro", "Palo de rosa"], foto: "img/bata.webp", // colores del catálogo 2026
           fotos: { "Negro": "img/bata.webp", "Palo de rosa": "img/bata-palo-rosa.webp" } },
-        { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico antifluido con toalla para el sudor y moña para el cabello, en varios diseños. Consulta precio y disponibilidad.", colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Negro"], foto: "img/gorro-quirurgico.webp" }, // confirmar con la dueña
+        { id: "gorro-quirurgico", nombre: "Gorro quirúrgico", precio: null, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico antifluido con toalla para el sudor y moña para el cabello, en varios diseños estampados. Consulta precio y disponibilidad.", colores: ["Azul cielo"], foto: "img/gorro-quirurgico-2.webp", foto2: "img/gorro-quirurgico.webp", video: "DFVMFzGOKOD" }, // fotos de Instagram (CKeZOjKJ9u6 y un cuadro del video); los demás estampados se consultan
         { id: "medias-compresion", nombre: "Medias de compresión", precio: null, cat: ["Medias de compresión"], desc: "Medias de compresión para jornadas largas de pie. Consulta tallas, precio y disponibilidad.", colores: ["Blanco", "Negro", "Café"], foto: "img/medias-compresion.webp" }, // confirmar con la dueña
         { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], sil: "sil-pantalon", recolor: true, desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon-gris.webp",
           fotos: { "Gris": "img/pantalon-gris.webp", "Lila": "img/pantalon-lila.webp", "Blanco": "img/pantalon.webp" } },
@@ -1221,8 +1227,11 @@
     const esUniforme = m => !m.cat.every(c => NEGOCIO.categoriasNoUniforme.includes(c));
     const swap = m => (m.foto2 ? `<img class="swap" src="${m.foto2}" alt="" loading="lazy" onerror="this.remove()">` : "");
     const altDe = (m, color) => `${esUniforme(m) ? "Uniforme " : ""}${m.nombre}, color ${color}`;
+    // video: id de una publicación de Instagram; la tarjeta lo anuncia y la vista rápida lo reproduce
+    const videoBadge = m => (m.video ? `<span class="video-badge"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg>Video</span>` : "");
     const fotoCard = (m, color) => (esUniforme(m) ? photoOr(fotoDe(m, color), C(color), altDe(m, color), m.sil)
-      : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="${altDe(m, color)}" loading="lazy" onerror="this.remove()">`) + swap(m);
+      : `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>Foto próximamente</div><img src="${fotoDe(m, color)}" alt="${altDe(m, color)}" loading="lazy" onerror="this.remove()">`) + swap(m) + videoBadge(m);
+    const videoQV = m => `<iframe class="qv-video" title="Video de ${m.nombre}" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture; fullscreen" src="https://www.instagram.com/p/${encodeURIComponent(m.video)}/embed/"></iframe>`;
     // Precio: uno solo si no cambia con la modalidad, y un rango (tienda a medida) si cambia
     const precioTexto = m => {
       if (!diseñable(m)) return "Consultar";
@@ -1263,7 +1272,9 @@
       $("qv-colname").textContent = color;
       $("qv-colors").querySelectorAll("button").forEach(b => { const on = b.dataset.color === color; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
       $("qv-tipos")?.querySelectorAll("button").forEach(b => { const on = b.dataset.tipo === qv.tipo; b.setAttribute("aria-pressed", on); });
-      $("qv-pic").innerHTML = fotoCard(m, color);
+      $("qv-pic").classList.toggle("has-video", !!m.video);
+      if (!m.video) $("qv-pic").innerHTML = fotoCard(m, color);
+      else if (!$("qv-pic").querySelector("iframe")) $("qv-pic").innerHTML = videoQV(m); // el video no se recarga al cambiar de opción
       $("qv-wa").href = waLink(qvResumen());
     }
     function quickView(m, color, opener) {
