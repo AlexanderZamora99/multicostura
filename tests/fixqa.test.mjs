@@ -42,7 +42,7 @@ test("photo grid hides stock-photo examples until real client photos are configu
 
 // changed: collection tiles replaced the circles; they stay photo-free (calm grey) until a photo is configured, covered in canon.test.mjs
 
-const fab = `document.querySelectorAll("#modes .mode")[2].click(); document.getElementById("form").scrollIntoView();`;
+const fab = `document.querySelectorAll("#modes .mode")[2].click(); document.getElementById("form").scrollIntoView({ behavior: "instant" });`;
 test("floating buttons step aside on phones while a form is on screen", () => {
   const phone = render({ width: 500, height: 900, inject: fab }).html;
   assert.match(phone.match(/<body[^>]*>/)[0], /fab-off/);

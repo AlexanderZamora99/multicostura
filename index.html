@@ -450,6 +450,34 @@
       .munit { grid-column: 2; }
     }
     .guia { margin-top: 2rem; }
+    .tallas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-top: 2.4rem; align-items: start; }
+    .tallas .guia { margin: 0; }
+    .tallas h3 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .7rem; }
+    .tallas-main { display: grid; gap: 1.6rem; min-width: 0; }
+    .tabla-wrap { overflow-x: auto; }
+    .tabla { width: 100%; border-collapse: collapse; font-size: .95rem; background: var(--card); }
+    .tabla caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .tabla th, .tabla td { padding: .6rem .7rem; border-bottom: 1px solid var(--line); text-align: center; }
+    .tabla th[scope="row"] { text-align: left; font-weight: 400; }
+    .tabla thead th { font-weight: 700; background: var(--bg-2); }
+    .tabla thead th:first-child { text-align: left; }
+    .tabla .grupo th { text-align: left; background: var(--bg-3); text-transform: uppercase; letter-spacing: .04em; font-size: .85rem; }
+    .tabla td.on { background: var(--pink); font-weight: 700; }
+    .tabla thead th.on { background: var(--mag); color: #fff; }
+    .calc { display: grid; gap: .9rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-3); }
+    .calc h3 { margin-bottom: 0; }
+    .calc-campos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
+    .calc label { display: grid; gap: .35rem; font-size: .95rem; font-weight: 600; color: var(--text); }
+    .calc .munit { position: relative; display: block; }
+    .calc input { width: 100%; min-height: 48px; border: 1.5px solid var(--ctl); border-radius: 4px; padding: .6rem 2.4rem .6rem .8rem; font: inherit; font-size: 1rem; font-weight: 400; background: var(--card); color: var(--text); }
+    .calc input:focus-visible { outline: 3px solid var(--mag-2); outline-offset: 1px; }
+    .calc .munit > span { position: absolute; right: .8rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 400; pointer-events: none; }
+    .calc-res { display: grid; gap: .4rem; justify-items: start; padding-top: .3rem; }
+    .calc-res b { font-size: 1.15rem; }
+    .calc-res span { color: var(--muted); }
+    .calc-res .btn { margin-top: .4rem; }
+    @media (max-width: 420px) { .calc-campos { grid-template-columns: minmax(0, 1fr); } }
+    @media (min-width: 900px) { .tallas { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; } .tallas .guia { position: sticky; top: 92px; } }
     .guia img { width: min(100%, 760px); margin-inline: auto; border-radius: var(--radius); border: 1px solid var(--line); }
     .measure .diagrama { width: min(100%, 340px); margin-inline: auto; }
 
@@ -741,7 +769,23 @@
         <ol id="measures"></ol>
         <div class="diagrama" id="diagrama-guia"></div>
       </div>
-      <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
+      <div class="tallas">
+        <div class="tallas-main">
+          <h3>Tabla de tallas</h3>
+          <div class="tabla-wrap"><table class="tabla" id="tabla-tallas"></table></div>
+          <form class="calc" id="calc" novalidate>
+            <h3>Calcula tu talla</h3>
+            <p class="lead">Mídete con un metro de costura, sin apretar, y escribe tus medidas en centímetros.</p>
+            <div class="calc-campos">
+              <label for="t-busto">Busto<span class="munit"><input id="t-busto" type="number" inputmode="decimal" min="60" max="160" step="0.5" placeholder="Ej: 98"><span aria-hidden="true">cm</span></span></label>
+              <label for="t-cintura">Cintura<span class="munit"><input id="t-cintura" type="number" inputmode="decimal" min="50" max="160" step="0.5" placeholder="Ej: 80"><span aria-hidden="true">cm</span></span></label>
+              <label for="t-cadera">Cadera<span class="munit"><input id="t-cadera" type="number" inputmode="decimal" min="60" max="180" step="0.5" placeholder="Ej: 110"><span aria-hidden="true">cm</span></span></label>
+            </div>
+            <div class="calc-res" aria-live="polite"><b id="r-tallas"></b><span id="r-nota"></span><a class="btn btn-dark" id="r-cta" href="#modelos">Ver modelos</a></div>
+          </form>
+        </div>
+        <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
+      </div>
     </div>
   </section>
 
@@ -1033,6 +1077,18 @@
       ],
       // Imagen de la guía de tallas (confirmar con la dueña)
       guiaTallas: "img/guia-tallas.webp",
+      // Tabla de tallas (de la foto de la guía de la dueña), en cm. La calculadora usa estos valores
+      tallas: {
+        orden: ["S", "M", "L", "XL"],
+        blusa: {
+          S: { busto: 96, cintura: 78, cadera: 104, largo: 68 }, M: { busto: 100, cintura: 84, cadera: 108, largo: 69 },
+          L: { busto: 108, cintura: 90, cadera: 114, largo: 70 }, XL: { busto: 112, cintura: 96, cadera: 120, largo: 72 },
+        },
+        pantalon: {
+          S: { cintura: 78, cadera: 104, largo: 102, largoRodilla: 60, contornoRodilla: 22 }, M: { cintura: 84, cadera: 108, largo: 104, largoRodilla: 61.5, contornoRodilla: 23 },
+          L: { cintura: 90, cadera: 114, largo: 106, largoRodilla: 63, contornoRodilla: 24 }, XL: { cintura: 96, cadera: 120, largo: 106, largoRodilla: 64.5, contornoRodilla: 25 },
+        },
+      },
       // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO
       look: {
         modelo: "kaill", color: "Azul rey", foto: "img/kaill-azul-rey.webp", alt: "Uniforme Kaill en azul rey, puesto",
@@ -1365,6 +1421,38 @@
       if (lista.length > 4) Promise.all(lista.map(m => fotoCarga(m.foto))).then(r => { if (turno === recoTurno && r.some(Boolean)) poner(lista.slice(4)); });
     }
     const listaY = a => a.length > 1 ? a.slice(0, -1).join(", ") + " o " + a[a.length - 1] : a.join("");
+    // Tabla de tallas y calculadora (datos en NEGOCIO.tallas)
+    function renderTallas() {
+      const T = NEGOCIO.tallas, o = T.orden;
+      const fila = (nombre, prenda, k) => `<tr><th scope="row">${nombre}</th>${o.map(t => `<td data-t="${t}" data-p="${prenda}">${T[prenda][t][k]}</td>`).join("")}</tr>`;
+      const grupo = n => `<tr class="grupo"><th colspan="${o.length + 1}" scope="colgroup">${n}</th></tr>`;
+      $("tabla-tallas").innerHTML = `<caption>Tabla de medidas de Multicostura, en centímetros</caption>
+        <thead><tr><th scope="col">Medida (cm)</th>${o.map(t => `<th scope="col" data-t="${t}">${t}</th>`).join("")}</tr></thead>
+        <tbody>${grupo("Blusa")}${fila("Busto", "blusa", "busto")}${fila("Cintura", "blusa", "cintura")}${fila("Cadera", "blusa", "cadera")}${fila("Largo blusa", "blusa", "largo")}
+        ${grupo("Pantalón")}${fila("Cintura", "pantalon", "cintura")}${fila("Cadera", "pantalon", "cadera")}${fila("Largo pantalón", "pantalon", "largo")}${fila("Largo rodilla", "pantalon", "largoRodilla")}${fila("Contorno rodilla", "pantalon", "contornoRodilla")}</tbody>`;
+      $("calc").addEventListener("input", () => calcTalla());
+      $("calc").addEventListener("submit", e => e.preventDefault());
+      calcTalla();
+    }
+    // Primera talla (en orden) cuya tabla cubre todas las medidas dadas; null si pasa de la última
+    const tallaDe = (prenda, med) => NEGOCIO.tallas.orden.find(t => Object.entries(med).every(([k, v]) => v <= NEGOCIO.tallas[prenda][t][k])) || null;
+    // Sin argumentos lee el formulario y pinta el resultado; con medidas { busto, cintura, cadera } solo calcula.
+    function calcTalla(med) {
+      const leer = id => parseFloat($(id).value) || 0;
+      const m = med || { busto: leer("t-busto"), cintura: leer("t-cintura"), cadera: leer("t-cadera") };
+      const completo = m.busto > 0 && m.cintura > 0 && m.cadera > 0;
+      const b = completo ? tallaDe("blusa", m) : null, p = completo ? tallaDe("pantalon", { cintura: m.cintura, cadera: m.cadera }) : null;
+      if (med) return { blusa: b, pantalon: p };
+      let res, nota, cta = ["Ver modelos", "#modelos", "btn-dark"];
+      if (!completo) { res = "Escribe tus medidas"; nota = "Con busto, cintura y cadera te decimos la talla de blusa y de pantalón."; }
+      else if (!b || !p) { res = `Blusa ${b || "a medida"} · Pantalón ${p || "a medida"}`; nota = "Pasas la talla XL: te la hacemos a tu medida para que no te quede justo."; cta = ["Agendar mis medidas", "#agenda", "btn-mag"]; }
+      else if (b !== p) { res = `Blusa ${b} · Pantalón ${p}`; nota = `Pide blusa ${b} y pantalón ${p} al hacer tu pedido.`; }
+      else { res = `Blusa ${b} · Pantalón ${p}`; nota = `Te queda la talla ${b} en blusa y pantalón.`; }
+      $("r-tallas").textContent = res; $("r-nota").textContent = nota;
+      Object.assign($("r-cta"), { textContent: cta[0], href: cta[1], className: "btn " + cta[2] });
+      document.querySelectorAll("#tabla-tallas [data-t]").forEach(c => c.classList.toggle("on", c.tagName === "TH" ? (c.dataset.t === b || c.dataset.t === p) : c.dataset.t === (c.dataset.p === "blusa" ? b : p)));
+      return { blusa: b, pantalon: p };
+    }
     function renderLook() {
       const L = NEGOCIO.look, m = NEGOCIO.modelos.find(x => x.id === L.modelo);
       $("look").classList.toggle("hidden", !m);
@@ -1933,7 +2021,7 @@
         movil.addEventListener("change", sync);
       }
     }
-    renderProfs(); renderModels(); renderRecomendados(); renderLook(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
+    renderProfs(); renderModels(); renderRecomendados(); renderLook(); renderTallas(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
     loadBusy().then(renderAgenda);
   </script>
 </body>
