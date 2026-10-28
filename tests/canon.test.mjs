@@ -253,8 +253,10 @@ test("¿CUÁL ES EL UNIFORME PARA TI? shows the three buying modes with price an
   assert.doesNotMatch(css, /\.tile\s*\{[^}]*linear-gradient/);
 });
 
-test("testimonials and the social grid stay hidden while every entry is an example; the FAQ accordion stays", () => {
-  assert.match(dom.match(/<section[^>]*id="testimonios"[^>]*>/)[0], /\bhidden\b/);
+// changed: the two real Facebook reviews are configured, so testimonials show; the social grid still has only examples
+test("testimonials show the real reviews, the social grid stays hidden while every entry is an example; the FAQ accordion stays", () => {
+  assert.doesNotMatch(dom.match(/<section[^>]*id="testimonios"[^>]*>/)[0], /\bhidden\b/);
+  assert.equal(count(section(dom, "testimonios"), 'class="quote-card"'), 2);
   assert.match(dom.match(/<section[^>]*id="clientas"[^>]*>/)[0], /\bhidden\b/);
   assert.ok(count(section(dom, "faq"), 'class="faq-q"') >= 5);
 });
@@ -270,7 +272,10 @@ test("footer has Contacto, Centro de ayuda and Explora columns and invents no po
     assert.ok(at(dom, id) > -1, `#${id} exists`);
   }
   for (const id of ["modelos", "personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
-  assert.doesNotMatch(dom, /devoluci|garant[ií]a|reembolso|cambios y/i);
+  // changed: the only policy is the client's own (Instagram highlight "INFORMACIÓN"), and it lives in the FAQ
+  const sinFaq = dom.replace(section(dom, "faq"), "").replaceAll("¿Hacen arreglos o devoluciones?", ""); // the question is also a chatbot chip
+  assert.doesNotMatch(sinFaq, /devoluci|garant[ií]a|reembolso|cambios y/i);
+  assert.match(section(dom, "faq"), /No se hace devolución de dinero/);
 });
 
 // ---- C5 QA: the no-photo silhouette matches the garment (trousers alone, long coat) ----

@@ -43,9 +43,10 @@ test("photo grid renders only tiles whose photo loaded and hides itself when non
 });
 
 test("testimonials stay hidden while every entry is an example and real ones show up on their own", () => {
-  assert.match(tag(dom, "testimonios"), /class="[^"]*\bhidden\b/);
-  assert.doesNotMatch(dom, /Texto de ejemplo/);
-  const html = strip(render({ inject: 'NEGOCIO.testimonios.push({ nombre: "Ana", oficio: "Odontóloga", texto: "Me quedó perfecto" }); renderTestimonios();' }).html);
+  const ej = strip(render({ inject: 'NEGOCIO.testimonios = [{ nombre: "X", oficio: "Y", texto: "Texto de ejemplo", ejemplo: true }]; renderTestimonios();' }).html);
+  assert.match(tag(ej, "testimonios"), /class="[^"]*\bhidden\b/);
+  assert.doesNotMatch(ej.replace(/<script[\s\S]*?<\/script>/g, ""), /Texto de ejemplo<\/p>/);
+  const html = strip(render({ inject: 'NEGOCIO.testimonios = [{ nombre: "Z", oficio: "Y", texto: "Texto de ejemplo", ejemplo: true }, { nombre: "Ana", oficio: "Odontóloga", texto: "Me quedó perfecto" }]; renderTestimonios();' }).html);
   assert.doesNotMatch(tag(html, "testimonios"), /\bhidden\b/);
   const s = section(html, "testimonios");
   assert.equal(count(s, 'class="quote-card"'), 1, "examples are never shown beside real ones");

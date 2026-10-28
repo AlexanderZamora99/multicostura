@@ -20,7 +20,7 @@ test("lower page order: testimonials, FAQ, photo grid, then footer", () => {
 // changed: example entries are no longer shown or marked, the whole section stays hidden until a real one exists (see honesto.test.mjs)
 test("testimonials: one card per real NEGOCIO.testimonios entry, arrows are labelled", () => {
   const s = section(dom, "testimonios");
-  assert.equal(count(s, 'class="quote-card"'), 0);
+  assert.equal(count(s, 'class="quote-card"'), 2); // changed: the two real Facebook reviews
   assert.match(s, /aria-label="Testimonios anteriores"/);
   assert.match(s, /aria-label="Testimonios siguientes"/);
   const html = strip(render({ inject: 'NEGOCIO.testimonios = [{ nombre: "Ana", oficio: "Odontóloga", texto: "Me quedó perfecto" }]; renderTestimonios();' }).html);

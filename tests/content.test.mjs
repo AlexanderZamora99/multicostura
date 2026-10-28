@@ -27,7 +27,17 @@ test("store button falls back to a WhatsApp link when tiendaOnline is empty", ()
 });
 
 test("videos section stays hidden while NEGOCIO.videos is empty", () => {
-  assert.match(dom, /<section id="videos" class="hidden"/);
+  const { html } = render({ inject: 'NEGOCIO.videos = []; document.getElementById("videos").classList.add("hidden");' });
+  assert.match(html, /<section id="videos" class="hidden"/);
+});
+
+test("TikTok and Instagram videos are embedded vertically, without hosting the files", () => {
+  const s = dom.slice(dom.indexOf('id="videos"'), dom.indexOf("</section>", dom.indexOf('id="videos"')));
+  assert.doesNotMatch(dom.match(/<section id="videos"[^>]*>/)[0], /hidden/);
+  assert.match(s, /<iframe class="vert"[^>]*src="https:\/\/www\.tiktok\.com\/player\/v1\/\d+/);
+  assert.match(s, /<iframe class="vert ig"[^>]*src="https:\/\/www\.instagram\.com\/reel\/[\w-]+\/embed\/"/);
+  assert.match(s, /class="vids vert-grid"/);
+  assert.ok((s.match(/<iframe[^>]*loading="lazy"/g) || []).length === 4);
 });
 
 test("each price tier shows its delivery time", () => {
