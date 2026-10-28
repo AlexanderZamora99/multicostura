@@ -53,11 +53,7 @@ const ICO = {
 function cabecera(actual) {
   const nav = [["catalogo.html", "Catálogo"], ["producto.html?m=kaill", "Diseña"], ["inicio.html#medidas", "Agenda medidas"], ["#", "Empresas"], ["#", "Bonos regalo"]];
   return `
-  <div class="barra"><ul>
-    <li>${ICO.truck} Envíos a toda Colombia</li>
-    <li>${ICO.scissors} Casi 10 años confeccionando para mujer</li>
-    <li>${ICO.ruler} Te tomamos medidas en el taller, a domicilio o desde casa</li>
-  </ul></div>
+  <div class="barra"><ul><li>Agenda tu toma de medidas: en el taller, a domicilio en Tuluá o desde tu casa</li></ul></div>
   <header class="cabecera"><div class="contenedor">
     <a class="logo" href="inicio.html" aria-label="Multicostura, inicio"><span class="logo-m" aria-hidden="true">m</span><span><b>MULTICOSTURA</b><small>Uniformes médicos</small></span></a>
     <nav class="nav" aria-label="Principal">${nav.map(([h, t]) => `<a href="${h}"${t === actual ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
@@ -70,7 +66,7 @@ function cabecera(actual) {
 function pie() {
   return `
   <footer class="pie"><div class="contenedor">
-    <div><a class="logo" href="inicio.html" style="color:#fff"><span class="logo-m">m</span><span><b>MULTICOSTURA</b><small style="color:#a9a6b0">Uniformes médicos</small></span></a>
+    <div><a class="logo" href="inicio.html"><span class="logo-m">m</span><span><b>MULTICOSTURA</b><small>Uniformes médicos</small></span></a>
       <p style="max-width:34ch">Taller de uniformes médicos para mujer en Tuluá. Cortamos, cosemos y bordamos en el mismo lugar.</p></div>
     <div><h3>Comprar</h3><ul><li><a href="catalogo.html">Catálogo</a></li><li><a href="producto.html?m=kaill">Diseña tu uniforme</a></li><li><a href="#">Ver disponibles en tienda</a></li><li><a href="#">Bonos regalo</a></li></ul></div>
     <div><h3>Ayuda</h3><ul><li><a href="inicio.html#talla">Calcula tu talla</a></li><li><a href="inicio.html#medidas">Cómo tomar tus medidas</a></li><li><a href="inicio.html#preguntas">Preguntas frecuentes</a></li><li><a href="#">Uniformes para empresas</a></li></ul></div>

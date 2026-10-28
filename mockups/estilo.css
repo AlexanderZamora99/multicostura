@@ -11,10 +11,10 @@
   --negro: #000;
   --blanco: #fff;
   --wa: #25d366;
-  --display: "Bricolage Grotesque", system-ui, sans-serif;
-  --texto: "Figtree", system-ui, sans-serif;
-  --r-s: 6px;
-  --r-m: 14px;
+  --display: "Open Sans", system-ui, sans-serif;
+  --texto: "Open Sans", system-ui, sans-serif;
+  --r-s: 4px;
+  --r-m: 6px;
   --ancho: min(1240px, 100% - 32px);
 }
 * { box-sizing: border-box; }
@@ -25,15 +25,15 @@ a { color: inherit; }
 button { font: inherit; cursor: pointer; }
 :focus-visible { outline: 3px solid var(--fucsia-2); outline-offset: 2px; }
 .contenedor { width: var(--ancho); margin-inline: auto; }
-h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; margin: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: 0; line-height: 1.15; margin: 0; }
 h2 { font-size: clamp(1.7rem, 3.2vw, 2.6rem); }
-h3 { font-size: 1.2rem; letter-spacing: -.01em; }
+h3 { font-size: 1.1rem; }
 .lead { color: var(--piedra); max-width: 56ch; margin: .6rem 0 0; }
 
 /* Barra superior negra con los datos del negocio */
-.barra { background: var(--negro); color: #fff; font-size: .86rem; }
-.barra ul { list-style: none; margin: 0 auto; padding: 0; width: var(--ancho); display: flex; justify-content: space-between; gap: 1rem; min-height: 38px; align-items: center; }
-.barra li { display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.barra { background: var(--fucsia); color: #fff; font-size: .9rem; font-weight: 600; }
+.barra ul { list-style: none; margin: 0 auto; padding: 0; width: var(--ancho); display: flex; justify-content: center; text-align: center; gap: 1rem; min-height: 38px; align-items: center; }
+.barra li { display: flex; align-items: center; gap: .5rem; }
 .barra svg { width: 17px; height: 17px; }
 
 /* Encabezado */
@@ -91,12 +91,12 @@ h3 { font-size: 1.2rem; letter-spacing: -.01em; }
 .tarjeta .muestras { position: relative; z-index: 2; }
 
 /* Pie */
-.pie { background: var(--negro); color: #c9c7cf; padding: 4rem 0 6rem; font-size: .95rem; }
+.pie { background: #ebeaed; color: #55525b; padding: 4rem 0 6rem; font-size: .95rem; }
 .pie .contenedor { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 2rem; }
-.pie h3 { color: #fff; font-size: 1rem; margin-bottom: .9rem; }
+.pie h3 { color: var(--grafito); text-transform: uppercase; font-weight: 600; letter-spacing: .02em; font-size: 1rem; margin-bottom: .9rem; }
 .pie ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .45rem; }
 .pie a { text-decoration: none; }
-.pie a:hover { color: #fff; text-decoration: underline; }
+.pie a:hover { color: var(--fucsia-2); text-decoration: underline; }
 
 /* Botones flotantes */
 .flotante { position: fixed; right: 20px; bottom: 20px; z-index: 30; width: 58px; height: 58px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.22); }
@@ -121,3 +121,9 @@ h3 { font-size: 1.2rem; letter-spacing: -.01em; }
   body { padding-bottom: 64px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* Títulos de sección al estilo de la referencia: centrados, en mayúscula, con una línea debajo */
+.titulo { text-align: center; margin: 0 auto 2.2rem; max-width: 760px; }
+.titulo h2 { text-transform: uppercase; font-weight: 700; font-size: clamp(1.45rem, 2.6vw, 2rem); letter-spacing: .01em; text-wrap: balance; }
+.titulo p { color: var(--piedra); margin: .6rem auto 0; max-width: 64ch; }
+.centro { display: flex; justify-content: center; margin-top: 2.2rem; }

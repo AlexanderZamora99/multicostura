@@ -34,56 +34,102 @@
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="estilo.css">
 <style>
-  /* Portada: carrusel de modelos; el color elegido tiñe el escenario y se elige sobre la misma foto */
-  .portada { --c: #2456b8; background: color-mix(in srgb, var(--c) 16%, #f4f3f6); transition: background .5s; overflow: hidden; }
-  .portada .contenedor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; padding-block: 2.5rem 3rem; }
-  .portada h1 { font-size: clamp(2.4rem, 5.2vw, 4.3rem); font-weight: 800; letter-spacing: -.035em; max-width: 13ch; text-wrap: balance; }
-  .portada .lead { font-size: 1.1rem; color: #48454e; margin-top: 1rem; }
-  .portada .botones { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.6rem; }
-  .sello { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin: 1.6rem 0 0; padding: 0; list-style: none; font-size: .92rem; font-weight: 600; }
-  .sello li { display: flex; align-items: center; gap: .4rem; }
-  .sello svg { width: 18px; height: 18px; color: var(--fucsia-2); }
-  .escenario { position: relative; display: grid; grid-template-columns: 1fr 84px; gap: 14px; align-items: end; }
-  .escenario .foto { border-radius: 22px; box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--c) 60%, #000); }
-  /* Selector de color encima de la foto: se cambia sin bajar ni subir */
-  .selector { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: .6rem; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border-radius: 14px; padding: .55rem .7rem .55rem .9rem; }
-  .selector .que { line-height: 1.2; min-width: 0; }
-  .selector .que b { font: 700 1.05rem/1.1 var(--display); display: block; }
-  .selector .que span { font-size: .82rem; color: var(--piedra); white-space: nowrap; }
-  .selector .muestras { flex-wrap: nowrap; }
-  .selector a { font-weight: 700; font-size: .85rem; color: var(--fucsia-2); white-space: nowrap; }
-  .miniaturas { display: grid; gap: 10px; }
-  .miniaturas button { padding: 0; border: 0; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 5; background: #fff; opacity: .7; }
-  .miniaturas button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--fucsia-2); }
-  .miniaturas img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); }
-  .control { display: flex; align-items: center; gap: .5rem; margin-top: 1.4rem; }
-  .control .icono-btn { background: rgba(255,255,255,.7); border-color: transparent; }
-  .puntos { display: flex; gap: 6px; margin-left: .4rem; }
-  .puntos button { width: 26px; height: 26px; border: 0; background: none; padding: 0; display: grid; place-items: center; }
-  .puntos button span { width: 8px; height: 8px; border-radius: 99px; background: rgba(38,36,43,.3); transition: width .3s; }
-  .puntos button[aria-current] span { width: 26px; background: var(--grafito); }
+  /* Banner a todo el ancho, como la referencia: cada diapositiva es una campaña armada con fotos reales */
+  .banner { position: relative; background: #e9e8ec; overflow: hidden; }
+  .diapo { display: none; grid-template-columns: minmax(0, .9fr) minmax(0, 1.6fr); align-items: stretch; min-height: clamp(420px, 40vw, 560px); }
+  .diapo.activa { display: grid; animation: entra .6s ease; }
+  @keyframes entra { from { opacity: .3; } to { opacity: 1; } }
+  .diapo .texto { display: grid; align-content: center; gap: .9rem; padding: 2rem max(16px, calc((100vw - 1240px) / 2)); padding-right: 2rem; }
+  .diapo .kicker { font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: .85rem; color: var(--piedra); }
+  .diapo h2 { font-size: clamp(2.4rem, 5vw, 4.4rem); font-weight: 800; text-transform: uppercase; line-height: .98; letter-spacing: -.01em; }
+  .diapo .sub { font-size: clamp(1.1rem, 1.6vw, 1.45rem); text-transform: uppercase; letter-spacing: .06em; }
+  .diapo .muestras { margin: .2rem 0 .4rem; }
+  .diapo .muestra { width: 34px; height: 34px; }
+  .diapo .muestra span { width: 24px; height: 24px; }
+  .diapo .btn { justify-self: start; }
+  .fotos-diapo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .fotos-diapo button { padding: 0; border: 0; background: none; overflow: hidden; position: relative; cursor: pointer; }
+  .fotos-diapo img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; transform: scale(1.12); transition: transform .5s; }
+  .fotos-diapo button:hover img { transform: scale(1.16); }
+  .fotos-diapo button span { position: absolute; left: 12px; bottom: 12px; background: rgba(255,255,255,.92); border-radius: 99px; padding: .25rem .7rem; font-size: .8rem; font-weight: 700; }
+  .banner-ctrl { position: absolute; right: max(16px, calc((100vw - 1240px) / 2)); bottom: 16px; display: flex; gap: .4rem; align-items: center; z-index: 3; }
+  .banner-ctrl .icono-btn { width: 38px; height: 38px; background: rgba(255,255,255,.85); border: 0; }
+  .puntos { display: flex; gap: 2px; background: rgba(255,255,255,.85); border-radius: 99px; padding: 0 6px; }
+  .puntos button { width: 24px; height: 38px; border: 0; background: none; padding: 0; display: grid; place-items: center; }
+  .puntos button span { width: 8px; height: 8px; border-radius: 99px; background: rgba(38,36,43,.35); }
+  .puntos button[aria-current] span { width: 12px; height: 12px; background: none; box-shadow: 0 0 0 2px var(--grafito); }
 
-  /* ¿Cómo lo quieres? Tres caminos, cada uno con su acción */
-  .caminos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .camino { background: #fff; border: 1px solid var(--linea); border-radius: 18px; padding: 1.6rem; display: grid; gap: .9rem; align-content: start; }
-  .camino.destacado { border: 2px solid var(--fucsia); }
-  .camino .para { font-size: .95rem; color: var(--piedra); margin: 0; }
-  .camino h3 { font-size: 1.45rem; }
-  .camino .cifras { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; border-block: 1px solid var(--linea); padding: .8rem 0; }
-  .camino .cifras b { font: 800 1.7rem/1 var(--display); letter-spacing: -.02em; }
-  .camino .cifras span { font-weight: 700; color: var(--fucsia-2); font-size: .92rem; text-align: right; }
-  .camino ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; font-size: .95rem; }
-  .camino li { display: grid; grid-template-columns: 20px 1fr; gap: .5rem; }
-  .camino li svg { width: 18px; height: 18px; margin-top: 3px; color: var(--fucsia-2); }
-  .camino .btn { width: 100%; margin-top: .3rem; }
-  .duda { margin-top: 1.4rem; display: flex; gap: .4rem 1rem; flex-wrap: wrap; align-items: center; justify-content: center; font-weight: 600; }
+  /* Franja negra en movimiento con los datos del negocio */
+  .franja { background: var(--negro); color: #fff; overflow: hidden; }
+  .franja .pista { display: flex; width: max-content; animation: corre 40s linear infinite; }
+  .franja:hover .pista { animation-play-state: paused; }
+  .franja ul { display: flex; gap: 3rem; list-style: none; margin: 0; padding: .7rem 1.5rem; font-size: .95rem; }
+  .franja li { display: flex; gap: .5rem; align-items: center; white-space: nowrap; }
+  .franja svg { width: 18px; height: 18px; }
+  @keyframes corre { to { transform: translateX(-50%); } }
 
-  /* Calculadora de talla con la tabla real */
+  /* Tarjeta al estilo de la referencia: insignias redondas y etiqueta de tela */
+  .tarjeta .foto { border-radius: 0; background: #efeef1; }
+  .insignias { position: absolute; top: 10px; left: 10px; z-index: 2; display: grid; gap: 6px; }
+  .insignias span { width: 42px; height: 42px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .insignias svg { width: 22px; height: 22px; color: var(--grafito); }
+  .tela { position: absolute; right: 10px; bottom: 10px; z-index: 2; background: var(--fucsia); color: #fff; font-size: .72rem; font-weight: 700; border-radius: 99px; padding: .2rem .6rem; }
+  .tarjeta .etiqueta { left: auto; right: 10px; background: var(--grafito); color: #fff; }
+  .tarjeta h3 { font-size: .95rem; font-weight: 600; }
+  .tarjeta .precio { font-size: 1.05rem; font-weight: 600; }
+
+  /* Colecciones: mosaico a todo el ancho, uno alto y dos apilados */
+  .mosaico-col { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; min-height: 680px; }
+  .col { position: relative; overflow: hidden; display: flex; align-items: end; color: #fff; text-decoration: none; }
+  .col:first-child { grid-row: span 2; }
+  .col img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 22%; transform: scale(1.08); transition: transform .6s; }
+  .col:hover img { transform: scale(1.12); }
+  .col::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(0,0,0,.66)); }
+  .col div { position: relative; z-index: 1; padding: clamp(1.4rem, 3vw, 2.6rem); display: grid; gap: .6rem; max-width: 520px; }
+  .col h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+  .col p { margin: 0; }
+  .col .btn { justify-self: start; }
+
+  /* Confianza */
+  .confianza { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  .confianza div { display: grid; grid-template-columns: 40px 1fr; gap: .2rem .9rem; }
+  .confianza svg { width: 34px; height: 34px; grid-row: span 2; color: var(--fucsia-2); }
+  .confianza b { font-size: 1.02rem; }
+  .confianza span { color: var(--piedra); font-size: .92rem; }
+
+  /* ¿Cuál es el uniforme para ti? Tres fotos grandes, cada una con su acción */
+  .para-ti { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .pt { position: relative; overflow: hidden; border-radius: 8px; min-height: 520px; display: flex; align-items: end; color: #fff; }
+  .pt img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transform: scale(1.1); }
+  .pt::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 30%, rgba(0,0,0,.78)); }
+  .pt div { position: relative; z-index: 1; padding: 1.4rem; display: grid; gap: .5rem; width: 100%; }
+  .pt h3 { text-transform: uppercase; font-size: 1.5rem; font-weight: 800; }
+  .pt p { margin: 0; }
+  .pt .dato { display: flex; justify-content: space-between; gap: .5rem; border-top: 1px solid rgba(255,255,255,.35); padding-top: .6rem; margin-top: .2rem; font-weight: 700; }
+  .pt .btn { width: 100%; margin-top: .4rem; }
+  .pt .btn-borde { border-color: #fff; color: #fff; }
+  .pt .btn-borde:hover { background: #fff; color: var(--grafito); }
+
+  /* Videos */
+  .videos { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr); gap: 14px; overflow-x: auto; padding-bottom: .5rem; scroll-snap-type: x mandatory; }
+  .video { scroll-snap-align: start; display: grid; gap: 8px; }
+  .video .marco { position: relative; aspect-ratio: 9 / 14; border-radius: 8px; overflow: hidden; background: #ddd; }
+  .video img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: saturate(.9); }
+  .video .play { position: absolute; inset: 0; display: grid; place-items: center; }
+  .video .play span { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.9); display: grid; place-items: center; }
+  .video .play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .video .pendiente { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.6); color: #fff; font-size: .72rem; border-radius: 99px; padding: .2rem .6rem; }
+  .video .mini { display: grid; grid-template-columns: 44px 1fr; gap: .6rem; align-items: center; border: 1px solid var(--linea); border-radius: 6px; padding: .5rem; font-size: .85rem; }
+  .video .mini img { width: 44px; height: 54px; border-radius: 4px; transform: none; }
+  .video .mini b { display: block; }
+  .video .btn { min-height: 38px; padding: .4rem .8rem; font-size: .85rem; }
+
+  /* Calculadora de talla */
   .talla { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
-  .calc { background: #fff; border: 1px solid var(--linea); border-radius: 18px; padding: 1.6rem; display: grid; gap: 1rem; }
+  .calc { background: #fff; border: 1px solid var(--linea); border-radius: 8px; padding: 1.6rem; display: grid; gap: 1rem; }
   .campos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .campo label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: .3rem; }
   .campo .entrada { display: flex; align-items: center; border: 1.5px solid #8a8790; border-radius: var(--r-s); background: #fff; }
@@ -91,192 +137,182 @@
   .campo input::-webkit-inner-spin-button { -webkit-appearance: none; }
   .campo .entrada span { padding-right: .7rem; color: var(--piedra); font-size: .9rem; }
   .campo:focus-within .entrada { border-color: var(--fucsia-2); box-shadow: 0 0 0 3px var(--fucsia-suave); }
-  .resultado { border-radius: 14px; background: var(--tiza); padding: 1.1rem 1.2rem; display: grid; gap: .5rem; }
-  .resultado .tallas-res { display: flex; gap: 1.6rem; flex-wrap: wrap; }
-  .resultado .tallas-res div span { display: block; font-size: .85rem; color: var(--piedra); }
-  .resultado .tallas-res b { font: 800 2.4rem/1 var(--display); }
+  .resultado { border-radius: 8px; background: var(--tiza); padding: 1.1rem 1.2rem; display: grid; gap: .5rem; }
+  .tallas-res { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+  .tallas-res div span { display: block; font-size: .85rem; color: var(--piedra); }
+  .tallas-res b { font: 800 2.3rem/1 var(--display); }
   .resultado p { margin: 0; font-size: .95rem; }
-  .tabla-mini { width: 100%; border-collapse: collapse; font-size: .92rem; font-variant-numeric: tabular-nums; }
-  .tabla-mini th, .tabla-mini td { padding: .45rem .4rem; text-align: center; border-bottom: 1px solid var(--linea); }
+  .tabla-mini { width: 100%; border-collapse: collapse; font-size: .92rem; font-variant-numeric: tabular-nums; background: #fff; }
+  .tabla-mini th, .tabla-mini td { padding: .5rem .4rem; text-align: center; border-bottom: 1px solid var(--linea); }
   .tabla-mini th:first-child, .tabla-mini td:first-child { text-align: left; }
-  .tabla-mini td.on, .tabla-mini th.on { background: var(--fucsia-suave); color: var(--fucsia-2); font-weight: 700; }
+  .tabla-mini .on { background: var(--fucsia-suave); color: var(--fucsia-2); font-weight: 700; }
 
-  /* Cómo funciona: es una secuencia real, por eso va numerada */
-  .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: paso; list-style: none; padding: 0; margin: 0; }
-  .pasos li { counter-increment: paso; padding: 1.4rem 1.4rem 0 0; border-top: 2px solid var(--grafito); position: relative; }
-  .pasos li::before { content: counter(paso); position: absolute; top: -17px; left: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--grafito); color: #fff; display: grid; place-items: center; font: 700 .95rem var(--display); }
-  .pasos h3 { margin-top: .6rem; }
-  .pasos p { color: var(--piedra); margin: .35rem 0 0; }
+  /* Descubre el look completo: puntos sobre la foto */
+  .look { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); background: #efeef1; }
+  .look-foto { position: relative; aspect-ratio: 4 / 5; max-height: 820px; width: 100%; overflow: hidden; }
+  .look-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .punto { position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.45); display: grid; place-items: center; cursor: pointer; }
+  .punto::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(214,36,127,.0); transition: box-shadow .2s; }
+  .punto[aria-pressed="true"]::after { background: var(--fucsia); box-shadow: 0 0 0 4px #fff; }
+  .look-info { padding: clamp(2rem, 4vw, 3.5rem); display: grid; align-content: center; gap: 1rem; }
+  .look-info h2 { text-transform: uppercase; font-size: clamp(1.45rem, 2.6vw, 2rem); }
+  .look-item { background: #fff; border-radius: 8px; padding: 1.2rem; display: grid; gap: .4rem; }
+  .look-item b { font-size: 1.15rem; }
+  .look-item p { margin: 0; color: var(--piedra); }
 
   /* Medidas */
   .medidas { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .medidas h2 { text-transform: uppercase; font-size: clamp(1.45rem, 2.6vw, 2rem); }
   .opciones { display: grid; gap: 10px; }
-  .opcion { display: grid; grid-template-columns: 22px 1fr auto; gap: .9rem; align-items: center; background: #fff; border: 1.5px solid var(--linea); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer; }
+  .opcion { display: grid; grid-template-columns: 22px 1fr auto; gap: .9rem; align-items: center; background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 1rem 1.1rem; cursor: pointer; }
   .opcion input { width: 18px; height: 18px; accent-color: var(--fucsia-2); margin: 0; }
   .opcion:has(input:checked) { border-color: var(--fucsia-2); box-shadow: inset 0 0 0 1px var(--fucsia-2); }
-  .opcion h3 { font-size: 1.08rem; }
+  .opcion h3 { font-size: 1.05rem; }
   .opcion p { margin: .15rem 0 0; color: var(--piedra); font-size: .92rem; }
   .opcion .extra { font-weight: 700; font-size: .9rem; white-space: nowrap; }
   .medidas .btn-fucsia { width: 100%; margin-top: .4rem; }
 
-  /* Colecciones */
-  .colecciones { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
-  .coleccion { position: relative; border-radius: var(--r-m); overflow: hidden; min-height: 360px; display: flex; align-items: end; color: #fff; text-decoration: none; background: var(--grafito); }
-  .coleccion img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transform: scale(1.08); transition: transform .5s; }
-  .coleccion:hover img { transform: scale(1.13); }
-  .coleccion::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(0,0,0,.72)); }
-  .coleccion div { position: relative; z-index: 1; padding: 1.4rem; display: grid; gap: .2rem; }
-  .coleccion h3 { font-size: 1.6rem; }
-  .coleccion p { margin: 0; opacity: .9; }
-  .coleccion .ir { margin-top: .6rem; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
-  .coleccion.sin-foto { background: var(--niebla); color: var(--grafito); }
-  .coleccion.sin-foto::after { display: none; }
-
-  /* Empresas y bono */
+  /* Reseñas, empresas y bono */
+  .resenas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .resena { border: 1.5px dashed var(--linea); border-radius: 8px; padding: 1.2rem; text-align: center; color: var(--piedra); font-size: .92rem; display: grid; gap: .4rem; place-items: center; min-height: 180px; }
   .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .panel { border-radius: 18px; padding: clamp(1.6rem, 3vw, 2.4rem); display: grid; gap: .9rem; align-content: start; }
+  .panel { border-radius: 8px; padding: clamp(1.6rem, 3vw, 2.4rem); display: grid; gap: .9rem; align-content: start; }
+  .panel h2 { text-transform: uppercase; font-size: clamp(1.3rem, 2.2vw, 1.7rem); }
   .panel.oscuro { background: var(--grafito); color: #fff; }
   .panel.oscuro .lead { color: #cfcdd4; }
   .panel.claro { background: var(--fucsia-suave); }
   .panel ul { margin: 0; padding-left: 1.1em; display: grid; gap: .3rem; }
   .panel .btn { justify-self: start; }
   .panel.oscuro .btn-borde { border-color: #fff; color: #fff; }
-  .panel.oscuro .btn-borde:hover { background: #fff; color: var(--grafito); }
   .montos { display: flex; gap: 8px; flex-wrap: wrap; }
   .montos span { background: #fff; border-radius: 99px; padding: .4rem .9rem; font-weight: 700; }
 
-  /* Taller */
+  /* Preguntas, ubicación y redes */
+  .faq { max-width: 860px; margin: 0 auto; }
+  .faq details { border-top: 1px solid var(--linea); }
+  .faq details:last-child { border-bottom: 1px solid var(--linea); }
+  .faq summary { list-style: none; cursor: pointer; padding: 1.1rem 0; font-weight: 700; display: flex; justify-content: space-between; gap: 1rem; }
+  .faq summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin: 4px 6px 0 0; transition: transform .2s; }
+  .faq details[open] summary::after { transform: rotate(225deg); margin-top: 10px; }
+  .faq details p { margin: 0 0 1.1rem; color: var(--piedra); }
   .taller { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-  .mapa { border-radius: var(--r-m); overflow: hidden; aspect-ratio: 4 / 3; background: var(--niebla); display: grid; place-items: center; text-align: center; color: var(--piedra); }
+  .taller h2 { text-transform: uppercase; font-size: clamp(1.45rem, 2.6vw, 2rem); }
+  .mapa { border-radius: 8px; aspect-ratio: 4 / 3; background: var(--niebla); display: grid; place-items: center; text-align: center; color: var(--piedra); }
   .mapa svg { width: 40px; height: 40px; color: var(--fucsia); }
   .horario { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1.2rem; margin: 1.4rem 0; font-size: .95rem; }
   .horario dt { font-weight: 700; }
   .horario dd { margin: 0; color: var(--piedra); }
-
-  /* Preguntas */
-  .preguntas { display: grid; grid-template-columns: 1fr 1.6fr; gap: clamp(2rem, 5vw, 5rem); }
-  .preguntas details { border-top: 1px solid var(--linea); }
-  .preguntas details:last-child { border-bottom: 1px solid var(--linea); }
-  .preguntas summary { list-style: none; cursor: pointer; padding: 1.05rem 0; font-weight: 700; display: flex; justify-content: space-between; gap: 1rem; }
-  .preguntas summary::after { content: "+"; font-size: 1.3rem; line-height: 1; color: var(--fucsia-2); }
-  .preguntas details[open] summary::after { content: "−"; }
-  .preguntas details p { margin: 0 0 1.1rem; color: var(--piedra); max-width: 64ch; }
-
-  /* Mosaico */
-  .mosaico { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .mosaico .foto { border-radius: 10px; }
-  .mosaico .foto:first-child { grid-row: span 2; aspect-ratio: auto; }
+  .redes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .redes .foto { aspect-ratio: 1; border-radius: 4px; }
+  .redes-t { text-transform: uppercase; font-size: clamp(1.3rem, 2.4vw, 1.9rem); margin-bottom: 1.6rem; }
+  .redes-t a { color: var(--fucsia-2); text-decoration: none; }
 
   @media (max-width: 960px) {
-    .portada .contenedor { grid-template-columns: 1fr; padding-block: 1rem 2rem; gap: 1.2rem; }
-    .portada .texto { order: 2; }
-    .portada h1 { font-size: 2.2rem; }
-    .portada .lead { font-size: 1rem; margin-top: .6rem; }
-    .portada .botones .btn { flex: 1 1 100%; }
-    .escenario { grid-template-columns: 1fr; }
-    .miniaturas { display: none; }
-    .control { margin-top: 1rem; }
-    .caminos, .talla, .medidas, .taller, .dos, .preguntas, .colecciones { grid-template-columns: 1fr; }
-    .camino.destacado { order: -1; }
-    .pasos { grid-template-columns: 1fr; gap: 1.6rem; }
-    .pasos li { border-top: 0; border-left: 2px solid var(--grafito); padding: 0 0 0 1.6rem; }
-    .pasos li::before { top: -4px; left: -17px; }
-    .pasos h3 { margin-top: 0; }
-    .campos { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .diapo { grid-template-columns: 1fr; min-height: 0; }
+    .diapo .texto { order: 2; padding: 1.4rem 16px 4.2rem; gap: .6rem; }
+    .diapo h2 { font-size: 2.5rem; }
+    .fotos-diapo { height: 360px; }
+    .fotos-diapo button:nth-child(3) { display: none; }
+    .fotos-diapo { grid-template-columns: 1fr 1fr; }
+    .banner-ctrl { right: 16px; bottom: 14px; }
+    .mosaico-col { grid-template-columns: 1fr; grid-template-rows: none; min-height: 0; }
+    .col, .col:first-child { grid-row: auto; min-height: 380px; }
+    .confianza { grid-template-columns: 1fr 1fr; }
+    .para-ti { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; }
+    .pt { scroll-snap-align: start; min-height: 480px; }
+    .talla, .look, .medidas, .dos, .taller { grid-template-columns: 1fr; }
+    .confianza { grid-template-columns: 1fr; }
+    .campos { gap: 6px; }
     .campo input { padding: 0 .5rem; }
-    .coleccion { min-height: 230px; }
     .opcion { grid-template-columns: 22px 1fr; }
     .opcion .extra { grid-column: 2; }
-    .mosaico { grid-template-columns: repeat(2, 1fr); }
-    .mosaico .foto:first-child { grid-column: span 2; grid-row: auto; aspect-ratio: 4/5; }
+    .resenas { grid-template-columns: 1fr 1fr; }
+    .redes { grid-template-columns: 1fr 1fr; }
   }
+  @media (prefers-reduced-motion: reduce) { .franja .pista { animation: none; } }
 </style>
 </head>
 <body>
 <div id="cab"></div>
 <main>
-  <section class="portada" aria-roledescription="carrusel" aria-label="Modelos destacados">
+  <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Multicostura, uniformes médicos para mujer en Tuluá</h1>
+
+  <section class="banner" aria-roledescription="carrusel" aria-label="Campañas">
+    <div id="diapos"></div>
+    <div class="banner-ctrl">
+      <button class="icono-btn" id="b-pausa" aria-label="Pausar el carrusel"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="6" width="3.5" height="12" rx="1"/><rect x="13.5" y="6" width="3.5" height="12" rx="1"/></svg></button>
+      <div class="puntos" id="b-puntos"></div>
+    </div>
+  </section>
+
+  <div class="franja" aria-label="Datos de Multicostura"><div class="pista" id="pista"></div></div>
+
+  <section class="seccion">
     <div class="contenedor">
-      <div class="texto">
-        <h1>Uniformes médicos para mujer, hechos en Tuluá</h1>
-        <p class="lead" id="p-texto">Conjuntos de blusa y pantalón en tela antifluido. Elige el modelo, míralo en tu color y pídelo en tu talla o a tu medida.</p>
-        <div class="botones">
-          <a class="btn btn-fucsia" id="p-cta" href="producto.html?m=kaill">Pedir este modelo</a>
-          <a class="btn btn-borde" href="catalogo.html">Ver los 13 modelos</a>
-        </div>
-        <ul class="sello">
-          <li data-i="check">Desde $159.000</li>
-          <li data-i="check">Envíos a toda Colombia</li>
-          <li data-i="check">Pedido por WhatsApp</li>
-        </ul>
-        <div class="control">
-          <button class="icono-btn" id="p-ant" aria-label="Modelo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
-          <button class="icono-btn" id="p-sig" aria-label="Modelo siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
-          <button class="icono-btn" id="p-pausa" aria-label="Pausar el carrusel"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="6" width="3.5" height="12" rx="1"/><rect x="13.5" y="6" width="3.5" height="12" rx="1"/></svg></button>
-          <div class="puntos" id="p-puntos"></div>
-        </div>
-      </div>
-      <div class="escenario">
-        <div class="foto">
-          <img id="p-foto" src="img/kaill-azul-rey.webp" alt="Uniforme médico Kaill en azul rey">
-          <div class="selector">
-            <div class="que"><b id="p-modelo">Kaill</b><span id="p-color">Azul rey, desde $159.000</span></div>
-            <ul class="muestras" id="p-muestras" aria-label="Ver en otro color"></ul>
-          </div>
-        </div>
-        <div class="miniaturas" id="p-minis"></div>
-      </div>
+      <div class="titulo"><h2>Nuestros recomendados</h2><p>Conjuntos de blusa y pantalón en antifluido. Toca un color para ver el modelo puesto.</p></div>
+      <div class="grilla" id="recomendados"></div>
+      <div class="centro"><a class="btn btn-fucsia" href="catalogo.html">Ver todo el catálogo</a></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="titulo contenedor"><h2>Explora nuestras colecciones</h2><p>Uniformes hechos solo para mujer, con un corte pensado para el cuerpo femenino y la jornada completa.</p></div>
+    <div class="mosaico-col">
+      <a class="col" href="catalogo.html"><img src="img/neru-fucsia.webp" alt=""><div><h3>Uniformes</h3><p>13 modelos de blusa y pantalón en antifluido elástico, en 18 colores.</p><span class="btn btn-fucsia">Ver uniformes</span></div></a>
+      <a class="col" href="catalogo.html"><img src="img/clasico-blanco-v.webp" alt=""><div><h3>Línea blancos</h3><p>Conjuntos blancos para laboratorio, odontología y consulta.</p><span class="btn btn-fucsia">Conoce la línea</span></div></a>
+      <a class="col" href="catalogo.html"><img src="img/bata-palo-rosa.webp" alt=""><div><h3>Batas y complementos</h3><p>Batas, pantalones sueltos, gorros quirúrgicos y medias de compresión.</p><span class="btn btn-fucsia">Descubre todo</span></div></a>
+    </div>
+  </section>
+
+  <section class="seccion gris" style="padding-block:3rem">
+    <div class="contenedor">
+      <div class="titulo" style="margin-bottom:1.8rem"><h2>Confianza en cada paso de tu pedido</h2></div>
+      <div class="confianza" id="confianza"></div>
     </div>
   </section>
 
   <section class="seccion">
     <div class="contenedor">
-      <div class="cabeza"><div><h2>Los más pedidos</h2><p class="lead">Toca un color para ver el modelo puesto en ese color. Todos se pueden pedir en cualquiera de los 18 colores.</p></div><a class="enlace" href="catalogo.html">Ver todo el catálogo</a></div>
-      <div class="grilla" id="recomendados"></div>
-    </div>
-  </section>
-
-  <section class="seccion gris" id="como">
-    <div class="contenedor">
-      <div class="cabeza"><div><h2>¿Cómo lo quieres?</h2><p class="lead">El mismo uniforme se puede comprar de tres formas. Cambia el precio y cuánto se demora.</p></div></div>
-      <div class="caminos" id="caminos"></div>
-      <p class="duda">¿No sabes cuál te sirve? <a class="enlace" href="#talla">Calcula tu talla</a> o <a class="enlace" href="#">pregúntanos por WhatsApp</a></p>
-    </div>
-  </section>
-
-  <section class="seccion" id="talla">
-    <div class="contenedor talla">
-      <div>
-        <h2>¿Cuál es tu talla?</h2>
-        <p class="lead">Mídete con un metro de costura, sin apretar, y escribe tus medidas. Te decimos la talla de blusa y de pantalón según nuestra tabla.</p>
-        <table class="tabla-mini" id="tabla" style="margin-top:1.6rem"></table>
-        <p class="lead" style="font-size:.88rem">Tabla de medidas de Multicostura, en centímetros.</p>
-      </div>
-      <form class="calc" id="calc" novalidate>
-        <div class="campos">
-          <div class="campo"><label for="t-busto">Busto</label><div class="entrada"><input id="t-busto" inputmode="decimal" type="number" value="98"><span>cm</span></div></div>
-          <div class="campo"><label for="t-cintura">Cintura</label><div class="entrada"><input id="t-cintura" inputmode="decimal" type="number" value="80"><span>cm</span></div></div>
-          <div class="campo"><label for="t-cadera">Cadera</label><div class="entrada"><input id="t-cadera" inputmode="decimal" type="number" value="110"><span>cm</span></div></div>
-        </div>
-        <div class="resultado" aria-live="polite">
-          <div class="tallas-res"><div><span>Blusa</span><b id="r-blusa">M</b></div><div><span>Pantalón</span><b id="r-pantalon">L</b></div></div>
-          <p id="r-nota"></p>
-        </div>
-        <a class="btn btn-fucsia" id="r-cta" href="catalogo.html">Ver modelos en mi talla</a>
-        <a class="enlace" href="#medidas" style="justify-self:start;font-size:.92rem">Cómo tomar las medidas bien</a>
-      </form>
+      <div class="titulo"><h2>¿Cuál es el uniforme para ti?</h2><p>El mismo modelo se compra de tres formas. Elige según para cuándo lo necesitas y qué tan exacto lo quieres.</p></div>
+      <div class="para-ti" id="para-ti"></div>
     </div>
   </section>
 
   <section class="seccion gris">
     <div class="contenedor">
-      <div class="cabeza"><div><h2>Así funciona tu pedido</h2><p class="lead">Todo se habla con la dueña por WhatsApp. No tienes que crear cuenta ni pagar en la página.</p></div></div>
-      <ol class="pasos">
-        <li><h3>Elige modelo y color</h3><p>En el catálogo ves el precio y el tiempo de cada forma de compra.</p></li>
-        <li><h3>Danos tus medidas</h3><p>Con la calculadora de talla, en el taller, a domicilio en Tuluá o midiéndote en casa.</p></li>
-        <li><h3>Abona el 50%</h3><p>Con el abono empezamos a cortar. Te confirmamos la fecha de entrega.</p></li>
-        <li><h3>Recíbelo y pruébatelo</h3><p>Lo recoges en el taller o te lo enviamos. Si algo hay que ajustar, lo ajustamos.</p></li>
-      </ol>
+      <div class="titulo"><h2>Mira Multicostura en acción</h2><p>Así se mueven nuestros uniformes en una jornada real.</p></div>
+      <div class="videos" id="videos"></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="talla">
+    <div class="contenedor">
+      <div class="titulo"><h2>Encuentra tu talla</h2><p>Mídete con un metro de costura, sin apretar, y escribe tus medidas. Te decimos la talla de blusa y de pantalón según nuestra tabla.</p></div>
+      <div class="talla">
+        <div><table class="tabla-mini" id="tabla"></table><p class="lead" style="font-size:.88rem">Tabla de medidas de Multicostura, en centímetros.</p></div>
+        <form class="calc" id="calc" novalidate>
+          <div class="campos">
+            <div class="campo"><label for="t-busto">Busto</label><div class="entrada"><input id="t-busto" inputmode="decimal" type="number" value="98"><span>cm</span></div></div>
+            <div class="campo"><label for="t-cintura">Cintura</label><div class="entrada"><input id="t-cintura" inputmode="decimal" type="number" value="80"><span>cm</span></div></div>
+            <div class="campo"><label for="t-cadera">Cadera</label><div class="entrada"><input id="t-cadera" inputmode="decimal" type="number" value="110"><span>cm</span></div></div>
+          </div>
+          <div class="resultado" aria-live="polite">
+            <div class="tallas-res"><div><span>Blusa</span><b id="r-blusa">M</b></div><div><span>Pantalón</span><b id="r-pantalon">L</b></div></div>
+            <p id="r-nota"></p>
+          </div>
+          <a class="btn btn-fucsia" id="r-cta" href="catalogo.html">Ver modelos en mi talla</a>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="look" aria-label="Descubre el look completo">
+    <div class="look-foto" id="look-foto"><img src="img/kaill-azul-rey.webp" alt="Uniforme Kaill en azul rey, puesto"></div>
+    <div class="look-info">
+      <h2>Descubre el look completo</h2>
+      <p class="lead" style="margin:0">Toca los puntos de la foto para ver cada parte del uniforme Kaill.</p>
+      <div class="look-item" id="look-item" aria-live="polite"></div>
+      <a class="btn btn-fucsia" href="producto.html?m=kaill" style="justify-self:start">Pedir el Kaill completo</a>
     </div>
   </section>
 
@@ -298,25 +334,21 @@
 
   <section class="seccion gris">
     <div class="contenedor">
-      <div class="cabeza"><h2>Explora por tipo de prenda</h2></div>
-      <div class="colecciones">
-        <a class="coleccion" href="catalogo.html"><img src="img/neru-fucsia.webp" alt=""><div><h3>Uniformes</h3><p>13 modelos de blusa y pantalón en antifluido</p><span class="ir">Ver uniformes</span></div></a>
-        <a class="coleccion" href="catalogo.html"><img src="img/clasico-blanco-v.webp" alt=""><div><h3>Línea blancos</h3><p>Conjuntos blancos y batas para laboratorio y consulta</p><span class="ir">Ver línea blancos</span></div></a>
-        <a class="coleccion sin-foto" href="catalogo.html"><div><h3>Gorros y medias</h3><p>Gorros quirúrgicos y medias de compresión para jornadas de pie</p><span class="ir">Ver gorros y medias</span></div></a>
-      </div>
+      <div class="titulo"><h2>Lo que dicen las que ya usan Multicostura</h2><p>Aquí irán reseñas reales de tus clientas, con su foto y su nombre. Envíanos capturas de WhatsApp o de Google.</p></div>
+      <div class="resenas"><div class="resena">Reseña real pendiente</div><div class="resena">Reseña real pendiente</div><div class="resena">Reseña real pendiente</div><div class="resena">Reseña real pendiente</div></div>
     </div>
   </section>
 
   <section class="seccion">
     <div class="contenedor dos">
       <div class="panel oscuro" id="empresas">
-        <h2>Uniformes para tu clínica o consultorio</h2>
-        <p class="lead">Vamos a tu lugar de trabajo, tomamos medidas a todo el equipo y bordamos el logo. Desde 3 uniformes hay descuento.</p>
+        <h2>Uniforma a tu equipo</h2>
+        <p class="lead">Vamos a tu clínica o consultorio, tomamos medidas a todo el equipo y bordamos el logo. Desde 3 uniformes hay descuento.</p>
         <ul><li>3 a 5 uniformes: 5% menos</li><li>6 a 11 uniformes: 10% menos</li><li>12 o más: 15% menos</li></ul>
         <a class="btn btn-borde" href="#">Pedir cotización para mi equipo</a>
       </div>
       <div class="panel claro" id="bonos">
-        <h2>Regala un uniforme</h2>
+        <h2>Bono de regalo</h2>
         <p class="lead">Compras un bono, se lo entregas a quien quieras y ella viene a tomarse las medidas y elegir su modelo. Ideal para grados y cumpleaños.</p>
         <div class="montos"><span>$100.000</span><span>$150.000</span><span>$200.000</span><span>$300.000</span></div>
         <a class="btn btn-fucsia" href="#">Comprar un bono</a>
@@ -324,11 +356,18 @@
     </div>
   </section>
 
-  <section class="seccion gris">
+  <section class="seccion gris" id="preguntas">
+    <div class="contenedor">
+      <div class="titulo"><h2>Preguntas frecuentes</h2></div>
+      <div class="faq" id="faq"></div>
+    </div>
+  </section>
+
+  <section class="seccion">
     <div class="contenedor taller">
       <div>
-        <h2>Un taller en Tuluá, no una bodega</h2>
-        <p class="lead">Multicostura confecciona uniformes médicos solo para mujer desde hace casi 10 años. Lo que ves en el catálogo se corta, se cose y se borda en el mismo taller, y la dueña atiende cada pedido.</p>
+        <h2>Visítanos en Tuluá</h2>
+        <p class="lead">Multicostura confecciona uniformes médicos solo para mujer desde hace casi 10 años. Lo que ves en el catálogo se corta, se cose y se borda en nuestro taller, y la dueña atiende cada pedido.</p>
         <dl class="horario"><dt>Dirección</dt><dd>Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)</dd><dt>Lunes a viernes</dt><dd>8:00 a 12:00 y 2:00 a 6:00</dd><dt>Sábados</dt><dd>8:00 a 1:00</dd></dl>
         <div style="display:flex;gap:.7rem;flex-wrap:wrap"><a class="btn btn-borde" href="#">Ver disponibles en tienda</a><a class="btn btn-wa" href="#" data-wa>Escribir por WhatsApp</a></div>
       </div>
@@ -336,17 +375,10 @@
     </div>
   </section>
 
-  <section class="seccion" id="preguntas">
-    <div class="contenedor preguntas">
-      <div><h2>Preguntas frecuentes</h2><p class="lead">Si no encuentras tu respuesta, escríbenos por WhatsApp.</p></div>
-      <div id="faq"></div>
-    </div>
-  </section>
-
   <section class="seccion gris">
     <div class="contenedor">
-      <div class="cabeza"><div><h2>Así se ven puestos</h2><p class="lead">Fotos de nuestro catálogo 2026. Síguenos para ver los nuevos colores primero.</p></div><a class="enlace" href="https://www.instagram.com/multicostura_uniformes/">Ver en Instagram</a></div>
-      <div class="mosaico" id="mosaico"></div>
+      <h2 class="redes-t">Encuéntranos en redes como <a href="https://www.instagram.com/multicostura_uniformes/">@multicostura_uniformes</a></h2>
+      <div class="redes" id="redes"></div>
     </div>
   </section>
 </main>
@@ -354,27 +386,69 @@
 
 <script src="comun.js"></script>
 <script>
+  const $ = id => document.getElementById(id);
   const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
-  document.getElementById("cab").outerHTML = cabecera("");
-  document.getElementById("pie").outerHTML = pie();
-  document.querySelectorAll("[data-i]").forEach(e => e.insertAdjacentHTML("afterbegin", CHECK));
+  const GOTA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></svg>';
+  $("cab").outerHTML = cabecera("");
+  $("pie").outerHTML = pie();
   document.querySelectorAll("[data-wa]").forEach(e => e.insertAdjacentHTML("afterbegin", ICO.wa));
   document.querySelector("[data-mapa]").insertAdjacentHTML("afterbegin", ICO.pin);
-  const $ = id => document.getElementById(id);
   const porId = Object.fromEntries(MODELOS.map(m => [m.id, m]));
-  $("recomendados").innerHTML = ["kaill", "alondra", "paris", "clasico", "durango", "mariee", "neru", "valencia"].map(id => tarjeta(porId[id])).join("");
 
-  // ¿Cómo lo quieres?
-  const CAMINOS = [
-    { para: "Lo necesito ya", t: "Listo en tienda", precio: "Desde $159.000", tiempo: "Te lo llevas hoy", items: ["Modelos, tallas y colores que hay en el taller", "Lo ves en persona en el taller", "Consulta existencias en la tienda en línea"], cta: "Ver qué hay disponible", clase: "btn-borde" },
-    { para: "Me gustó un modelo, pero no en mi talla o color", t: "Bajo pedido", precio: "$175.000", tiempo: "3 a 5 días hábiles", items: ["Cualquier modelo del catálogo", "En tu talla S, M, L o XL", "En cualquiera de los 18 colores"], cta: "Elegir mi modelo", clase: "btn-fucsia", destacado: true },
-    { para: "Quiero que me quede exacto", t: "A tu medida", precio: "$185.000", tiempo: "5 a 8 días hábiles", items: ["Cortado con tus medidas de busto, cintura y cadera", "Para tallas fuera de la tabla o cuerpos con medidas distintas arriba y abajo", "Medidas en el taller, a domicilio o desde casa"], cta: "Agendar mis medidas", clase: "btn-borde" },
+  // Banner: campañas armadas con las fotos reales de cada modelo
+  const DIAPOS = [
+    { m: "kaill", kicker: "Catálogo 2026", t: "Kaill", sub: "En cuatro colores", cta: ["Pedir el Kaill", "producto.html?m=kaill"] },
+    { m: "alondra", kicker: "Bajo pedido o a tu medida", t: "Hecho para tu cuerpo", sub: "Te medimos en el taller o en tu casa", cta: ["Agendar medidas", "#medidas"] },
+    { m: "durango", kicker: "Línea blancos y colores", t: "Durango", sub: "Cuello y mangas en rib", cta: ["Pedir el Durango", "producto.html?m=durango"] },
   ];
-  $("caminos").innerHTML = CAMINOS.map(c => `<article class="camino${c.destacado ? " destacado" : ""}">
-    <p class="para">${c.para}</p><h3>${c.t}</h3>
-    <div class="cifras"><b>${c.precio}</b><span>${c.tiempo}</span></div>
-    <ul>${c.items.map(i => `<li>${CHECK}<span>${i}</span></li>`).join("")}</ul>
-    <a class="btn ${c.clase}" href="${c.t === "A tu medida" ? "#medidas" : c.t === "Bajo pedido" ? "catalogo.html" : "#"}">${c.cta}</a></article>`).join("");
+  $("diapos").innerHTML = DIAPOS.map((d, i) => {
+    const m = porId[d.m], cols = Object.keys(m.fotos).slice(0, 3);
+    return `<div class="diapo${i ? "" : " activa"}" aria-roledescription="diapositiva" aria-label="${i + 1} de ${DIAPOS.length}">
+      <div class="texto"><span class="kicker">${d.kicker}</span><h2>${d.t}</h2><span class="sub">${d.sub}</span>
+        <ul class="muestras" aria-label="Colores con foto">${Object.keys(m.fotos).map(c => `<li><span class="muestra" style="--c:${COLORES[c]}" title="${c}"><span></span></span></li>`).join("")}</ul>
+        <a class="btn btn-fucsia" href="${d.cta[1]}">${d.cta[0]}</a></div>
+      <div class="fotos-diapo">${cols.map(c => `<button onclick="location.href='producto.html?m=${m.id}'" aria-label="${m.nombre} en ${c.toLowerCase()}"><img src="${m.fotos[c]}" alt=""><span>${c}</span></button>`).join("")}</div></div>`;
+  }).join("");
+  let actual = 0, pausado = matchMedia("(prefers-reduced-motion: reduce)").matches, reloj;
+  $("b-puntos").innerHTML = DIAPOS.map((d, i) => `<button aria-label="Ver diapositiva ${i + 1}"><span></span></button>`).join("");
+  function ir(i) {
+    actual = (i + DIAPOS.length) % DIAPOS.length;
+    document.querySelectorAll(".diapo").forEach((d, n) => d.classList.toggle("activa", n === actual));
+    [...$("b-puntos").children].forEach((b, n) => n === actual ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current"));
+  }
+  $("b-puntos").onclick = e => { const b = e.target.closest("button"); if (b) ir([...$("b-puntos").children].indexOf(b)); };
+  function pausar(si) { pausado = si; clearInterval(reloj); if (!si) reloj = setInterval(() => ir(actual + 1), 6000); $("b-pausa").setAttribute("aria-label", si ? "Reanudar el carrusel" : "Pausar el carrusel"); }
+  $("b-pausa").onclick = () => pausar(!pausado);
+  ir(0); pausar(pausado);
+
+  // Franja negra
+  const DATOS = [[ICO.scissors, "Casi 10 años confeccionando para mujer"], [ICO.truck, "Envíos a toda Colombia"], [ICO.store, "Taller propio en Tuluá"], [ICO.ruler, "Bajo pedido o a tu medida"]];
+  const lista = `<ul aria-hidden="false">${DATOS.map(([i, t]) => `<li>${i}${t}</li>`).join("")}</ul>`;
+  $("pista").innerHTML = lista + lista.replace('aria-hidden="false"', 'aria-hidden="true"');
+
+  // Recomendados al estilo de la referencia
+  $("recomendados").innerHTML = ["kaill", "alondra", "paris", "clasico", "durango", "mariee", "neru", "valencia"].map(id => tarjeta(porId[id])).join("");
+  document.querySelectorAll("#recomendados .foto").forEach(f => {
+    f.insertAdjacentHTML("beforeend", `<div class="insignias"><span title="Tela antifluido">${GOTA}</span><span title="También a tu medida">${ICO.ruler}</span></div><span class="tela">Antifluido</span>`);
+  });
+
+  // Confianza
+  $("confianza").innerHTML = [[ICO.truck, "Envíos a toda Colombia", "El envío se cotiza según el destino"], [ICO.scissors, "Taller propio", "Cortamos, cosemos y bordamos en Tuluá"], [ICO.ruler, "A tu medida", "En el taller, a domicilio o desde casa"], [ICO.wa, "Atención directa", "La dueña responde tu pedido por WhatsApp"]]
+    .map(([i, t, d]) => `<div>${i}<b>${t}</b><span>${d}</span></div>`).join("");
+
+  // ¿Cuál es el uniforme para ti?
+  const PARA = [
+    { t: "Listo en tienda", d: "Para la que lo necesita hoy", img: "img/valencia-gris.webp", precio: "Desde $159.000", tiempo: "Hoy mismo", cta: "Ver disponibles", clase: "btn-borde", href: "#" },
+    { t: "Bajo pedido", d: "Tu modelo favorito, en tu color y tu talla", img: "img/kaill-lila.webp", precio: "$175.000", tiempo: "3 a 5 días hábiles", cta: "Elegir mi modelo", clase: "btn-fucsia", href: "catalogo.html" },
+    { t: "A tu medida", d: "Para que te quede exacto, con tus medidas", img: "img/durango-rojo.webp", precio: "$185.000", tiempo: "5 a 8 días hábiles", cta: "Agendar mis medidas", clase: "btn-borde", href: "#medidas" },
+  ];
+  $("para-ti").innerHTML = PARA.map(p => `<article class="pt"><img src="${p.img}" alt=""><div><h3>${p.t}</h3><p>${p.d}</p><span class="dato"><span>${p.precio}</span><span>${p.tiempo}</span></span><a class="btn ${p.clase}" href="${p.href}">${p.cta}</a></div></article>`).join("");
+
+  // Videos (pendientes de la clienta): cada uno lleva al modelo que se ve
+  const VID = [["kaill", "Azul rey"], ["neru", "Verde jade"], ["mariee", "Beige"], ["paris", "Rosa"], ["clasico", "Petróleo"]];
+  const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>';
+  $("videos").innerHTML = VID.map(([id, c]) => { const m = porId[id], f = m.fotos[c]; return `<div class="video"><div class="marco"><img src="${f}" alt=""><span class="pendiente">Video pendiente</span><span class="play"><span>${PLAY}</span></span></div>
+    <div class="mini"><img src="${f}" alt=""><div><b>${m.nombre}</b>${pesos(m.precio)}</div></div><a class="btn btn-fucsia" href="producto.html?m=${id}">Pedir este modelo</a></div>`; }).join("");
 
   // Calculadora de talla
   const ORDEN = ["S", "M", "L", "XL"];
@@ -393,55 +467,36 @@
   }
   $("calc").oninput = calcular; $("calc").onsubmit = e => e.preventDefault(); calcular();
 
-  // Medidas: el botón dice exactamente qué pasa con la opción elegida
+  // Descubre el look completo
+  const PUNTOS = [
+    { x: 52, y: 38, t: "Blusa Kaill", d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales." },
+    { x: 50, y: 80, t: "Pantalón Kaill", d: "Viene con la blusa, en el mismo color. Si lo quieres solo, pídelo por WhatsApp." },
+    { x: 62, y: 30, t: "Bordado opcional", d: "Tu nombre por $12.000 y tu profesión por $6.000, en hilo blanco, dorado, plateado, negro o rosa." },
+  ];
+  $("look-foto").insertAdjacentHTML("beforeend", PUNTOS.map((p, i) => `<button class="punto" style="left:calc(${p.x}% - 22px);top:calc(${p.y}% - 22px)" aria-label="${p.t}" aria-pressed="${i === 0}"></button>`).join(""));
+  function verPunto(i) { const p = PUNTOS[i]; $("look-item").innerHTML = `<b>${p.t}</b><p>${p.d}</p>`; document.querySelectorAll(".punto").forEach((b, n) => b.setAttribute("aria-pressed", n === i)); }
+  $("look-foto").onclick = e => { const b = e.target.closest(".punto"); if (b) verPunto([...document.querySelectorAll(".punto")].indexOf(b)); };
+  verPunto(0);
+
+  // Medidas
   $("modos-medida").onchange = e => { const v = e.target.value; $("m-cta").textContent = v === "Me mido en casa" ? "Ver la guía y enviar mis medidas" : v === "A domicilio" ? "Elegir día y hora a domicilio" : "Elegir día y hora en el taller"; };
 
-  // Preguntas frecuentes (mismas respuestas del chatbot) + datos estructurados para Google
+  // Preguntas frecuentes + datos estructurados
   const FAQ = [
     ["¿Cómo se paga?", "Con el 50% empezamos a confeccionar tu uniforme y el resto lo pagas al recibirlo. Por ahora los pagos se acuerdan por WhatsApp."],
     ["¿En cuánto tiempo me lo entregan?", "Listo en tienda: el mismo día. Bajo pedido: 3 a 5 días hábiles. A tu medida: 5 a 8 días hábiles."],
     ["¿Hacen envíos fuera de Tuluá?", "Sí, enviamos a toda Colombia. El envío se cotiza según el destino."],
+    ["¿Los uniformes son antifluido?", "Sí. Todos los conjuntos se confeccionan en tela antifluido elástica o licrada, según el modelo."],
     ["¿Puedo pedir solo la blusa o solo el pantalón?", "Sí. Escríbenos por WhatsApp con el modelo y la talla, y te damos el precio."],
     ["¿Hacen uniformes para hombre?", "No. Multicostura confecciona solo para mujer; por eso los cortes están pensados para el cuerpo femenino."],
-    ["¿Me pueden bordar el nombre?", "Sí. El nombre cuesta $12.000 y la profesión $6.000, en hilo blanco, dorado, plateado, negro o rosa."],
   ];
   $("faq").innerHTML = FAQ.map(([q, a], i) => `<details${i === 0 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("");
   const ld = document.createElement("script"); ld.type = "application/ld+json";
   ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) });
   document.head.append(ld);
 
-  const fotosMosaico = ["img/alondra-morado.webp", "img/kaill-lila.webp", "img/durango-rojo.webp", "img/mariee-beige.webp", "img/neru-verde-jade.webp", "img/clasico-rosa.webp", "img/valencia-gris.webp"];
-  $("mosaico").innerHTML = fotosMosaico.map(f => `<div class="foto"><img src="${f}" alt="Uniforme médico Multicostura"></div>`).join("");
-
-  // Carrusel de la portada
-  const slides = [
-    { m: "kaill", texto: "Conjuntos de blusa y pantalón en tela antifluido. Elige el modelo, míralo en tu color y pídelo en tu talla o a tu medida." },
-    { m: "alondra", texto: "¿No está en tu talla? Bajo pedido en 3 a 5 días hábiles, o a tu medida en 5 a 8. Te medimos en el taller, en tu casa o te guiamos para medirte." },
-    { m: "clasico", texto: "Siete colores del Clásico con foto, y once más bajo pedido. Agrega tu nombre o tu profesión bordados." },
-  ];
-  const portada = document.querySelector(".portada");
-  let actual = 0, pausado = matchMedia("(prefers-reduced-motion: reduce)").matches, reloj;
-  $("p-puntos").innerHTML = slides.map(s => `<button aria-label="Ver ${porId[s.m].nombre}"><span></span></button>`).join("");
-  function pintar(i, c) {
-    actual = (i + slides.length) % slides.length;
-    const s = slides[actual], m = porId[s.m], cols = Object.keys(m.fotos), color = c || cols[0];
-    $("p-texto").textContent = s.texto;
-    $("p-cta").textContent = `Pedir el ${m.nombre}`; $("p-cta").href = `producto.html?m=${m.id}`;
-    $("p-modelo").textContent = m.nombre; $("p-color").textContent = `${color}, desde ${pesos(m.precio)}`;
-    $("p-foto").src = m.fotos[color]; $("p-foto").alt = `Uniforme médico ${m.nombre} en ${color.toLowerCase()}`;
-    portada.style.setProperty("--c", COLORES[color]);
-    $("p-muestras").innerHTML = cols.slice(0, 5).map(k => `<li><button class="muestra" style="--c:${COLORES[k]}" aria-label="${k}" aria-pressed="${k === color}"><span></span></button></li>`).join("");
-    $("p-minis").innerHTML = cols.slice(0, 4).map(k => `<button aria-label="${k}" aria-pressed="${k === color}"><img src="${m.fotos[k]}" alt=""></button>`).join("");
-    [...$("p-puntos").children].forEach((b, n) => n === actual ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current"));
-  }
-  const elegir = e => { const b = e.target.closest("button"); if (b) { pausar(true); pintar(actual, b.getAttribute("aria-label")); } };
-  $("p-muestras").onclick = elegir; $("p-minis").onclick = elegir;
-  $("p-puntos").onclick = e => { const b = e.target.closest("button"); if (b) pintar([...$("p-puntos").children].indexOf(b)); };
-  $("p-ant").onclick = () => pintar(actual - 1);
-  $("p-sig").onclick = () => pintar(actual + 1);
-  function pausar(si) { pausado = si; clearInterval(reloj); if (!si) reloj = setInterval(() => pintar(actual + 1), 6000); $("p-pausa").setAttribute("aria-label", si ? "Reanudar el carrusel" : "Pausar el carrusel"); }
-  $("p-pausa").onclick = () => pausar(!pausado);
-  pintar(0); pausar(pausado);
+  // Redes
+  $("redes").innerHTML = ["img/alondra-morado.webp", "img/mariee-beige.webp", "img/neru-verde-jade.webp", "img/paris-rosa.webp"].map(f => `<a class="foto" href="https://www.instagram.com/multicostura_uniformes/"><img src="${f}" alt="Uniforme Multicostura en Instagram"></a>`).join("");
 </script>
 </body>
 </html>
