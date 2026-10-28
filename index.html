@@ -488,20 +488,33 @@
       .munit { grid-column: 2; }
     }
     .guia { margin-top: 2rem; }
-    .tallas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-top: 2.4rem; align-items: start; }
-    .tallas .guia { margin: 0; }
-    .tallas h3 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .7rem; }
-    .tallas-main { display: grid; gap: 1.6rem; min-width: 0; }
-    .tabla-wrap { overflow-x: auto; }
-    .tabla { width: 100%; border-collapse: collapse; font-size: .95rem; background: var(--card); }
+    .poster { --poster: #f8e9f1; margin-top: 2.4rem; background: var(--poster); border-radius: var(--radius); padding: clamp(1.2rem, 4vw, 3rem); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "model" "tablas" "metro"; gap: 1.6rem; }
+    .poster-head h3 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1; text-transform: uppercase; color: #2b2b33; max-width: 7em; margin-bottom: 1.6rem; }
+    .poster-head b { display: block; font-size: 1.15rem; margin-bottom: .4rem; color: #2b2b33; }
+    .poster-head p { color: #4a4a52; font-size: 1.05rem; max-width: 30em; }
+    .poster-head { grid-area: head; }
+    .poster-modelo { grid-area: model; width: min(100%, 360px); height: auto; justify-self: center; align-self: start; }
+    .poster-tablas { grid-area: tablas; display: grid; gap: 1.4rem; min-width: 0; align-content: start; }
+    .poster-metro { grid-area: metro; width: min(100%, 420px); height: auto; mix-blend-mode: multiply; }
+    .tabla { width: 100%; border-collapse: collapse; background: #fff; color: #111; font-size: .95rem; table-layout: fixed; }
     .tabla caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-    .tabla th, .tabla td { padding: .6rem .7rem; border-bottom: 1px solid var(--line); text-align: center; }
-    .tabla th[scope="row"] { text-align: left; font-weight: 400; }
-    .tabla thead th { font-weight: 700; background: var(--bg-2); }
-    .tabla thead th:first-child { text-align: left; }
-    .tabla .grupo th { text-align: left; background: var(--bg-3); text-transform: uppercase; letter-spacing: .04em; font-size: .85rem; }
-    .tabla td.on { background: var(--pink); font-weight: 700; }
+    .tabla th, .tabla td { padding: .65rem .3rem; border: 1px solid #1c1c1c; text-align: center; font-weight: 700; }
+    .tabla thead th { border-top-width: 1px; border-bottom-width: 1px; font-size: 1.5rem; line-height: 1; padding: .7rem .2rem; }
+    .tabla thead th:first-child { text-align: left; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; padding-left: .7rem; }
+    .tabla tbody th { text-align: left; text-transform: uppercase; padding-left: .7rem; font-size: .9rem; }
+    .tabla thead th, .tabla tbody th, .tabla td { border-left: 0; border-right: 0; }
+    .tabla td { border-left: 1px solid #1c1c1c; }
+    .tabla thead th:first-child, .tabla tbody th { width: 34%; }
+    .tabla td.on { background: var(--pink); }
     .tabla thead th.on { background: var(--mag); color: #fff; }
+    .calc-wrap { margin-top: 1.4rem; }
+    .guia-orig { margin-top: 1.4rem; }
+    .guia-orig summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+    @media (min-width: 701px) {
+      .poster { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); grid-template-areas: "head model" "tablas model" "metro model"; column-gap: clamp(1rem, 3vw, 2.5rem); }
+      .poster-modelo { width: 100%; justify-self: end; }
+    }
+    @media (max-width: 420px) { .tabla thead th { font-size: 1.25rem; } .tabla thead th:first-child { font-size: .6rem; letter-spacing: .12em; } .tabla tbody th { font-size: .78rem; padding-left: .45rem; } }
     .calc { display: grid; gap: .9rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-3); }
     .calc h3 { margin-bottom: 0; }
     .calc-campos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
@@ -515,7 +528,6 @@
     .calc-res span { color: var(--muted); }
     .calc-res .btn { margin-top: .4rem; }
     @media (max-width: 420px) { .calc-campos { grid-template-columns: minmax(0, 1fr); } }
-    @media (min-width: 900px) { .tallas { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; } .tallas .guia { position: sticky; top: 92px; } }
     .guia img { width: min(100%, 760px); margin-inline: auto; border-radius: var(--radius); border: 1px solid var(--line); }
     .measure .diagrama { width: min(100%, 340px); margin-inline: auto; }
 
@@ -826,23 +838,32 @@
         <ol id="measures"></ol>
         <div class="diagrama" id="diagrama-guia"></div>
       </div>
-      <div class="tallas">
-        <div class="tallas-main">
-          <h3>Tabla de tallas</h3>
-          <div class="tabla-wrap"><table class="tabla" id="tabla-tallas"></table></div>
-          <form class="calc" id="calc" novalidate>
-            <h3>Calcula tu talla</h3>
-            <p class="lead">Mídete con un metro de costura, sin apretar, y escribe tus medidas en centímetros.</p>
-            <div class="calc-campos">
-              <label for="t-busto">Busto<span class="munit"><input id="t-busto" type="number" inputmode="decimal" min="60" max="160" step="0.5" placeholder="Ej: 98"><span aria-hidden="true">cm</span></span></label>
-              <label for="t-cintura">Cintura<span class="munit"><input id="t-cintura" type="number" inputmode="decimal" min="50" max="160" step="0.5" placeholder="Ej: 80"><span aria-hidden="true">cm</span></span></label>
-              <label for="t-cadera">Cadera<span class="munit"><input id="t-cadera" type="number" inputmode="decimal" min="60" max="180" step="0.5" placeholder="Ej: 110"><span aria-hidden="true">cm</span></span></label>
-            </div>
-            <div class="calc-res" aria-live="polite"><b id="r-tallas"></b><span id="r-nota"></span><a class="btn btn-dark" id="r-cta" href="#modelos">Ver modelos</a></div>
-          </form>
+      <div class="poster" id="poster">
+        <div class="poster-head">
+          <h3>Tabla de medidas</h3>
+          <b>¿Cómo saber tu talla?</b>
+          <p>Debes tomarte las medidas con el metro, redondeando, en cada parte del cuerpo señalada en la imagen.</p>
         </div>
-        <figure class="guia" id="guia" hidden><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
+        <img class="poster-modelo" id="guia-modelo" src="img/guia-modelo.webp" width="410" height="1018" loading="lazy" alt="Modelo con uniforme rosado mostrando dónde medir busto, cintura, cadera y largo de pantalón">
+        <div class="poster-tablas" id="tabla-tallas"></div>
+        <img class="poster-metro" src="img/guia-metro.webp" width="560" height="268" loading="lazy" alt="" aria-hidden="true">
       </div>
+      <div class="calc-wrap">
+<form class="calc" id="calc" novalidate>
+          <h3>Calcula tu talla</h3>
+          <p class="lead">Mídete con un metro de costura, sin apretar, y escribe tus medidas en centímetros.</p>
+          <div class="calc-campos">
+            <label for="t-busto">Busto<span class="munit"><input id="t-busto" type="number" inputmode="decimal" min="60" max="160" step="0.5" placeholder="Ej: 98"><span aria-hidden="true">cm</span></span></label>
+            <label for="t-cintura">Cintura<span class="munit"><input id="t-cintura" type="number" inputmode="decimal" min="50" max="160" step="0.5" placeholder="Ej: 80"><span aria-hidden="true">cm</span></span></label>
+            <label for="t-cadera">Cadera<span class="munit"><input id="t-cadera" type="number" inputmode="decimal" min="60" max="180" step="0.5" placeholder="Ej: 110"><span aria-hidden="true">cm</span></span></label>
+          </div>
+          <div class="calc-res" aria-live="polite"><b id="r-tallas"></b><span id="r-nota"></span><a class="btn btn-dark" id="r-cta" href="#modelos">Ver modelos</a></div>
+        </form>
+      </div>
+      <details class="guia-orig">
+        <summary>Ver la guía original</summary>
+        <figure class="guia" id="guia"><img id="guia-img" alt="Guía de tallas Multicostura" loading="lazy"></figure>
+      </details>
     </div>
   </section>
 
@@ -1565,11 +1586,12 @@
     function renderTallas() {
       const T = NEGOCIO.tallas, o = T.orden;
       const fila = (nombre, prenda, k) => `<tr><th scope="row">${nombre}</th>${o.map(t => `<td data-t="${t}" data-p="${prenda}">${T[prenda][t][k]}</td>`).join("")}</tr>`;
-      const grupo = n => `<tr class="grupo"><th colspan="${o.length + 1}" scope="colgroup">${n}</th></tr>`;
-      $("tabla-tallas").innerHTML = `<caption>Tabla de medidas de Multicostura, en centímetros</caption>
-        <thead><tr><th scope="col">Medida (cm)</th>${o.map(t => `<th scope="col" data-t="${t}">${t}</th>`).join("")}</tr></thead>
-        <tbody>${grupo("Blusa")}${fila("Busto", "blusa", "busto")}${fila("Cintura", "blusa", "cintura")}${fila("Cadera", "blusa", "cadera")}${fila("Largo blusa", "blusa", "largo")}
-        ${grupo("Pantalón")}${fila("Cintura", "pantalon", "cintura")}${fila("Cadera", "pantalon", "cadera")}${fila("Largo pantalón", "pantalon", "largo")}${fila("Largo rodilla", "pantalon", "largoRodilla")}${fila("Contorno rodilla", "pantalon", "contornoRodilla")}</tbody>`;
+      const tabla = (cap, rotulo, filas) => `<table class="tabla"><caption>${cap}</caption>
+        <thead><tr><th scope="col">${rotulo}</th>${o.map(t => `<th scope="col" data-t="${t}">${t}</th>`).join("")}</tr></thead>
+        <tbody>${filas.map(f => fila(...f)).join("")}</tbody></table>`;
+      $("tabla-tallas").innerHTML =
+        tabla("Medidas de blusa en centímetros", "Medida blusa", [["BUSTO", "blusa", "busto"], ["CINTURA", "blusa", "cintura"], ["CADERA", "blusa", "cadera"], ["L.BLUSA", "blusa", "largo"]]) +
+        tabla("Medidas de pantalón en centímetros", "Medida pantalones", [["CINTURA", "pantalon", "cintura"], ["CADERA", "pantalon", "cadera"], ["L.PANTALÓN", "pantalon", "largo"], ["L.RODILLA", "pantalon", "largoRodilla"], ["C.RODILLA", "pantalon", "contornoRodilla"]]);
       $("calc").addEventListener("input", () => calcTalla());
       $("calc").addEventListener("submit", e => e.preventDefault());
       calcTalla();
@@ -2148,7 +2170,7 @@
     design.color = model().colores[0];
     if (NEGOCIO.guiaTallas) {
       const g = $("guia-img");
-      g.onload = () => ($("guia").hidden = false); // si no carga, la guía queda oculta
+      g.onerror = () => ($("guia").closest("details").hidden = true); // si no carga, la guía original queda oculta
       g.src = NEGOCIO.guiaTallas;
     }
     // En el celular, los botones flotantes se apartan mientras hay un formulario en pantalla (no tapan campos ni el botón de envío)

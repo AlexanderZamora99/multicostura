@@ -77,12 +77,36 @@ const tlDom = strip(tl);
 const medidasSec = between(tlDom, 'id="medidas"', 'id="agenda"');
 const partes = k => attr(tl, "c-" + k).split("||");
 
-test("size table renders S M L XL with blusa and pantalon rows from NEGOCIO.tallas", () => {
-  const tabla = between(medidasSec, 'id="tabla-tallas"', "</table>");
-  for (const t of ["S", "M", "L", "XL"]) assert.match(tabla, new RegExp(`<th[^>]*>${t}</th>`));
-  for (const row of ["Busto", "Largo blusa", "Largo pantalón", "Largo rodilla", "Contorno rodilla"]) assert.ok(tabla.includes(row), row);
-  assert.ok(tabla.includes("61.5") || tabla.includes("61,5"));
-  assert.ok(tabla.includes(">64.5<") || tabla.includes(">64,5<"));
+test("size guide renders two tables (blusa, pantalon) with captions, S M L XL and rows from NEGOCIO.tallas", () => {
+  const wrap = between(medidasSec, 'id="tabla-tallas"', 'id="calc"');
+  const tablas = wrap.match(/<table[\s\S]*?<\/table>/g) || [];
+  assert.equal(tablas.length, 2);
+  assert.match(tablas[0], /<caption>[^<]*blusa[^<]*cent[^<]*<\/caption>/i);
+  assert.match(tablas[1], /<caption>[^<]*pantal[^<]*cent[^<]*<\/caption>/i);
+  for (const tb of tablas) for (const t of ["S", "M", "L", "XL"]) assert.match(tb, new RegExp(`<th[^>]*scope="col"[^>]*>${t}</th>`));
+  for (const row of ["BUSTO", "L.BLUSA"]) assert.ok(tablas[0].toUpperCase().includes(row), row);
+  for (const row of ["L.PANTALÓN", "L.RODILLA", "C.RODILLA"]) assert.ok(tablas[1].toUpperCase().includes(row), row);
+  assert.ok(tablas[1].includes(">61.5<") && tablas[1].includes(">64.5<") && tablas[1].includes(">25<"));
+});
+
+test("poster has heading and model image with alt, width, height and lazy loading inside #medidas", () => {
+  assert.match(medidasSec, /<h3[^>]*>\s*Tabla de medidas\s*<\/h3>/i);
+  const img = (medidasSec.match(/<img[^>]*guia-modelo\.webp[^>]*>/) || [])[0] || "";
+  assert.ok(img, "model img");
+  assert.match(img, /alt="[^"]{20,}"/);
+  assert.match(img, /width="\d+"/); assert.match(img, /height="\d+"/); assert.match(img, /loading="lazy"/);
+});
+
+const posterProbe = `const r = s => { const b = document.querySelector(s).getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom].join(","); };
+  document.body.setAttribute("data-p", r("#tabla-tallas") + "|" + r("#guia-modelo"));`;
+const posterAt = w => { const h = render({ width: w, height: 900, inject: posterProbe }).html; return attr(h, "p").split("|").map(x => x.split(",").map(Number)); };
+
+test("poster: model sits right of the tables on desktop, above them on mobile", () => {
+  const [t, m] = posterAt(1366);
+  assert.ok(m[0] >= t[2] - 1, `desktop model left ${m[0]} vs tables right ${t[2]}`);
+  const [t5, m5] = posterAt(500);
+  assert.ok(m5[3] <= t5[1] + 1, `mobile model bottom ${m5[3]} vs tables top ${t5[1]}`);
+  assert.ok(t5[2] <= 500 + 1, "tables fit at 500");
 });
 
 test("medidas keeps guide photo ids and order before empresas", () => {
