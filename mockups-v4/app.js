@@ -70,11 +70,60 @@
     foto.addEventListener("click", e => { const b = e.target.closest(".punto"); if (!b) return; $$(".punto", foto).forEach(x => x.setAttribute("aria-pressed", x === b)); $("#look-item").innerHTML = `<b>${b.dataset.t}</b><p class="lead">${b.dataset.d}</p>`; });
   }, "look");
 
+  // Catálogo: menú lateral de filtros
+  safe(() => {
+    const form = $("#filtros"); if (!form) return;
+    const grilla = $("#grilla-cat"), panel = $("#panel-filtros"), abrir = $("#abrir-filtros");
+    const tarjetas = $$(".tarjeta", grilla), solo = $(".solo-prenda", grilla), orden0 = [...grilla.children];
+    const st = { cat: new URLSearchParams(location.search).get("cat") || "", forma: "pedido", color: "", talla: "" };
+    if (st.cat) { const r = $(`input[name=cat][value="${st.cat}"]`, form); if (r) r.checked = true; }
+    function aplicar() {
+      let n = 0;
+      tarjetas.forEach(t => {
+        const m = modelo(t.dataset.id), fotos = m.fotos;
+        const ver = (!st.cat || m.cat === st.cat) && (!st.color || fotos[st.color]);
+        t.hidden = !ver; if (ver) n++;
+        if (ver && st.color && fotos[st.color]) { $(".foto img", t).src = fotos[st.color]; $$(".muestra", t).forEach(b => b.setAttribute("aria-pressed", b.getAttribute("aria-label") === st.color)); }
+        const pr = $(".precio", t);
+        if (m.precio) {
+          const tipo = MC.tipos.find(x => x.id === st.forma), valor = m.fijo || st.forma === "tienda" ? m.precio : tipo.precio;
+          pr.innerHTML = `${pesos(valor)} <small>${m.fijo ? "" : tipo.t.toLowerCase()}</small>`;
+        }
+        const a = $("h3 a", t); a.href = `modelo-${m.id}.html${st.talla ? "?talla=" + st.talla : ""}`;
+      });
+      solo.hidden = !!st.color || (st.cat && st.cat !== "Uniformes");
+      $("#res-cuenta").textContent = `${n} ${n === 1 ? "modelo" : "modelos"}${st.cat ? " en " + st.cat.toLowerCase() : ""}${st.color ? " con foto en " + st.color.toLowerCase() : ""}`;
+      $("#sin-res").hidden = n > 0;
+      $("#f-color-n").textContent = st.color;
+      $$("#f-colores .muestra").forEach(b => b.setAttribute("aria-pressed", b.dataset.color === st.color));
+      abrir.textContent = `Filtros${[st.cat, st.color, st.talla].filter(Boolean).length ? " (" + [st.cat, st.color, st.talla].filter(Boolean).length + ")" : ""}`;
+      $("#ver-resultados").textContent = `Ver ${n} ${n === 1 ? "modelo" : "modelos"}`;
+    }
+    form.addEventListener("change", e => { if (e.target.name === "cat") st.cat = e.target.value; if (e.target.name === "forma") st.forma = e.target.value; aplicar(); });
+    $("#f-colores").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; st.color = st.color === b.dataset.color ? "" : b.dataset.color; aplicar(); });
+    $("#f-talla").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; st.talla = st.talla === b.textContent ? "" : b.textContent; $$("#f-talla button").forEach(x => x.setAttribute("aria-pressed", x.textContent === st.talla)); aplicar(); });
+    form.addEventListener("reset", () => setTimeout(() => { Object.assign(st, { cat: "", forma: "pedido", color: "", talla: "" }); $$("#f-talla button").forEach(x => x.setAttribute("aria-pressed", "false")); aplicar(); }));
+    $("#orden").addEventListener("change", e => {
+      const v = e.target.value, val = el => { const m = el.dataset.id && modelo(el.dataset.id); return m && m.precio ? m.precio : Infinity; };
+      const lista = v ? [...orden0].filter(x => x.dataset.id).sort((a, b) => v === "asc" ? val(a) - val(b) : val(b) - val(a)) : orden0;
+      lista.forEach(x => grilla.append(x)); if (v) grilla.append(solo);
+    });
+    // Panel en celular
+    let velo;
+    function cerrar() { panel.classList.remove("abierto"); abrir.setAttribute("aria-expanded", "false"); velo && velo.remove(); abrir.focus(); }
+    abrir.addEventListener("click", () => { panel.classList.add("abierto"); abrir.setAttribute("aria-expanded", "true"); velo = document.createElement("div"); velo.className = "velo"; velo.onclick = cerrar; document.body.append(velo); $("#cerrar-filtros").focus(); });
+    $("#cerrar-filtros").addEventListener("click", cerrar); $("#ver-resultados").addEventListener("click", cerrar);
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && panel.classList.contains("abierto")) cerrar(); });
+    form.addEventListener("submit", e => e.preventDefault());
+    aplicar();
+  }, "catalogo");
+
   // Ficha de producto
   safe(() => {
     const ficha = $("#ficha"); if (!ficha) return;
     const m = modelo(ficha.dataset.id);
-    const st = { color: Object.keys(m.fotos)[0], modo: "pedido", talla: "M", cant: 1 };
+    const st = { color: Object.keys(m.fotos)[0], modo: "pedido", talla: new URLSearchParams(location.search).get("talla") || "M", cant: 1 };
+    if ($("#f-tallas")) $$("#f-tallas button").forEach(b => b.setAttribute("aria-pressed", b.textContent === st.talla));
     function pintar() {
       const foto = m.fotos[st.color];
       if (foto && $("#f-foto")) { $("#f-foto").src = foto; $("#f-foto").alt = `${m.nombre} en ${st.color.toLowerCase()}`; }

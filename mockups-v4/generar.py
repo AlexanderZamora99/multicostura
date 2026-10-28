@@ -210,7 +210,7 @@ def tarjeta(m, insignias=True):
     precio = f'{pesos(m["precio"])}{" <small>a $185.000</small>" if not m.get("fijo") else ""}' if m["precio"] else "Consulta el precio"
     extra = (f'<div class="insignias"><span title="Tela antifluido">{ico("drop")}</span><span title="También a tu medida">{ico("ruler")}</span></div><span class="tela">Antifluido</span>' if insignias and cols and not m.get("fijo") else "")
     tag = f'<span class="etiqueta">{m["tag"]}</span>' if m.get("tag") else ""
-    return f'''<article class="tarjeta" data-cat="{m["cat"]}">
+    return f'''<article class="tarjeta" data-cat="{m["cat"]}" data-id="{m["id"]}">
   <div class="foto">{foto}{extra}{tag}</div>
   <h3><a href="modelo-{m["id"]}.html">{m["nombre"]}</a></h3>
   <p class="precio">{precio}</p>
@@ -282,8 +282,8 @@ def inicio():
   <div class="titulo contenedor"><h2>Explora nuestras colecciones</h2><p>Uniformes hechos solo para mujer, con un corte pensado para el cuerpo femenino y la jornada completa.</p></div>
   <div class="mosaico-col">
     <a class="col" href="catalogo.html"><img src="img/neru-fucsia.webp" alt="" loading="lazy"><div><h3>Uniformes</h3><p>12 modelos de blusa y pantalón en antifluido, en 18 colores.</p><span class="btn btn-fucsia">Ver uniformes</span></div></a>
-    <a class="col" href="catalogo.html#linea-blancos"><img src="img/clasico-blanco-v.webp" alt="" loading="lazy"><div><h3>Línea blancos</h3><p>Conjuntos blancos para laboratorio, odontología y consulta.</p><span class="btn btn-fucsia">Conoce la línea</span></div></a>
-    <a class="col" href="catalogo.html#batas-y-complementos"><img src="img/bata-palo-rosa.webp" alt="" loading="lazy"><div><h3>Batas y complementos</h3><p>Batas, pantalones, gorros quirúrgicos y medias de compresión.</p><span class="btn btn-fucsia">Descubre todo</span></div></a>
+    <a class="col" href="catalogo.html?cat=L%C3%ADnea%20blancos"><img src="img/clasico-blanco-v.webp" alt="" loading="lazy"><div><h3>Línea blancos</h3><p>Conjuntos blancos para laboratorio, odontología y consulta.</p><span class="btn btn-fucsia">Conoce la línea</span></div></a>
+    <a class="col" href="catalogo.html?cat=Batas%20y%20complementos"><img src="img/bata-palo-rosa.webp" alt="" loading="lazy"><div><h3>Batas y complementos</h3><p>Batas, pantalones, gorros quirúrgicos y medias de compresión.</p><span class="btn btn-fucsia">Descubre todo</span></div></a>
   </div>
 </section>
 
@@ -379,19 +379,40 @@ def inicio():
 
 # ---------- Catálogo ----------
 def catalogo():
-    secciones = ""
-    for c in CATS:
-        slug = c.lower().replace(" ", "-").replace("í", "i")
-        tarjetas = [tarjeta(m) for m in MODELOS if m["cat"] == c]
-        if c == "Uniformes":
-            tarjetas.insert(6, f'<div class="solo-prenda"><h3>¿Solo la blusa o solo el pantalón?</h3><p>También los hacemos por separado. Cuéntanos el modelo y la talla, y te damos el precio.</p><a class="btn btn-wa" href="{wa_link("Hola, quiero cotizar solo una prenda (blusa o pantalón) del modelo: ")}">{ico("wa")}Preguntar por WhatsApp</a></div>')
-        secciones += f'<section id="{slug}" style="scroll-margin-top:90px;display:grid;gap:1.2rem"><h2 class="h2">{c}</h2><div class="grilla">{"".join(tarjetas)}</div></section>'
+    uniformes = [m for m in MODELOS]
+    tarjetas = [tarjeta(m) for m in uniformes]
+    tarjetas.insert(6, f'<div class="solo-prenda" data-cat="Uniformes"><h3>¿Solo la blusa o solo el pantalón?</h3><p>También los hacemos por separado. Cuéntanos el modelo y la talla, y te damos el precio.</p><a class="btn btn-wa" href="{wa_link("Hola, quiero cotizar solo una prenda (blusa o pantalón) del modelo: ")}">{ico("wa")}Preguntar por WhatsApp</a></div>')
+    cuenta = {c: sum(1 for m in MODELOS if m["cat"] == c) for c in CATS}
+    cats = f'<label><input type="radio" name="cat" value="" checked> Todos <span class="cuenta">{len(MODELOS)}</span></label>' + "".join(
+        f'<label><input type="radio" name="cat" value="{c}"> {c} <span class="cuenta">{cuenta[c]}</span></label>' for c in CATS)
+    formas = "".join(f'<label><input type="radio" name="forma" value="{t["id"]}"{" checked" if t["id"] == "pedido" else ""}> {t["t"]}<span class="cuenta">{t["tiempo"].replace(" hábiles", "").replace("Entrega inmediata", "hoy")}</span></label>' for t in TIPOS)
+    colores = "".join(f'<li><button type="button" class="muestra" style="--m:{h}" aria-label="{c}" aria-pressed="false" data-color="{c}"><i></i></button></li>' for c, h in COLORES.items())
     cuerpo = f'''<div class="contenedor catalogo">
   <div class="migas"><a href="inicio.html">Inicio</a> / Catálogo</div>
   <div class="titulo" style="text-align:left;margin:0"><h1 class="h2">Catálogo de uniformes médicos para mujer</h1><p>Todos los modelos se hacen bajo pedido en tu color y talla (S a XL), o a tu medida. Bajo pedido: 3 a 5 días hábiles. A tu medida: 5 a 8.</p></div>
-  <nav class="filtros" aria-label="Categorías">{"".join(f'<a href="#{c.lower().replace(" ", "-").replace("í", "i")}">{c}</a>' for c in CATS)}<a href="compara.html">Compara modelos</a><a href="inicio.html#talla">Calcula tu talla</a></nav>
   <div class="tienda-fisica" id="tienda">{ico("store")}<p><b>¿Lo necesitas hoy?</b><br><span class="lead">Mira qué modelos, tallas y colores hay listos en el taller.</span></p><a class="btn btn-borde" href="#">Ver disponibles en tienda física</a></div>
-  {secciones}
+  <div class="con-filtros">
+    <aside class="panel-filtros" id="panel-filtros" aria-label="Filtros">
+      <div class="pf-cabeza"><b>Filtros</b><button type="button" class="icono-btn" id="cerrar-filtros" aria-label="Cerrar filtros">×</button></div>
+      <form id="filtros" class="pf-cuerpo">
+        <fieldset><legend>Categoría</legend>{cats}</fieldset>
+        <fieldset><legend>Forma de compra</legend>{formas}<small class="lead">Cambia el precio que ves en cada modelo.</small></fieldset>
+        <fieldset><legend>Talla</legend><div class="chips" id="f-talla"><button type="button" aria-pressed="false">S</button><button type="button" aria-pressed="false">M</button><button type="button" aria-pressed="false">L</button><button type="button" aria-pressed="false">XL</button></div><a class="enlace" href="inicio.html#talla" style="font-size:.88rem">Calcula tu talla</a></fieldset>
+        <fieldset><legend>Color <span class="lead" id="f-color-n" style="font-weight:500"></span></legend><ul class="muestras" id="f-colores">{colores}</ul><small class="lead">Muestra los modelos que tienen foto en ese color. Todos se hacen en cualquier color bajo pedido.</small></fieldset>
+        <button type="reset" class="btn btn-borde btn-ancho">Quitar filtros</button>
+      </form>
+      <div class="pf-pie"><button type="button" class="btn btn-fucsia btn-ancho" id="ver-resultados">Ver modelos</button></div>
+    </aside>
+    <section>
+      <div class="barra-res">
+        <button type="button" class="btn btn-borde btn-filtros" id="abrir-filtros" aria-controls="panel-filtros" aria-expanded="false">Filtros</button>
+        <p class="lead" id="res-cuenta" aria-live="polite">{len(MODELOS)} modelos</p>
+        <label class="orden"><span class="sr">Ordenar</span><select id="orden"><option value="">Más pedidos</option><option value="asc">Precio menor</option><option value="desc">Precio mayor</option></select></label>
+      </div>
+      <div class="grilla" id="grilla-cat">{"".join(tarjetas)}</div>
+      <p class="lead" id="sin-res" hidden>Ningún modelo tiene foto en ese color todavía, pero lo hacemos bajo pedido en cualquier modelo. <a class="enlace" href="disena.html">Míralo en Diseña</a>.</p>
+    </section>
+  </div>
 </div>'''
     lista = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": f"{URL}modelo-{m['id']}.html", "name": m["nombre"]} for i, m in enumerate(MODELOS)]}
     pagina("catalogo.html", "Catálogo de uniformes médicos para mujer | Multicostura Tuluá",
