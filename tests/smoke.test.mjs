@@ -5,7 +5,7 @@ import { render, count } from "./render.mjs";
 const { html, stderr } = render();
 
 test("existing sections are still present", () => {
-  for (const id of ["modelos", "nosotros", "personaliza", "agenda", "medidas", "empresas", "bono", "clientas"]) {
+  for (const id of ["modelos", "look", "nosotros", "personaliza", "agenda", "medidas", "empresas", "bono", "clientas"]) {
     assert.ok(html.includes(`id="${id}"`), `missing #${id}`);
   }
 });

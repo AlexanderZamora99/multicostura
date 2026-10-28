@@ -405,6 +405,19 @@
     }
 
     /* Guía de medidas */
+    .look-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; align-items: center; }
+    .look-foto { position: relative; aspect-ratio: 4 / 5; max-height: 640px; width: 100%; overflow: hidden; border-radius: var(--radius); background: var(--bg-3); }
+    .look-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .punto { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.5); display: grid; place-items: center; }
+    .punto::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+    .punto[aria-pressed="true"]::after { background: var(--mag); box-shadow: 0 0 0 4px #fff; }
+    .look-info { display: grid; gap: 1rem; align-content: center; justify-items: start; }
+    .look-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; display: grid; gap: .3rem; width: 100%; }
+    .look-item p { color: var(--muted); }
+    @media (min-width: 781px) {
+      .look-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); gap: 3rem; }
+      .look-foto { aspect-ratio: auto; height: 640px; }
+    }
     .measure { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; margin-top: 2rem; }
     @media (max-width: 780px) { .measure { grid-template-columns: minmax(0, 1fr); } }
     .measure ol { display: grid; gap: .8rem; padding-left: 1.2rem; }
@@ -598,6 +611,18 @@
       <div class="sec-head"><h2>Nuestros recomendados</h2><p class="lead">Modelos de pantalón y blusa en antifluido, con el precio y los colores a la vista.</p></div>
       <div class="models reco-grid" id="recomendados" role="list" aria-label="Productos recomendados"></div>
       <div class="sec-cta"><a class="btn btn-dark" id="reco-all" href="#modelos">Ver todo el catálogo</a></div>
+    </div>
+  </section>
+
+  <section id="look" class="alt" aria-labelledby="look-t">
+    <div class="wrap look-grid">
+      <div class="look-foto" id="look-foto"></div>
+      <div class="look-info">
+        <h2 id="look-t">Descubre el look completo</h2>
+        <p class="lead">Toca los puntos de la foto para ver cada parte del uniforme Kaill.</p>
+        <div class="look-item" id="look-item" aria-live="polite"></div>
+        <button type="button" class="btn btn-mag" id="look-cta">Pedir el Kaill completo</button>
+      </div>
     </div>
   </section>
 
@@ -1008,6 +1033,15 @@
       ],
       // Imagen de la guía de tallas (confirmar con la dueña)
       guiaTallas: "img/guia-tallas.webp",
+      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO
+      look: {
+        modelo: "kaill", color: "Azul rey", foto: "img/kaill-azul-rey.webp", alt: "Uniforme Kaill en azul rey, puesto",
+        puntos: [
+          { x: 52, y: 38, t: "Blusa Kaill", d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales." },
+          { x: 50, y: 80, t: "Pantalón Kaill", d: "Viene con la blusa, en el mismo color. Si lo quieres solo, pídelo por WhatsApp." },
+          { x: 62, y: 30, t: "Bordado opcional", d: () => `Tu nombre por ${pesos(NEGOCIO.bordado.nombre)} y tu profesión por ${pesos(NEGOCIO.bordado.profesion)}, en hilo ${listaY(Object.keys(NEGOCIO.hilos).map(h => h.toLowerCase()))}.` },
+        ],
+      },
       // Sin "colores" = todos los colores de la lista de arriba
       // precio: null = se consulta por WhatsApp (no se diseña). fotos: { Color: "ruta" } = foto por color (opcional)
       // Fotos recortadas del catálogo 2026 de Canva (img/*.webp)
@@ -1329,6 +1363,25 @@
       const poner = ms => ms.forEach(m => { const c = modelCard(m); c.setAttribute("role", "listitem"); $("recomendados").appendChild(c); });
       poner(lista.slice(0, 4));
       if (lista.length > 4) Promise.all(lista.map(m => fotoCarga(m.foto))).then(r => { if (turno === recoTurno && r.some(Boolean)) poner(lista.slice(4)); });
+    }
+    const listaY = a => a.length > 1 ? a.slice(0, -1).join(", ") + " o " + a[a.length - 1] : a.join("");
+    function renderLook() {
+      const L = NEGOCIO.look, m = NEGOCIO.modelos.find(x => x.id === L.modelo);
+      $("look").classList.toggle("hidden", !m);
+      if (!m) return;
+      const poner = i => {
+        const p = L.puntos[i];
+        $("look-foto").querySelectorAll(".punto").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
+        $("look-item").innerHTML = `<b>${p.t}</b><p>${typeof p.d === "function" ? p.d() : p.d}</p>`;
+      };
+      $("look-foto").innerHTML = `<img src="${L.foto}" alt="${L.alt}" loading="lazy">` +
+        L.puntos.map(p => `<button type="button" class="punto" style="left:${p.x}%;top:${p.y}%" aria-pressed="false" aria-label="${p.t}"></button>`).join("");
+      $("look-foto").querySelectorAll(".punto").forEach((b, i) => (b.onclick = () => poner(i)));
+      poner(0);
+      $("look-cta").onclick = () => {
+        if (m.colores.includes(L.color)) quickView(m, L.color, $("look-cta"));
+        else $("personaliza").scrollIntoView();
+      };
     }
     $("reco-all").onclick = () => { cat = "Todos"; renderProfs(); renderModels(); };
     // Flechas del carrusel de desplazamiento (testimonios)
@@ -1880,7 +1933,7 @@
         movil.addEventListener("change", sync);
       }
     }
-    renderProfs(); renderModels(); renderRecomendados(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
+    renderProfs(); renderModels(); renderRecomendados(); renderLook(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
     loadBusy().then(renderAgenda);
   </script>
 </body>
