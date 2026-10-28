@@ -8,3 +8,6 @@ desktop.ini
 # Datos de clientas (nunca subir)
 *.xlsx
 *.csv
+
+# Copias temporales de las pruebas (tests/render.mjs)
+_render-*.html

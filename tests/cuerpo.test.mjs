@@ -1,9 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { render, count } from "./render.mjs";
+import { render, count, source as pageSource } from "./render.mjs";
 
-const source = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const source = pageSource();
 const strip = h => h.replace(/<script[\s\S]*?<\/script>/g, "");
 const dom = strip(render().html);
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };

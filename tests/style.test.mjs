@@ -1,10 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { render } from "./render.mjs";
+import { render, source as pageSource } from "./render.mjs";
 
 const { html } = render();
-const source = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const source = pageSource();
 const rule = sel => {
   const m = source.match(new RegExp(`(?:^|\\n)\\s*${sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\{([^}]*)\\}`));
   return m ? m[1] : "";

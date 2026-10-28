@@ -1,9 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { render } from "./render.mjs";
+import { render, source as pageSource } from "./render.mjs";
 
-const source = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const source = pageSource();
 const FAQS = (source.match(/claves:\s*\[/g) || []).length;
 
 const { html, stderr } = render();

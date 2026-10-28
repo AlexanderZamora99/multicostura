@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { render } from "./render.mjs";
+import { render, estilos } from "./render.mjs";
 
 const { html, stderr } = render();
 const dom = html.replace(/<script[\s\S]*?<\/script>/g, ""); // solo el DOM, sin el código fuente
@@ -55,7 +55,7 @@ test("map sits full width below the Nosotros text and is tall", () => {
   const section = dom.slice(dom.indexOf('id="nosotros"'), dom.indexOf('id="personaliza"'));
   assert.ok(section.indexOf('id="n-address"') < section.indexOf('id="map"'), "map must come after the text");
   assert.doesNotMatch(section, /class="wrap about"/, "text and map must not share a two-column grid");
-  const css = dom.match(/\.map iframe \{[^}]*height: (\d+)px/);
+  const css = estilos().match(/\.map iframe \{[^}]*height: (\d+)px/);
   assert.ok(css && Number(css[1]) >= 440, "map iframe must be at least 440px tall on desktop");
 });
 

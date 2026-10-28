@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { render, count } from "./render.mjs";
+import { render, count, source } from "./render.mjs";
 
 const { html } = render();
 const dom = html.replace(/<script[\s\S]*?<\/script>/g, ""); // solo el DOM, sin el código fuente
@@ -24,6 +24,7 @@ test("one labelled dot per slide, exactly one current", () => {
 });
 
 test("carousel respects reduced motion and pauses on hover/focus", () => {
-  assert.ok(html.includes("prefers-reduced-motion"));
-  assert.ok(html.includes("mouseenter") && html.includes("focusin"));
+  const codigo = source();
+  assert.ok(codigo.includes("prefers-reduced-motion"));
+  assert.ok(codigo.includes("mouseenter") && codigo.includes("focusin"));
 });

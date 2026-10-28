@@ -1,13 +1,16 @@
 # Multicostura — página web con agenda de toma de medidas
 
-Página 100% estática (HTML, CSS y JS en `index.html`) + agenda gratis en Google Sheets.
+Página 100% estática (`index.html` + estilos en `css/` + código y datos en `js/`) + agenda gratis en Google Sheets.
 Se publica gratis en GitHub Pages. No necesita servidor.
 
 ## Archivos
 
 | Archivo | Para qué |
 |---|---|
-| `index.html` | Toda la página. Los datos del negocio están en `const NEGOCIO = {...}` dentro del `<script>`. |
+| `index.html` | La estructura de la página (los textos fijos y las secciones). |
+| `js/datos.js` | **Los datos del negocio** (`const NEGOCIO = {...}`): precios, modelos, horarios, WhatsApp, etc. Es el archivo que se edita. |
+| `js/app.js` | El funcionamiento de la página. No se toca. |
+| `css/estilos.css` | Los colores y el diseño de la página. |
 | `apps-script.gs` | Código de la agenda. Se pega en Google Apps Script (no se sube a GitHub). |
 | `img/` | Fotos. Los nombres deben coincidir con los de `NEGOCIO` (`portada-1.jpg`, `kaill.jpg`, `clienta-1.jpg`, …). |
 
@@ -19,7 +22,7 @@ Se publica gratis en GitHub Pages. No necesita servidor.
 
 ## Qué cambiar con los datos de la dueña
 
-Dentro de `NEGOCIO` en `index.html`:
+Dentro de `NEGOCIO` en `js/datos.js`:
 
 - `whatsapp`: número con 57 adelante, sin espacios ni `+`.
 - `direccionTaller`, `ciudad`.
@@ -70,7 +73,7 @@ Si después cambias `apps-script.gs`: **Implementar → Gestionar implementacion
 ## Publicar gratis en GitHub Pages
 
 1. Crea un repositorio público `multicostura` en GitHub.
-2. Sube `index.html` y la carpeta `img/` (en la raíz del repositorio).
+2. Sube `index.html` y las carpetas `css/`, `js/` e `img/` (en la raíz del repositorio).
    No subas datos de clientas. `apps-script.gs` e `INSTRUCCIONES.md` pueden ir, no tienen datos privados.
 3. **Settings → Pages → Deploy from a branch → main / (root) → Save**.
 4. Link: `https://TU-USUARIO.github.io/multicostura/`

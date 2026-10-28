@@ -1,11 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { render } from "./render.mjs";
+import { render, source as pageSource, estilos } from "./render.mjs";
 
-const source = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const source = pageSource();
 const strip = h => h.replace(/<script[\s\S]*?<\/script>/g, "");
-const css = source.slice(source.indexOf("<style>"), source.indexOf("</style>"));
+const css = estilos();
 const dom = strip(render().html);
 
 // ---- browser-side probe: contrast, labels, targets, headings ----
