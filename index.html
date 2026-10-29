@@ -355,6 +355,10 @@
     .pd-colors button[aria-pressed="true"]::before { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--mag); }
     .pd-aviso { font-size: .8rem; color: var(--muted); background: var(--bg-2); border-left: 3px solid var(--mag); border-radius: 8px; padding: .55rem .75rem; }
     .pd-aviso b { color: var(--text); }
+    /* Nota de accesorios: otros diseños por WhatsApp */
+    .pd-nota-diseno, .nota-diseno { font-size: .82rem; color: var(--muted); }
+    .pd-nota-diseno a, .nota-diseno a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .nota-diseno { margin-top: .35rem; font-size: .78rem; }
     .pd-opts { display: flex; flex-wrap: wrap; gap: .45rem; }
     .pd-opts button { min-height: 44px; padding: .45rem .9rem; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); font-size: .88rem; text-align: left; line-height: 1.3; }
     .pd-opts button small { display: block; color: var(--muted); font-size: .74rem; }
@@ -779,6 +783,7 @@
         <ul class="pd-feats" id="pd-feats"></ul>
         <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
           <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
+          <p class="pd-nota-diseno" id="pd-otro" hidden>¿Quieres otro diseño? Tenemos muchos más estampados. <a id="pd-otro-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te mostramos los disponibles.</p>
         </div>
         <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
         <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div></div>
@@ -1122,6 +1127,8 @@
         $("profs").appendChild(b);
       });
     }
+    // Accesorios con estampados: enlace a WhatsApp para pedir un diseño que no está en el catálogo
+    const waOtroDiseno = m => waLink(`Hola Multicostura 💗 me interesa un ${m.nombre.toLowerCase()} con otro diseño. ¿Qué estampados tienen disponibles?`);
     // Modelos con foto por color (m.fotos): los colores de la tarjeta son botones que cambian la foto
     const swatchButtons = (m, extra) => `
             <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${m.colores.map((c, i) =>
@@ -1158,7 +1165,11 @@
         // Ficha ampliada del producto: al tocar la foto o el nombre (con el color que la clienta tenga elegido)
         const abrir = () => abrirProducto(m, el.dataset.color, el.querySelector(".pd-open"));
         // accesorios (gorros) no se diseñan: el botón de la tarjeta abre la ficha para encargar
-        if (m.accesorio) { el.querySelector(".design-btn").textContent = "Encargar"; el.querySelector(".design-btn").onclick = abrir; }
+        if (m.accesorio) {
+          el.querySelector(".design-btn").textContent = "Encargar"; el.querySelector(".design-btn").onclick = abrir;
+          // nota: otros diseños se piden por WhatsApp
+          el.querySelector(".sw-name").insertAdjacentHTML("afterend", `<p class="nota-diseno">¿Quieres otro diseño? <a href="${waOtroDiseno(m)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>`);
+        }
         el.querySelector(".pd-open").onclick = abrir;
         el.querySelector(".pic").onclick = abrir;
         el.querySelector(".pic").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } };
@@ -1590,6 +1601,8 @@
       $("pd-tipo-box").hidden = !!m.precioFijo;
       // accesorios (gorros): sin medidas, sin diseñador y sin descuento por cantidad de uniformes
       $("pd-medidas").parentElement.hidden = $("pd-pers").hidden = !!m.accesorio;
+      $("pd-otro").hidden = !m.accesorio;
+      if (m.accesorio) $("pd-otro-wa").href = waOtroDiseno(m);
       pintarProducto();
       document.documentElement.classList.add("pd-abierta");
       $("pd").showModal();
@@ -1738,8 +1751,9 @@
     }
     function pedirColor() {
       if (P.m.colores.length === 1) { elegirColor(P.m.colores[0], true); return; }
-      bot("¿En qué color lo quieres?");
-      chips(P.m.colores.map(c => ({ t: c, dot: C(c), fn: () => elegirColor(c) })));
+      bot(P.m.accesorio ? "¿Qué estampado te gusta? Si quieres otro diseño, te mostramos más por WhatsApp." : "¿En qué color lo quieres?");
+      chips([...P.m.colores.map(c => ({ t: c, dot: C(c), fn: () => elegirColor(c) })),
+        ...(P.m.accesorio ? [{ t: "🎨 Quiero otro diseño", href: waOtroDiseno(P.m), cls: "principal" }] : [])]);
     }
     function elegirColor(c, unico) {
       P.color = c;
