@@ -218,7 +218,7 @@
     <div class="wrap">
       <div class="sec-head">
         <h2>Agenda tu toma de medidas</h2>
-        <p class="lead">Solo ves los horarios que de verdad están libres. Si estás en otra ciudad, te guiamos para que te midas en casa.</p>
+        <p class="lead">Elige un día en el calendario y mira las horas libres y las ocupadas. Si estás en otra ciudad, te guiamos para que te midas en casa.</p>
       </div>
 
       <div class="flow" id="flow">
@@ -226,15 +226,18 @@
           <b><span>1</span>¿Cómo tomamos tus medidas?</b>
           <div class="modes" id="modes"></div>
         </div>
-        <div class="step off" id="st-day">
-          <b><span>2</span>Día</b>
-          <p class="lock-msg" id="lock-day">Primero elige cómo tomamos tus medidas.</p>
-          <div class="chips" id="days"></div>
-        </div>
-        <div class="step off" id="st-hour">
-          <b><span>3</span>Hora</b>
-          <p class="lock-msg" id="lock-hour">Primero elige un día para ver las horas libres.</p>
-          <div class="slots" id="slots"><p class="empty">Elige un día primero.</p></div>
+        <div class="cal-row" id="cal-row">
+          <div class="step off" id="st-day">
+            <b><span>2</span>Día</b>
+            <p class="lock-msg" id="lock-day">Primero elige cómo tomamos tus medidas.</p>
+            <div class="cal" id="days"></div>
+          </div>
+          <div class="step off" id="st-hour">
+            <b><span>3</span>Hora</b>
+            <p class="lock-msg" id="lock-hour">Primero elige un día para ver las horas libres.</p>
+            <div class="slots" id="slots" aria-live="polite"><p class="empty">Elige un día primero.</p></div>
+            <p class="dur hidden" id="dur"></p>
+          </div>
         </div>
         <div class="step off" id="st-data">
           <b><span id="data-num">4</span>Tus datos</b>

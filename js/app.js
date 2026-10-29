@@ -22,6 +22,8 @@ const ICONO = {
   sock: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h7v9l4 4a3 3 0 0 1-4 4l-6-5a4 4 0 0 1-1-3z"/></svg>',
   coat: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0zM12 7v14"/></svg>',
   card: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
+  chevL: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  chevR: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
   ruler: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1.500"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4"/></svg>',
 };
 // Cada página usa solo parte de las secciones: si un id no existe en la página, devuelve un elemento suelto (un <select> fuera del documento, que acepta las mismas operaciones)
@@ -528,28 +530,45 @@ const overlaps = (fecha, start, len, busy) =>
   busy.some(b => b.fecha === fecha && start < toMin(b.hora) + b.dur && toMin(b.hora) < start + len);
 
 // ---------- Agenda: flujo ----------
-const ag = { modo: null, fecha: null, hora: null, busy: [] };
-const days = [];
-const today = new Date();
-for (let i = 0; i < NEGOCIO.diasVisibles; i++) days.push(isoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)));
+const ag = { modo: null, fecha: null, hora: null, busy: [], mes: null, activo: null };
+// "Hoy" sale del reloj; window.HOY_TEST ("AAAA-MM-DD") lo fija solo en las pruebas.
+const ahora = () => (window.HOY_TEST ? fromIso(window.HOY_TEST) : new Date());
+const hoyIso = () => isoDate(ahora());
+const addDias = (f, n) => { const d = fromIso(f); return isoDate(new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)); };
+// Última fecha reservable: hoy + diasVisibles - 1 (la ventana incluye hoy)
+const ultimoDia = () => addDias(hoyIso(), NEGOCIO.diasVisibles - 1);
+const mesDe = f => f.slice(0, 7);
+ag.mes = mesDe(hoyIso());
 
 const citaMin = () => NEGOCIO.minutosBase + NEGOCIO.minutosPorPersona * design.qty;
 const margen = () => NEGOCIO.margen[ag.modo] || 0;
 const presencial = () => ag.modo && ag.modo !== "casa";
 
-function freeSlots(fecha) {
+// Turnos del día dentro del horario: [{h, libre}]. Los que ya pasaron hoy no se incluyen.
+function slotsDelDia(fecha) {
   const rangos = NEGOCIO.horario[fromIso(fecha).getDay()];
-  if (!rangos || !presencial()) return [];
+  if (!rangos) return [];
   const dur = citaMin(), len = dur + margen();
-  const now = new Date();
+  const now = ahora();
   const minStart = fecha === isoDate(now) ? now.getHours() * 60 + now.getMinutes() + NEGOCIO.anticipacion : -1;
   const out = [];
   rangos.forEach(([a, b]) => {
     for (let m = toMin(a); m + dur <= toMin(b); m += NEGOCIO.paso) {
-      if (m >= minStart && !overlaps(fecha, m, len, ag.busy)) out.push(toHHMM(m));
+      if (m >= minStart) out.push({ h: toHHMM(m), libre: !overlaps(fecha, m, len, ag.busy) });
     }
   });
   return out;
+}
+const freeSlots = fecha => (presencial() ? slotsDelDia(fecha).filter(s => s.libre).map(s => s.h) : []);
+
+// "disponible" | "lleno" | "cerrado" | "pasado" | "fuera"
+function estadoDia(f) {
+  if (f < hoyIso()) return "pasado";
+  if (f > ultimoDia()) return "fuera";
+  if (!NEGOCIO.horario[fromIso(f).getDay()]) return "cerrado";
+  const s = slotsDelDia(f);
+  if (!s.length) return "pasado";
+  return s.some(x => x.libre) ? "disponible" : "lleno";
 }
 
 function renderModes() {
@@ -570,32 +589,86 @@ function renderModes() {
   });
 }
 
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const nombreDia = f => { const d = fromIso(f); return `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`; };
+const ETIQ = { disponible: "disponible", lleno: "lleno", cerrado: "cerrado", pasado: "no disponible", fuera: "fuera del plazo de reserva" };
+const mesPermitido = m => m >= mesDe(hoyIso()) && m <= mesDe(ultimoDia());
+
+async function cambiarMes(nuevo, foco) {
+  if (!mesPermitido(nuevo)) return;
+  ag.mes = nuevo;
+  if (foco) ag.activo = foco;
+  await loadBusy();
+  renderDays();
+  if (foco) { const b = $("days").querySelector(`[data-fecha="${foco}"]`); if (b) b.focus(); }
+}
+const mesDelta = d => { const [y, m] = ag.mes.split("-").map(Number); return mesDe(isoDate(new Date(y, m - 1 + d, 1))); };
+
 function renderDays() {
-  $("days").innerHTML = "";
-  days.forEach((f, i) => {
-    const d = fromIso(f);
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "chip" + (ag.fecha === f ? " on" : ""); b.setAttribute("aria-pressed", ag.fecha === f);
-    const label = i === 0 ? "Hoy" : i === 1 ? "Mañana" : d.toLocaleDateString("es-CO", { weekday: "short" });
-    b.innerHTML = `${d.getDate()} ${d.toLocaleDateString("es-CO", { month: "short" })}<small>${label}</small>`;
-    b.disabled = !freeSlots(f).length;
-    b.onclick = () => { ag.fecha = f; ag.hora = null; renderAgenda(); };
-    $("days").appendChild(b);
+  const box = $("days");
+  const [y, m] = ag.mes.split("-").map(Number);
+  const n = new Date(y, m, 0).getDate();
+  const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7; // lunes primero
+  const hoy = hoyIso();
+  const fechas = Array.from({ length: n }, (_, i) => `${ag.mes}-${pad(i + 1)}`);
+  const act = [ag.activo, ag.fecha].find(f => f && mesDe(f) === ag.mes);
+  const foco = act || fechas.find(f => estadoDia(f) === "disponible") || fechas[0];
+  let filas = "", celdas = "<td></td>".repeat(offset);
+  fechas.forEach((f, i) => {
+    const est = estadoDia(f), sel = ag.fecha === f;
+    celdas += `<td><button type="button" class="cal-day ${est}${sel ? " on" : ""}" data-fecha="${f}" tabindex="${f === foco ? 0 : -1}"${f === foco ? ` data-activo="${f}"` : ""}` +
+      `${est === "disponible" ? "" : ' aria-disabled="true"'} aria-pressed="${sel}"${f === hoy ? ' aria-current="date"' : ""}` +
+      ` aria-label="${nombreDia(f)}, ${ETIQ[est]}"><span>${i + 1}</span>${est === "lleno" ? "<small>Lleno</small>" : ""}</button></td>`;
+    if ((offset + i + 1) % 7 === 0 || i === n - 1) { filas += `<tr>${celdas}</tr>`; celdas = ""; }
+  });
+  const titulo = `${MESES[m - 1][0].toUpperCase()}${MESES[m - 1].slice(1)} ${y}`;
+  const cab = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+    .map(d => `<th scope="col"><abbr title="${d}">${d === "miércoles" ? "X" : d[0].toUpperCase()}</abbr></th>`).join("");
+  box.innerHTML = `<div class="cal-head">
+      <button type="button" class="cal-prev" aria-label="Mes anterior"${mesPermitido(mesDelta(-1)) ? "" : " disabled"}>${ICONO.chevL}</button>
+      <strong class="cal-title" aria-live="polite">${titulo}</strong>
+      <button type="button" class="cal-next" aria-label="Mes siguiente"${mesPermitido(mesDelta(1)) ? "" : " disabled"}>${ICONO.chevR}</button>
+    </div>
+    <table class="cal-grid" role="grid" aria-label="${titulo}"><thead><tr>${cab}</tr></thead><tbody>${filas}</tbody></table>
+    <p class="cal-leyenda"><span class="lg lg-ok"></span>Disponible <span class="lg lg-full"></span>Lleno</p>`;
+  box.querySelector(".cal-prev").onclick = () => cambiarMes(mesDelta(-1));
+  box.querySelector(".cal-next").onclick = () => cambiarMes(mesDelta(1));
+  box.querySelectorAll(".cal-day").forEach(b => {
+    const f = b.dataset.fecha;
+    b.onclick = () => {
+      if (b.getAttribute("aria-disabled") === "true") return;
+      ag.fecha = f; ag.activo = f; ag.hora = null; renderAgenda();
+    };
+    b.onkeydown = e => {
+      const paso = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      if (paso === undefined) return;
+      e.preventDefault();
+      const dest = addDias(f, paso);
+      if (!mesPermitido(mesDe(dest))) return;
+      if (mesDe(dest) !== ag.mes) { cambiarMes(mesDe(dest), dest); return; }
+      ag.activo = dest;
+      box.querySelectorAll(".cal-day").forEach(x => { x.tabIndex = -1; x.removeAttribute("data-activo"); });
+      const t = box.querySelector(`[data-fecha="${dest}"]`);
+      t.tabIndex = 0; t.dataset.activo = dest; t.focus();
+    };
   });
 }
 
 function renderSlots() {
-  const box = $("slots");
+  const box = $("slots"), dur = $("dur");
+  dur.classList.toggle("hidden", !ag.fecha);
   if (!ag.fecha) { box.innerHTML = `<p class="empty">Elige un día primero.</p>`; return; }
-  const s = freeSlots(ag.fecha);
+  dur.textContent = `Duración: ${citaMin()} minutos${ag.modo === "domicilio" ? " más el traslado" : ""}`;
+  const s = slotsDelDia(ag.fecha);
   box.innerHTML = s.length ? "" : `<p class="empty">No quedan horarios este día. Prueba otro.</p>`;
-  s.forEach(h => {
+  s.forEach(({ h, libre }) => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "chip" + (ag.hora === h ? " on" : ""); b.setAttribute("aria-pressed", ag.hora === h);
     b.textContent = hora12(h);
-    b.onclick = () => { ag.hora = h; renderAgenda(); $("st-data").scrollIntoView({ block: "nearest" }); };
+    if (!libre) { b.disabled = true; b.setAttribute("aria-label", `${hora12(h)}, ocupado`); }
+    else b.onclick = () => { ag.hora = h; renderAgenda(); $("st-data").scrollIntoView({ block: "nearest" }); };
     box.appendChild(b);
   });
 }
@@ -614,8 +687,7 @@ function renderSummary() {
 function renderAgenda() {
   renderModes();
   const p = presencial();
-  $("st-day").classList.toggle("hidden", ag.modo === "casa");
-  $("st-hour").classList.toggle("hidden", ag.modo === "casa");
+  $("cal-row").classList.toggle("hidden", ag.modo === "casa");
   $("st-day").classList.toggle("off", !p);
   $("st-hour").classList.toggle("off", !ag.fecha);
   $("st-data").classList.toggle("off", !(ag.modo === "casa" || ag.hora));
@@ -657,8 +729,11 @@ NEGOCIO.medidas.forEach(([t, d, min, max], i) => $("mgrid").insertAdjacentHTML("
     <div class="mtxt"><label for="m-${i + 1}">${t}</label><span class="mhint" id="m-${i + 1}-h">${d}</span></div>
     <div class="munit"><input id="m-${i + 1}" type="number" inputmode="decimal" min="${min}" max="${max}" step="0.5" data-m="${t}" aria-describedby="m-${i + 1}-h m-${i + 1}-u"><span class="u" id="m-${i + 1}-u">cm</span></div></div>`));
 
+// Trae las citas del mes que se ve (acotado a la ventana de reserva) y reemplaza las de ese rango.
 async function loadBusy() {
-  try { ag.busy = await fetchBusy(days[0], days[days.length - 1]); }
+  const from = [`${ag.mes}-01`, hoyIso()].sort().pop();
+  const to = [isoDate(new Date(+ag.mes.slice(0, 4), +ag.mes.slice(5), 0)), ultimoDia()].sort()[0];
+  try { ag.busy = ag.busy.filter(b => b.fecha < from || b.fecha > to).concat(await fetchBusy(from, to)); }
   catch { $("slots").innerHTML = `<p class="err">No pude cargar la agenda. Escríbenos por WhatsApp.</p>`; }
 }
 
