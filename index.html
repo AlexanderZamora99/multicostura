@@ -463,7 +463,7 @@
       <div>
         <span class="eyebrow">Uniformes médicos · Catálogo 2026</span>
         <h1>Viste tu profesión <em>con estilo.</em></h1>
-        <p class="lead">Calidad, comodidad y estilo en antifluido. Llévate un modelo listo para entrega, pídelo en tu talla o mándalo a confeccionar a tu medida, con tu nombre bordado.</p>
+        <p class="lead">Calidad, comodidad y estilo en antifluido. Llévate un modelo listo para entrega, pídelo bajo pedido o mándalo a confeccionar a tu medida, con tu nombre bordado.</p>
         <div class="hero-actions">
           <a href="#agenda" class="btn btn-mag">Agendar toma de medidas</a>
           <a href="#personaliza" class="btn btn-ghost">Diseñar mi uniforme</a>
@@ -673,7 +673,7 @@
     <div class="wrap">
       <span class="eyebrow">Centro de ayuda</span>
       <h2>Preguntas frecuentes</h2>
-      <p class="lead">Lo que más nos preguntan sobre pagos, entregas, tallas y medidas. ¿No encuentras tu respuesta? Escríbenos por WhatsApp.</p>
+      <p class="lead">Lo que más nos preguntan sobre pagos, entregas y medidas. ¿No encuentras tu respuesta? Escríbenos por WhatsApp.</p>
       <div class="faq-list" id="faq-list"></div>
       <button type="button" class="btn btn-ghost faq-more" id="faq-more" aria-expanded="false" aria-controls="faq-list"></button>
     </div>
@@ -754,7 +754,7 @@
           <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
         </div>
         <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
-        <div class="pd-field"><span class="pd-lbl" id="pd-talla-lbl">Talla</span><div class="pd-opts" id="pd-tallas" role="group" aria-labelledby="pd-talla-lbl"></div></div>
+        <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div></div>
         <div class="pd-field"><span class="pd-lbl">Cantidad</span>
           <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
         </div>
@@ -837,7 +837,7 @@
       // precio: null = el precio tienda de cada modelo. Los modelos con precioFijo no cambian de precio.
       tipos: [
         { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null },
-        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000 },
+        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y lo confeccionamos con tus medidas.", precio: 175000 },
         { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000 },
       ],
       // Colores de ejemplo: confirmar con la dueña
@@ -957,16 +957,15 @@
           colores: ["Gris", "Lila", "Lavanda", "Palo de rosa", "Blanco"],
           fotos: { "Gris": "img/pantalon.webp", "Lila": "img/pantalon-lila.webp", "Lavanda": "img/pantalon-lavanda.webp", "Palo de rosa": "img/pantalon-palo-rosa.webp", "Blanco": "img/pantalon-blanco.webp" } },
       ],
-      // Tiempos de entrega por modalidad (confirmar con la dueña) y tallas de la guía del catálogo (pág. 44)
+      // Tiempos de entrega por modalidad (confirmar con la dueña). No se trabaja por tallas: siempre se toman las medidas
       tiempos: { tienda: "entrega inmediata", pedido: "3 a 5 días hábiles", medida: "5 a 8 días hábiles" },
-      tallas: ["S", "M", "L", "XL"],
       // ---- Preguntas frecuentes (sección #faq y chatbot) ----
       // claves: palabras que activan la respuesta en el chat (sin tildes, en minúscula). Si "a" es función, recibe NEGOCIO.
       faq: [
         { id: "pago", q: "¿Cómo se paga?", a: "Con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar"] },
         { id: "tiempos", q: "¿En cuánto tiempo me lo entregan?", a: n => `Precio tienda: ${n.tiempos.tienda}. Bajo pedido: ${n.tiempos.pedido}. Por medida: ${n.tiempos.medida}.`, claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "dias", "entrega", "entregan", "listo", "rapido"] },
         { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
-        { id: "tallas", q: "¿Qué tallas manejan?", a: n => `Manejamos tallas ${n.tallas.join(", ")}. Si no sabes tu talla, mídete con la guía o haz tu uniforme por medida.`, claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
+        { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No. No trabajamos por tallas: te tomamos las medidas en el taller, a domicilio o te guiamos para que te midas en casa, y el uniforme queda a tu cuerpo.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
         { id: "medidas", q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Te explicamos cada una en la guía de medidas.", claves: ["medida", "medidas", "medir", "medirme", "metro", "cinta"] },
         { id: "envios", q: "¿Hacen envíos?", a: n => `Sí, enviamos a toda Colombia. ${n.envio}`, claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete", "mandan"] },
         { id: "domicilio", q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio con un recargo de ${pesos(n.recargoDomicilio)}. También puedes venir al taller o medirte en casa.`, claves: ["domicilio", "visita", "vienen", "recargo", "consultorio", "casa"] },
@@ -1512,7 +1511,7 @@
     }
     const fotoProducto = (m, c) => { const real = (m.fotos || {})[c]; return real && !(m.simulados || []).includes(c) && c !== NEGOCIO.disena[m.id] ? real : fotoDisena(m, c) || m.foto; };
     function abrirProducto(m, color, opener) {
-      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", talla: null, medidas: null, qty: 1 });
+      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", medidas: null, qty: 1 });
       if (!m.colores.includes(pd.color)) pd.color = m.colores[0];
       $("pd-title").textContent = m.nombre;
       $("pd-cat").textContent = m.cat.join(" · ");
@@ -1544,24 +1543,20 @@
       $("pd-color-name").textContent = c + (ref || (m.simulados || []).includes(c) && !srcElegida ? " · color de referencia" : "");
       $("pd-colors").innerHTML = m.colores.map(x => `<button type="button" data-color="${x}" style="--c:${C(x)}" title="${x}" aria-label="Color ${x}" aria-pressed="${x === c}"></button>`).join("");
       $("pd-colors").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(); }));
-      // modalidad, talla (o cómo tomar medidas) y cantidad
+      // modalidad, cómo tomar las medidas (no se trabaja por tallas) y cantidad
       $("pd-tipos").innerHTML = NEGOCIO.tipos.map(t => `<button type="button" data-t="${t.id}" aria-pressed="${t.id === pd.tipo}">${t.t} · ${pesos(precio(m, t))}<small>${NEGOCIO.tiempos[t.id]}</small></button>`).join("");
       $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
-      const porMedida = pd.tipo === "medida";
-      $("pd-talla-lbl").textContent = porMedida ? "¿Cómo tomamos tus medidas?" : "Talla";
-      const opciones = porMedida ? NEGOCIO.modalidades.map(x => ({ v: x.id, t: x.t, s: x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d })) : NEGOCIO.tallas.map(t => ({ v: t, t }));
-      const sel = porMedida ? pd.medidas : pd.talla;
-      $("pd-tallas").innerHTML = opciones.map(o => `<button type="button" data-v="${o.v}" aria-pressed="${o.v === sel}">${o.t}${o.s ? `<small>${o.s}</small>` : ""}</button>`).join("");
-      $("pd-tallas").querySelectorAll("button").forEach(b => (b.onclick = () => { if (porMedida) pd.medidas = b.dataset.v; else pd.talla = b.dataset.v; pintarProducto(srcElegida); }));
+      $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
+      $("pd-medidas").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.medidas = b.dataset.v; pintarProducto(srcElegida); }));
       $("pd-q").textContent = pd.qty;
       const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = discount(pd.qty);
-      const recargo = porMedida && pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
+      const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
       $("pd-desc-qty").textContent = pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
-      const eleccion = porMedida ? `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}` : `Talla: ${pd.talla || "por definir"}`;
+      const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
       $("pd-wa").href = waLink(`Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
-      $("pd-agenda").hidden = !(porMedida && pd.medidas !== "casa");
+      $("pd-agenda").hidden = !pd.medidas || pd.medidas === "casa";
     }
     $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarProducto(); };
     $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarProducto(); };
@@ -1671,22 +1666,12 @@
       paso(pedirModalidad);
     }
     function pedirModalidad() {
-      if (P.m.precioFijo) { P.t = NEGOCIO.tipos[0]; paso(pedirTalla); return; }
+      if (P.m.precioFijo) { P.t = NEGOCIO.tipos[0]; paso(pedirMedidas); return; }
       bot("¿Cómo lo quieres?");
-      chips(NEGOCIO.tipos.map(t => ({ t: `${t.t} · ${pesos(precio(P.m, t))} · ${NEGOCIO.tiempos[t.id]}`, fn: () => { P.t = t; paso(t.id === "medida" ? pedirMedidas : pedirTalla); } })));
-    }
-    function pedirTalla() {
-      bot("¿Cuál es tu talla?");
-      chips([...NEGOCIO.tallas.map(t => ({ t, fn: () => { P.talla = t; paso(pedirCantidad); } })),
-        { t: "No sé mi talla", fn: () => {
-          bot("Tranquila 🙂 Puedes medirte con nuestra guía, o pedir el uniforme por medida y lo hacemos exacto a tu cuerpo.");
-          chips([{ t: "📏 Ver la guía de medidas", href: "#medidas", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "medidas"; } },
-            { t: "✂️ Hacerlo por medida", fn: () => { P.t = NEGOCIO.tipos.find(t => t.id === "medida"); paso(pedirMedidas); } },
-            ...NEGOCIO.tallas.map(t => ({ t: `Talla ${t}`, fn: () => { P.talla = t; paso(pedirCantidad); } }))]);
-        } }]);
+      chips(NEGOCIO.tipos.map(t => ({ t: `${t.t} · ${pesos(precio(P.m, t))} · ${NEGOCIO.tiempos[t.id]}`, fn: () => { P.t = t; paso(pedirMedidas); } })));
     }
     function pedirMedidas() {
-      bot("Para hacerlo a tu medida, ¿cómo tomamos tus medidas?");
+      bot("Todos nuestros uniformes se hacen con tus medidas 📏 ¿Cómo te las tomamos?");
       chips(NEGOCIO.modalidades.map(x => ({ t: `${x.t}${x.id === "domicilio" ? ` (+${pesos(NEGOCIO.recargoDomicilio)})` : ""}`, fn: () => { P.medidas = x; paso(pedirCantidad); } })));
     }
     function pedirCantidad() {
@@ -1741,7 +1726,7 @@
       const k = cuenta(), t = P.t;
       const lineas = [
         ["Modelo", P.m.nombre], ["Color", P.color], ["Modalidad", `${t.t} (${NEGOCIO.tiempos[t.id]})`],
-        P.talla ? ["Talla", P.talla] : ["Medidas", P.medidas ? P.medidas.t : "—"],
+        ["Medidas", P.medidas ? P.medidas.t : "—"],
         ["Cantidad", P.qty],
         ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hilo.toLowerCase()})` : "Sin bordado"],
         ["Entrega", P.entrega], ["Nombre", P.nombre], ["Celular", P.cel],
