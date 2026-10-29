@@ -65,6 +65,22 @@
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
+      // Franja de confianza bajo la portada (ico = nombre en ICONO de app.js). Solo hechos del negocio, iguales a las preguntas frecuentes
+      confianza: [
+        { ico: "truck", t: "Envíos a toda Colombia", d: "El envío se cotiza según el destino" },
+        { ico: "scissors", t: "Taller propio en Tuluá", d: "Cortamos y cosemos en el mismo lugar" },
+        { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
+        { ico: "card", t: "Pago 50% para empezar", d: "Con el 50% empezamos a confeccionar tu uniforme" },
+      ],
+      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO
+      look: {
+        modelo: "kaill", color: "Azul rey", foto: "img/kaill-azul-rey.webp", alt: "Uniforme Kaill en azul rey, puesto",
+        puntos: [
+          { x: 52, y: 30, t: "Blusa Kaill", d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales." },
+          { x: 45, y: 88, t: "Pantalón Kaill", d: "Viene con la blusa, en el mismo color. Si lo quieres solo, pídelo por WhatsApp." },
+          { x: 62, y: 42, t: "Bordado opcional", d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras.` },
+        ],
+      },
       // Ids de los modelos que se destacan en el inicio (8, en este orden)
       recomendados: ["kaill", "alondra", "paris", "violet", "clasico", "durango", "luna", "lisboa"],
       // Sin "colores" = todos los colores de la lista de arriba

@@ -236,6 +236,34 @@
     const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
     if (HOME) $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
 
+    // ---------- Franja de confianza ----------
+    // Íconos de línea (24x24) de NEGOCIO.confianza
+    const ICONO = {
+      truck: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 10h4l3 3v3h-7z"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></svg>`,
+      scissors: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><path d="M8 7.6 20 17M8 16.4 20 7"/></svg>`,
+      ruler: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 14-14 4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></svg>`,
+      card: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg>`,
+    };
+    if (HOME) $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<strong>${c.t}</strong><small>${c.d}</small></div>`).join("");
+
+    // ---------- Descubre el look completo ----------
+    // Puntos sobre la foto: cada uno es un botón; el activo muestra su nombre y descripción. El botón lleva al diseñador con el modelo elegido.
+    (function renderLook() {
+      const L = NEGOCIO.look, m = NEGOCIO.modelos.find(x => x.id === L.modelo);
+      if (!HOME || !m) return;
+      const poner = i => {
+        const p = L.puntos[i];
+        $("look-foto").querySelectorAll(".punto").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
+        $("look-item").innerHTML = `<b>${p.t}</b><p>${typeof p.d === "function" ? p.d(NEGOCIO) : p.d}</p>`;
+      };
+      $("look-foto").innerHTML = `<img src="${L.foto}" alt="${L.alt}" loading="lazy">` +
+        L.puntos.map(p => `<button type="button" class="punto" style="left:${p.x}%;top:${p.y}%" aria-pressed="false" aria-label="${p.t}"></button>`).join("");
+      $("look-foto").querySelectorAll(".punto").forEach((b, i) => (b.onclick = () => poner(i)));
+      poner(0);
+      $("look-cta").textContent = `Diseñar el ${m.nombre}`;
+      $("look-cta").onclick = () => disenar(m, m.colores.includes(L.color) ? L.color : m.colores[0]);
+    })();
+
     // ---------- Personalizador ----------
     const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
     const model = () => NEGOCIO.modelos.find(m => m.id === $("s-model").value);
