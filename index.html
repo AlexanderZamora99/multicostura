@@ -292,6 +292,18 @@
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+    /* Quiénes somos: texto a la izquierda y video vertical de la tienda a la derecha */
+    .nos-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 2.5rem; align-items: center; }
+    .nos-video { position: relative; justify-self: end; width: min(100%, 320px); aspect-ratio: 9 / 16; border-radius: 24px; overflow: hidden; background: var(--text); box-shadow: 0 24px 50px -28px rgba(173,23,101,.55); }
+    .nos-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nos-pp { position: absolute; right: .7rem; bottom: .7rem; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(36,22,29,.65); color: #fff; display: grid; place-items: center; }
+    .nos-pp:hover { background: rgba(36,22,29,.85); }
+    .nos-pp:focus-visible { outline: 2px solid var(--mag); outline-offset: 2px; }
+    .nos-pp svg { width: 14px; height: 14px; fill: currentColor; grid-area: 1 / 1; }
+    .nos-pp .i-play, .nos-pp.paused .i-pause { display: none; }
+    .nos-pp.paused .i-play { display: block; }
+    @media (max-width: 760px) { .nos-grid { grid-template-columns: minmax(0, 1fr); } .nos-video { justify-self: center; width: min(100%, 300px); } }
+
     /* Tarjeta: la foto y el nombre abren la ficha ampliada */
     .model .pic[role="button"] { cursor: zoom-in; }
     .model .pic[role="button"]::after { content: "Ver detalles"; position: absolute; left: 50%; bottom: .8rem; translate: -50% 0; z-index: 2; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--text); font-size: .8rem; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; }
@@ -499,10 +511,20 @@
   </section>
 
   <section id="nosotros" class="alt">
-    <div class="wrap">
-      <span class="eyebrow">Quiénes somos</span>
-      <h2>Empresa Multicostura</h2>
-      <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+    <div class="wrap nos-grid">
+      <div>
+        <span class="eyebrow">Quiénes somos</span>
+        <h2>Empresa Multicostura</h2>
+        <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+      </div>
+      <!-- Video de la tienda en bucle: sin sonido, se carga y reproduce solo cuando se ve en pantalla -->
+      <figure class="nos-video">
+        <video id="nos-video" muted loop playsinline preload="none" poster="video/nosotros-poster.webp" aria-label="Video de la tienda Multicostura en Tuluá">
+          <source src="video/nosotros.webm" type="video/webm">
+          <source src="video/nosotros.mp4" type="video/mp4">
+        </video>
+        <button type="button" class="nos-pp" id="nos-pp" aria-label="Pausar video"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+      </figure>
     </div>
   </section>
 
@@ -1496,6 +1518,19 @@
     design.color = model().colores[0];
     renderProfs(); renderModels(); renderDesign(); renderBono();
     loadBusy().then(renderAgenda);
+
+    // ---------- Video de Quiénes somos ----------
+    // Se descarga y reproduce solo cuando la sección está en pantalla (ahorra datos); se pausa al salir.
+    // Con "reducir movimiento" queda la portada quieta hasta que la persona lo active con el botón.
+    (function videoNosotros() {
+      const v = $("nos-video"), pp = $("nos-pp"), reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      let pausado = reduce.matches, visible = false;
+      const sync = () => { pp.classList.toggle("paused", pausado); pp.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video"); };
+      const actualizar = () => { if (visible && !pausado) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); };
+      pp.onclick = () => { pausado = !pausado; sync(); actualizar(); };
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; actualizar(); }, { threshold: 0.25 }).observe(v);
+      sync();
+    })();
 
     // ---------- Ficha ampliada del producto ----------
     // Galería: la foto base en alta resolución (si el modelo tiene) y las fotos reales de cada color.
