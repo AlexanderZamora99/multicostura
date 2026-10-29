@@ -286,6 +286,11 @@
     .faq-list details[open] summary::after { transform: rotate(45deg); }
     .faq-list summary:focus-visible { outline: 2px solid var(--mag); outline-offset: 2px; border-radius: 14px; }
     .faq-list details p { padding: 0 1.1rem 1rem; color: var(--muted); }
+    /* Retráctil: solo las primeras preguntas a la vista; el botón despliega o recoge el resto */
+    .faq-list:not(.todas) details.extra { display: none; }
+    .faq-more { margin-top: 1rem; }
+    .faq-more::after { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .2s; }
+    .faq-more[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
     .faq-list details.destacada { border-color: var(--mag); box-shadow: 0 0 0 3px rgba(214,36,127,.18); }
 
     /* Asistente de compra: botón encima del de WhatsApp y panel de conversación */
@@ -578,6 +583,7 @@
       <h2>Preguntas frecuentes</h2>
       <p class="lead">Lo que más nos preguntan sobre pagos, entregas, tallas y medidas. ¿No encuentras tu respuesta? Escríbenos por WhatsApp.</p>
       <div class="faq-list" id="faq-list"></div>
+      <button type="button" class="btn btn-ghost faq-more" id="faq-more" aria-expanded="false" aria-controls="faq-list"></button>
     </div>
   </section>
 
@@ -1332,11 +1338,27 @@
 
     // ---------- Preguntas frecuentes ----------
     const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);
-    $("faq-list").innerHTML = NEGOCIO.faq.map(f => `<details id="faq-${f.id}"><summary>${f.q}</summary><p>${respuesta(f)}</p></details>`).join("");
-    // Abre una pregunta del acordeón, la muestra y la resalta un momento
+    const FAQ_VISIBLES = 4; // preguntas a la vista con la sección recogida
+    $("faq-list").innerHTML = NEGOCIO.faq.map((f, i) => `<details id="faq-${f.id}"${i >= FAQ_VISIBLES ? ' class="extra"' : ""}><summary>${f.q}</summary><p>${respuesta(f)}</p></details>`).join("");
+    const faqMas = $("faq-more"), ocultas = NEGOCIO.faq.length - FAQ_VISIBLES;
+    function desplegarFaq(abrir) {
+      $("faq-list").classList.toggle("todas", abrir);
+      faqMas.setAttribute("aria-expanded", abrir);
+      faqMas.textContent = abrir ? "Ver menos preguntas" : `Ver las ${ocultas} preguntas más`;
+      if (!abrir) $("faq-list").querySelectorAll("details.extra[open]").forEach(d => (d.open = false));
+    }
+    faqMas.hidden = ocultas <= 0;
+    faqMas.onclick = () => {
+      const abrir = faqMas.getAttribute("aria-expanded") !== "true";
+      desplegarFaq(abrir);
+      if (abrir) $("faq-list").querySelector("details.extra summary").focus(); // el foco va a la primera pregunta nueva
+    };
+    desplegarFaq(false);
+    // Abre una pregunta del acordeón (desplegando la sección si estaba oculta), la muestra y la resalta un momento
     function abrirFaq(id) {
       const d = $("faq-" + id);
       if (!d) return;
+      if (d.classList.contains("extra")) desplegarFaq(true);
       d.open = true;
       if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); // en celular el chat tapa la página
       d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
