@@ -875,12 +875,15 @@
       },
       // Colores que solo tienen algunos modelos (se nombran en su lista "colores"); no se agregan a todos
       coloresExtra: { "Morado": "#5b2a86", "Malva": "#a0609f", "Beige": "#d6c7b6", "Petróleo": "#1f5f6e", "Verde oliva": "#5d6b3a", "Lavanda": "#8478e0", "Coral": "#f2a19a", "Amarillo": "#f3e29a", "Gris": "#9a9ea6", "Palo de rosa": "#d39a9c",
+        // estampados de los gorros
+        "Dibujos animados": "linear-gradient(135deg, #f2c230 50%, #1f1d22 50%)", "Ratoncita rosa": "linear-gradient(135deg, #e7408a 50%, #1f1d22 50%)", "Flamencos": "linear-gradient(135deg, #1f1d22 50%, #f08bb3 50%)",
+        "Estrellas": "linear-gradient(135deg, #1f1d22 50%, #e66fae 50%)", "Tropical": "linear-gradient(135deg, #1e6b5c 50%, #f4c9d8 50%)", "Ratoncito negro": "linear-gradient(135deg, #1f1d22 50%, #f2a7c6 50%)",
         "Negro y rosa": "linear-gradient(90deg, #1f1d22 50%, #f4b6d2 50%)", "Rojo y gris": "linear-gradient(90deg, #d22b3a 50%, #c9ccd2 50%)" },
       hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
       bordado: { nombre: 12000, profesion: 6000 },
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
-      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones"],
+      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos"],
       // Sin "colores" = todos los colores de la lista de arriba
       modelos: [
         { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp",
@@ -983,6 +986,11 @@
           // Fotos reales (pág. 41): gris, lila, blanco, lavanda y palo de rosa
           colores: ["Gris", "Lila", "Lavanda", "Palo de rosa", "Blanco"],
           fotos: { "Gris": "img/pantalon.webp", "Lila": "img/pantalon-lila.webp", "Lavanda": "img/pantalon-lavanda.webp", "Palo de rosa": "img/pantalon-palo-rosa.webp", "Blanco": "img/pantalon-blanco.webp" } },
+        // Gorros (fotos de la dueña, 6 estampados). precio: promoción de Instagram "3 gorros por $60.000" (confirmar con la dueña)
+        { id: "gorro", nombre: "Gorro quirúrgico", precio: 20000, precioFijo: true, accesorio: true, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico antifluido y estampado, con moña para recoger el cabello y toalla para el sudor. Cómodo durante toda la jornada.", foto: "img/gorro-animados.webp",
+          colores: ["Dibujos animados", "Ratoncita rosa", "Flamencos", "Estrellas", "Tropical", "Ratoncito negro"],
+          fotos: { "Dibujos animados": "img/gorro-animados.webp", "Ratoncita rosa": "img/gorro-ratoncita-rosa.webp", "Flamencos": "img/gorro-flamencos.webp",
+            "Estrellas": "img/gorro-estrellas.webp", "Tropical": "img/gorro-tropical.webp", "Ratoncito negro": "img/gorro-ratoncito-negro.webp" } },
       ],
       // Tiempos de entrega por modalidad (confirmar con la dueña). No se trabaja por tallas: siempre se toman las medidas
       tiempos: { tienda: "entrega inmediata", pedido: "3 a 5 días hábiles", medida: "5 a 8 días hábiles" },
@@ -1149,6 +1157,8 @@
         if (m.fotos) colorSwitch(el, m);
         // Ficha ampliada del producto: al tocar la foto o el nombre (con el color que la clienta tenga elegido)
         const abrir = () => abrirProducto(m, el.dataset.color, el.querySelector(".pd-open"));
+        // accesorios (gorros) no se diseñan: el botón de la tarjeta abre la ficha para encargar
+        if (m.accesorio) { el.querySelector(".design-btn").textContent = "Encargar"; el.querySelector(".design-btn").onclick = abrir; }
         el.querySelector(".pd-open").onclick = abrir;
         el.querySelector(".pic").onclick = abrir;
         el.querySelector(".pic").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } };
@@ -1166,7 +1176,7 @@
     const model = () => NEGOCIO.modelos.find(m => m.id === $("s-model").value);
     const tipo = () => NEGOCIO.tipos.find(t => t.id === design.tipo);
     const precio = (m, t) => (t.precio && !m.precioFijo ? t.precio : m.precio);
-    NEGOCIO.modelos.forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id)));
+    NEGOCIO.modelos.filter(m => !m.accesorio).forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id))); // accesorios (gorros) no se diseñan
     const tipoNombre = id => NEGOCIO.tipos.find(t => t.id === id).t;
     $("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
 
@@ -1573,10 +1583,13 @@
       $("pd-price").innerHTML = m.precioFijo ? pesos(m.precio)
         : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}<small>${NEGOCIO.tipos.map(t => `${t.t}: ${pesos(precio(m, t))}`).join(" · ")}</small>`;
       $("pd-desc").textContent = m.desc;
-      $("pd-feats").innerHTML = ["Tela antifluido de alta calidad", `Confeccionado en nuestro taller de ${NEGOCIO.ciudad}`, "Bordado de nombre y profesión disponible", "Envíos a toda Colombia"].map(x => `<li>${x}</li>`).join("");
+      $("pd-feats").innerHTML = (m.accesorio ? ["Tela antifluido", "Moña para recoger el cabello y toalla para el sudor", "Varios estampados: pregunta por los disponibles", "Envíos a toda Colombia"]
+        : ["Tela antifluido de alta calidad", `Confeccionado en nuestro taller de ${NEGOCIO.ciudad}`, "Bordado de nombre y profesión disponible", "Envíos a toda Colombia"]).map(x => `<li>${x}</li>`).join("");
       $("pd-thumbs").innerHTML = galeria(m).map(g => `<button type="button" data-src="${g.src}" data-color="${g.color}" aria-label="Ver foto en ${g.color.toLowerCase()}"><img src="${g.src}" alt="" loading="lazy"></button>`).join("");
       $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
       $("pd-tipo-box").hidden = !!m.precioFijo;
+      // accesorios (gorros): sin medidas, sin diseñador y sin descuento por cantidad de uniformes
+      $("pd-medidas").parentElement.hidden = $("pd-pers").hidden = !!m.accesorio;
       pintarProducto();
       document.documentElement.classList.add("pd-abierta");
       $("pd").showModal();
@@ -1603,14 +1616,15 @@
       $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
       $("pd-medidas").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.medidas = b.dataset.v; pintarProducto(srcElegida); }));
       $("pd-q").textContent = pd.qty;
-      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = discount(pd.qty);
+      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = m.accesorio ? 0 : discount(pd.qty);
       const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
-      $("pd-desc-qty").textContent = pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
+      $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
-      $("pd-wa").href = waLink(`Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
-      $("pd-agenda").hidden = !pd.medidas || pd.medidas === "casa";
+      $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}\n¿Está disponible?`
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
+      $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
     $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarProducto(); };
     $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarProducto(); };
@@ -1731,7 +1745,7 @@
       P.color = c;
       const foto = (P.m.fotos || {})[c] || P.m.foto, ref = (P.m.simulados || []).includes(c);
       bot(`${unico ? `Viene en ${c.toLowerCase()}.` : `Así se ve el ${P.m.nombre} en ${c.toLowerCase()}${ref ? " (color de referencia, el tono real puede variar)" : ""}.`}<img src="${foto}" alt="${P.m.nombre} en color ${c}">`);
-      paso(pedirModalidad);
+      paso(P.m.accesorio ? pedirCantidad : pedirModalidad); // accesorios (gorros): sin modalidad ni medidas
     }
     function pedirModalidad() {
       if (P.m.precioFijo) { P.t = NEGOCIO.tipos[0]; paso(pedirMedidas); return; }
@@ -1744,11 +1758,12 @@
     }
     function pedirCantidad() {
       const tramos = NEGOCIO.descuentos.filter(([, p]) => p).map(([n, p]) => `${n}+ = −${p * 100}%`).join(", ");
-      pedirTexto(`¿Cuántos uniformes necesitas? Hay descuento por cantidad: ${tramos}.`, txt => {
+      if (P.m.accesorio) P.t = NEGOCIO.tipos[0];
+      pedirTexto(P.m.accesorio ? `¿Cuántas unidades quieres?` : `¿Cuántos uniformes necesitas? Hay descuento por cantidad: ${tramos}.`, txt => {
         const n = parseInt(txt, 10);
         if (!(n > 0 && n < 500)) { bot("Escríbeme un número, por ejemplo 2 🙂"); return; }
-        P.qty = n; espera = null; paso(pedirBordado);
-      }, [1, 2, 3, 6, 12].map(n => ({ t: String(n), fn: () => { P.qty = n; espera = null; paso(pedirBordado); } })));
+        P.qty = n; espera = null; paso(P.m.accesorio ? pedirEntrega : pedirBordado);
+      }, [1, 2, 3, 6, 12].map(n => ({ t: String(n), fn: () => { P.qty = n; espera = null; paso(P.m.accesorio ? pedirEntrega : pedirBordado); } })));
     }
     function pedirBordado() {
       bot(`¿Le bordamos tu nombre y profesión? Nombre +${pesos(NEGOCIO.bordado.nombre)}, profesión +${pesos(NEGOCIO.bordado.profesion)}.`);
@@ -1784,7 +1799,7 @@
     }
     function cuenta() {
       const base = precio(P.m, P.t), bord = (P.bordNombre ? NEGOCIO.bordado.nombre : 0) + (P.bordRol ? NEGOCIO.bordado.profesion : 0);
-      const sub = (base + bord) * P.qty, pct = discount(P.qty), desc = Math.round(sub * pct);
+      const sub = (base + bord) * P.qty, pct = P.m.accesorio ? 0 : discount(P.qty), desc = Math.round(sub * pct);
       const recargo = P.medidas && P.medidas.id === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
       const total = sub - desc + recargo;
       return { base, bord, sub, pct, desc, recargo, total, abono: Math.round(total / 2) };
@@ -1793,14 +1808,15 @@
       ultimo = resumen;
       const k = cuenta(), t = P.t;
       const lineas = [
-        ["Modelo", P.m.nombre], ["Color", P.color], ["Modalidad", `${t.t} (${NEGOCIO.tiempos[t.id]})`],
-        ["Medidas", P.medidas ? P.medidas.t : "—"],
-        ["Cantidad", P.qty],
-        ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hilo.toLowerCase()})` : "Sin bordado"],
+        ...(P.m.accesorio ? [["Producto", P.m.nombre], ["Estampado", P.color], ["Cantidad", P.qty]] : [
+          ["Modelo", P.m.nombre], ["Color", P.color], ["Modalidad", `${t.t} (${NEGOCIO.tiempos[t.id]})`],
+          ["Medidas", P.medidas ? P.medidas.t : "—"],
+          ["Cantidad", P.qty],
+          ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hilo.toLowerCase()})` : "Sin bordado"]]),
         ["Entrega", P.entrega], ["Nombre", P.nombre], ["Celular", P.cel],
       ];
       const precioTxt = [`${pesos(k.base + k.bord)} c/u × ${P.qty}`, k.desc ? `descuento ${k.pct * 100}%: −${pesos(k.desc)}` : "", k.recargo ? `domicilio de medidas: +${pesos(k.recargo)}` : ""].filter(Boolean).join(" · ");
-      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span></div>\nEl precio final se confirma al tomar tus medidas${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
+      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span></div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
       const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`;
       const opciones = [{ t: "✅ Enviar mi pedido por WhatsApp", href: waLink(msg), cls: "principal", fn: () => setTimeout(() => bot("¡Gracias! 💗 Te respondemos por WhatsApp para confirmar tu pedido y el abono."), 400) }];
       if (P.medidas && P.medidas.id !== "casa") opciones.push({ t: "📅 Agendar mis medidas", href: "#agenda", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "agenda"; } });
