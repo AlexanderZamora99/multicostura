@@ -82,6 +82,18 @@
     .hero-pics figure:nth-child(2) { aspect-ratio: 9/18; }
     .hero-pics img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .hero-pics svg { width: 78%; }
+    /* Pasarela dentro de los mismos tres arcos: fundido suave entre fotos, botón de pausa en la esquina */
+    .hero-pics { position: relative; }
+    .hero-pics figure.pasa img { object-position: center top; transition: opacity .45s ease; }
+    .hero-pics figure.pasa img.fade { opacity: 0; }
+    .hero-pp { position: absolute; right: .5rem; bottom: .5rem; z-index: 2; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(36,22,29,.65); color: #fff; display: grid; place-items: center; }
+    .hero-pp:hover { background: rgba(36,22,29,.85); }
+    .hero-pp:focus-visible { outline: 2px solid var(--mag); outline-offset: 2px; }
+    .hero-pp svg { width: 14px; height: 14px; fill: currentColor; grid-area: 1 / 1; }
+    .hero-pp .i-play, .hero-pp.paused .i-pause { display: none; }
+    .hero-pp.paused .i-play { display: block; }
+    .hero-pp[hidden] { display: none; }
+    @media (prefers-reduced-motion: reduce) { .hero-pics figure.pasa img { transition: none; } }
 
     /* Modelos */
     .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
@@ -305,7 +317,9 @@
           <div><strong>Envíos</strong><small>a toda Colombia</small></div>
         </div>
       </div>
-      <div class="hero-pics" id="hero-pics"></div>
+      <div class="hero-pics" id="hero-pics" role="group" aria-roledescription="carrusel" aria-label="Pasarela de uniformes Multicostura">
+        <button type="button" class="hero-pp" id="hero-pp" aria-label="Pausar pasarela de uniformes"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+      </div>
     </div>
   </section>
 
@@ -735,6 +749,19 @@
         { foto: "img/portada-2.jpg", color: "Azul noche" },
         { foto: "img/portada-3.jpg", color: "Café" },
       ],
+      // Pasarela de la portada: fotos reales que van pasando por los tres arcos (cambiar aquí para elegir otras)
+      pasarela: [
+        { foto: "img/alondra.webp", nombre: "Alondra azul" },
+        { foto: "img/kaill-lila.webp", nombre: "Kaill lila" },
+        { foto: "img/durango-rojo.webp", nombre: "Durango rojo" },
+        { foto: "img/mariee-vinotinto.webp", nombre: "Mariee vinotinto" },
+        { foto: "img/clasico-negro.webp", nombre: "Clásico negro" },
+        { foto: "img/neru-fucsia.webp", nombre: "Neru fucsia" },
+        { foto: "img/luna-petroleo.webp", nombre: "Luna petróleo" },
+        { foto: "img/paris.webp", nombre: "París lavanda" },
+        { foto: "img/violet.webp", nombre: "Violet rosa" },
+        { foto: "img/durango.webp", nombre: "Durango petróleo" },
+      ],
     };
     // ==========================================================
     NEGOCIO.modelos.forEach(m => (m.colores ||= Object.keys(NEGOCIO.colores)));
@@ -757,6 +784,34 @@
     // ---------- Portada ----------
     NEGOCIO.portada.forEach(p => $("hero-pics").insertAdjacentHTML("beforeend",
       `<figure style="background:linear-gradient(180deg, #fff, ${C(p.color)}33)">${photoOr(p.foto, C(p.color))}</figure>`));
+    // Pasarela: las fotos de NEGOCIO.pasarela van pasando por los mismos tres arcos (mismo tamaño y margen).
+    // Se pausa con el botón, con el cursor encima o con el foco, y queda quieta si la persona pidió reducir el movimiento.
+    (function pasarela() {
+      const fotos = NEGOCIO.pasarela, arcos = [...$("hero-pics").querySelectorAll("figure")];
+      if (!fotos || fotos.length < arcos.length) return;
+      fotos.forEach(f => (new Image().src = f.foto)); // precarga: el cambio no parpadea
+      let k = 0, pausa = false, timer = null;
+      const poner = (fig, f) => { fig.querySelector("svg")?.remove(); let img = fig.querySelector("img"); if (!img) { img = document.createElement("img"); fig.appendChild(img); } img.src = f.foto; img.alt = f.nombre; img.removeAttribute("loading"); };
+      arcos.forEach((fig, i) => { fig.classList.add("pasa"); poner(fig, fotos[i]); });
+      const avanzar = () => {
+        k = (k + 1) % fotos.length;
+        arcos.forEach((fig, i) => setTimeout(() => {
+          const img = fig.querySelector("img");
+          img.classList.add("fade");
+          setTimeout(() => { poner(fig, fotos[(k + i) % fotos.length]); img.classList.remove("fade"); }, 450);
+        }, i * 180));
+      };
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      const pp = $("hero-pp");
+      const play = () => { clearInterval(timer); if (!pausa && !reduce.matches) timer = setInterval(avanzar, 3500); };
+      const sync = () => { pp.hidden = reduce.matches; pp.classList.toggle("paused", pausa); pp.setAttribute("aria-label", pausa ? "Reanudar pasarela de uniformes" : "Pausar pasarela de uniformes"); };
+      pp.onclick = () => { pausa = !pausa; sync(); play(); };
+      const box = $("hero-pics");
+      box.onmouseenter = box.onfocusin = () => clearInterval(timer);
+      box.onmouseleave = box.onfocusout = play;
+      reduce.addEventListener("change", () => { sync(); play(); });
+      sync(); play();
+    })();
 
     // ---------- Modelos ----------
     let cat = "Todos";
