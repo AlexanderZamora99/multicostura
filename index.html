@@ -8,207 +8,17 @@
   <meta property="og:title" content="Multicostura · Calidad, comodidad y estilo">
   <meta property="og:description" content="Más de 10 años vistiendo profesionalismo. Mira el catálogo 2026 y agenda tu toma de medidas 💗">
   <meta property="og:type" content="website">
+  <!-- Vista previa al compartir: con dominio publicado, cambiar a la URL completa (https://.../img/og-image.jpg) -->
+  <meta property="og:image" content="img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #fffafc;
-      --bg-2: #fcedf4;
-      --card: #ffffff;
-      --text: #24161d;
-      --muted: #84707a;
-      --mag: #d6247f;
-      --mag-2: #ad1765;
-      --pink: #f4b6d2;
-      --line: #f2dde7;
-      --wa: #25d366;
-      --radius: 18px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-    body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; cursor: pointer; color: inherit; }
-    img { max-width: 100%; display: block; }
-    .wrap { width: min(1150px, 100% - 32px); margin-inline: auto; }
-    h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 700; line-height: 1.02; }
-    h2 { font-size: clamp(2.3rem, 6vw, 3.3rem); margin-bottom: .4rem; }
-    .eyebrow { color: var(--mag); font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: .74rem; }
-    .lead { color: var(--muted); max-width: 600px; }
-    section { padding: 80px 0; }
-    .alt { background: var(--bg-2); }
-    .hidden { display: none !important; }
-
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .9rem 1.5rem; border-radius: 999px; font-weight: 600; border: 0; transition: transform .15s, background .15s, opacity .15s; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-    .btn-mag { background: var(--mag); color: #fff; }
-    .btn-mag:hover { background: var(--mag-2); }
-    .btn-ghost { border: 1.5px solid var(--text); background: transparent; }
-    .btn-wa { background: var(--wa); color: #08260f; }
-
-    /* Nav */
-    header { position: sticky; top: 0; z-index: 30; background: rgba(255,250,252,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-    .nav { display: flex; align-items: center; justify-content: space-between; height: 66px; }
-    .logo { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .02em; }
-    .logo svg { width: 40px; height: 40px; }
-    .logo small { display: block; font-size: .62rem; letter-spacing: .25em; color: var(--muted); font-weight: 600; }
-    .nav ul { display: flex; gap: 1.4rem; list-style: none; color: var(--muted); font-size: .93rem; }
-    .nav ul a:hover { color: var(--text); }
-    .nav .btn { padding: .6rem 1.1rem; font-size: .88rem; }
-    @media (max-width: 900px) { .nav ul { display: none; } }
-
-    /* Hero */
-    .hero { padding: 72px 0 64px; background: radial-gradient(640px 400px at 88% 10%, rgba(214,36,127,.16), transparent 60%), radial-gradient(500px 320px at 0% 100%, rgba(244,182,210,.35), transparent 60%); }
-    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 2.5rem; align-items: center; }
-    @media (max-width: 880px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
-    .hero h1 { font-size: clamp(3rem, 8.5vw, 5.4rem); margin: .7rem 0 1rem; }
-    .hero h1 em { color: var(--mag); }
-    .hero .lead { font-size: 1.08rem; margin-bottom: 1.7rem; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
-    .stats { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2.2rem; }
-    .stats strong { font-family: "Cormorant Garamond"; font-size: 2.4rem; color: var(--mag); display: block; line-height: 1; }
-    .stats small { color: var(--muted); }
-    .hero-pics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; align-items: end; }
-    .hero-pics figure { border-radius: 999px 999px 22px 22px; overflow: hidden; aspect-ratio: 9/16; position: relative; display: grid; place-items: end center; padding-bottom: 1rem; }
-    .hero-pics figure:nth-child(2) { aspect-ratio: 9/18; }
-    .hero-pics img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .hero-pics svg { width: 78%; }
-
-    /* Modelos */
-    .profs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
-    .profs button { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: .5rem 1rem; font-size: .9rem; }
-    .profs button.on { background: var(--text); border-color: var(--text); color: #fff; }
-    .models { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); margin-top: 1.6rem; }
-    .model { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
-    .model .pic { aspect-ratio: 4/5; position: relative; display: grid; place-items: center; background: linear-gradient(180deg, var(--bg-2), #fff); }
-    .model .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .model .pic svg { width: 62%; }
-    .model .tag { position: absolute; top: .7rem; left: .7rem; z-index: 1; background: var(--mag); color: #fff; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .65rem; border-radius: 999px; }
-    .model .info { padding: 1rem 1.1rem 1.2rem; display: grid; gap: .35rem; flex: 1; }
-    .model .info p { color: var(--muted); font-size: .88rem; flex: 1; }
-    .model .row { display: flex; justify-content: space-between; align-items: center; margin-top: .4rem; gap: .5rem; }
-    .model .row button { background: var(--bg-2); color: var(--mag-2); border: 0; border-radius: 999px; padding: .5rem 1rem; font-weight: 600; font-size: .86rem; }
-    .model .row button:hover { background: var(--mag); color: #fff; }
-    .swatches { display: flex; gap: .3rem; flex-wrap: wrap; }
-    .swatches i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); }
-    .swatches small { font-size: .72rem; color: var(--muted); align-self: center; }
-    .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
-    .tipos div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; display: grid; gap: .3rem; }
-    .tipos b { text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
-    .tipos strong { font-family: "Cormorant Garamond"; font-size: 2rem; color: var(--mag); line-height: 1.1; }
-    .tipos p { color: var(--muted); font-size: .9rem; }
-    .tipos-title { margin-top: 3rem; font-size: 2rem; }
-
-    /* Personalizador */
-    .studio { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 2.5rem; align-items: start; margin-top: 2.2rem; }
-    @media (max-width: 880px) { .studio { grid-template-columns: minmax(0, 1fr); } }
-    .preview { position: sticky; top: 90px; background: radial-gradient(circle at 50% 35%, #fff, var(--bg-2) 70%); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; display: grid; place-items: center; gap: .8rem; }
-    @media (max-width: 880px) { .preview { position: static; } }
-    .preview svg { width: min(100%, 340px); }
-    .preview .cap { font-size: .85rem; color: var(--muted); text-align: center; }
-    .panel { display: grid; gap: 1.2rem; }
-    .field > span { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .45rem; }
-    .opts { display: flex; flex-wrap: wrap; gap: .45rem; }
-    .opts button { border: 1.5px solid var(--line); background: var(--card); border-radius: 12px; padding: .5rem .9rem; font-size: .9rem; display: flex; align-items: center; gap: .45rem; }
-    .opts button i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,.15); }
-    .opts button.on { border-color: var(--mag); background: var(--bg-2); font-weight: 600; }
-    .panel input, .panel select, .agenda input, .agenda textarea, .agenda select { width: 100%; border: 1.5px solid var(--line); border-radius: 12px; padding: .75rem .9rem; font: inherit; font-size: 1rem; background: var(--card); color: var(--text); }
-    .panel input:focus, .panel select:focus, .agenda input:focus, .agenda textarea:focus { outline: 2px solid var(--mag); border-color: transparent; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-    @media (max-width: 480px) { .two { grid-template-columns: 1fr; } }
-    .qty { display: flex; align-items: center; gap: .6rem; }
-    .qty button { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--card); font-size: 1.2rem; }
-    .qty output { min-width: 2.2rem; text-align: center; font-weight: 700; font-size: 1.1rem; }
-    .made { display: flex; gap: .7rem; align-items: center; background: var(--card); border: 1.5px dashed var(--mag); border-radius: 14px; padding: .8rem 1rem; font-size: .9rem; }
-    .made b { color: var(--mag-2); }
-    .quote { background: var(--text); color: #fff; border-radius: 18px; padding: 1.2rem 1.3rem; display: grid; gap: .3rem; font-size: .93rem; }
-    .quote div { display: flex; justify-content: space-between; gap: 1rem; }
-    .quote .total { font-size: 1.2rem; font-weight: 700; border-top: 1px solid rgba(255,255,255,.2); padding-top: .5rem; margin-top: .3rem; }
-    .quote small { color: #d9c4cf; }
-    .tiers { display: flex; gap: .4rem; flex-wrap: wrap; font-size: .8rem; }
-    .tiers span { border: 1px dashed var(--mag); color: var(--mag-2); border-radius: 999px; padding: .2rem .6rem; }
-    .tiers span.on { background: var(--mag); color: #fff; border-style: solid; }
-    .actions { display: flex; flex-wrap: wrap; gap: .6rem; }
-    .actions .btn { flex: 1 1 220px; }
-
-    /* ===== Agenda de medidas ===== */
-    .agenda .flow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; margin-top: 2rem; }
-    .step { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; }
-    .step > b { display: flex; align-items: center; gap: .6rem; margin-bottom: .9rem; }
-    .step > b span { width: 26px; height: 26px; border-radius: 50%; background: var(--mag); color: #fff; display: grid; place-items: center; font-size: .82rem; flex: none; }
-    .step.off { opacity: .45; pointer-events: none; }
-    .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: .7rem; }
-    .mode { text-align: left; border: 1.5px solid var(--line); background: var(--bg); border-radius: 16px; padding: 1rem; display: grid; gap: .2rem; }
-    .mode .ico { font-size: 1.5rem; }
-    .mode small { color: var(--muted); font-size: .85rem; }
-    .mode.on { border-color: var(--mag); background: var(--bg-2); box-shadow: 0 0 0 3px rgba(214,36,127,.12); }
-    .chips { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .3rem; }
-    .chip { flex: none; background: var(--bg); border: 1.5px solid var(--line); border-radius: 14px; padding: .55rem .9rem; font-size: .9rem; text-align: center; line-height: 1.25; }
-    .chip small { display: block; color: var(--muted); font-size: .72rem; text-transform: capitalize; }
-    .chip:disabled { opacity: .35; cursor: not-allowed; }
-    .chip.on { background: var(--mag); border-color: var(--mag); color: #fff; }
-    .chip.on small { color: #fff; }
-    .slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .5rem; }
-    .slots .chip { padding: .6rem .4rem; }
-    .empty { color: var(--muted); font-size: .92rem; }
-    .agenda form { display: grid; gap: .9rem; }
-    .agenda label { display: grid; gap: .3rem; font-size: .85rem; color: var(--muted); }
-    .agenda textarea { min-height: 70px; resize: vertical; }
-    .summary { background: var(--bg-2); border-radius: 12px; padding: .9rem 1rem; font-size: .92rem; display: grid; gap: .25rem; }
-    .summary strong { color: var(--mag-2); }
-    .mgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: .7rem; }
-    .err { color: #c0392b; font-size: .9rem; }
-    .done { text-align: center; padding: 2rem 1rem; display: grid; gap: .8rem; justify-items: center; }
-    .done .big { font-size: 3rem; }
-    .demo-note { margin-top: 1rem; font-size: .8rem; color: var(--muted); border: 1px dashed var(--line); border-radius: 10px; padding: .6rem .8rem; background: var(--card); }
-
-    /* Proceso */
-    .steps-row { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); margin-top: 2rem; counter-reset: s; }
-    .steps-row div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; position: relative; }
-    .steps-row div::before { counter-increment: s; content: counter(s); position: absolute; top: -12px; left: 1.2rem; width: 28px; height: 28px; border-radius: 50%; background: var(--mag); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: .85rem; }
-    .steps-row b { display: block; margin: .3rem 0 .2rem; }
-    .steps-row p { color: var(--muted); font-size: .9rem; }
-
-    /* Guía de medidas */
-    .measure { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; margin-top: 2rem; }
-    @media (max-width: 780px) { .measure { grid-template-columns: minmax(0, 1fr); } }
-    .measure ol { display: grid; gap: .8rem; padding-left: 1.2rem; }
-    .measure li b { display: block; }
-    .measure li span { color: var(--muted); font-size: .92rem; }
-    .measure svg { width: min(100%, 300px); margin-inline: auto; }
-
-    /* Empresas y bono */
-    .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1.2rem; }
-    .box { border-radius: 24px; padding: 1.8rem; display: grid; gap: .9rem; align-content: start; }
-    .box.dark { background: var(--text); color: #fff; }
-    .box.dark .lead { color: #d9c4cf; }
-    .box.pinkbox { background: linear-gradient(135deg, #fbd3e5, #f7a9cc); }
-    .box label { display: grid; gap: .3rem; font-size: .84rem; }
-    .box input { width: 100%; border: 1.5px solid rgba(0,0,0,.08); border-radius: 12px; padding: .75rem .9rem; font: inherit; font-size: 1rem; background: rgba(255,255,255,.9); color: var(--text); }
-    .gift { background: #fff; border-radius: 18px; padding: 1.2rem; box-shadow: 0 16px 30px -18px rgba(173,23,101,.6); display: grid; gap: .3rem; position: relative; overflow: hidden; }
-    .gift::after { content: "🎀"; position: absolute; right: .8rem; top: .5rem; font-size: 2rem; }
-    .gift b { font-family: "Cormorant Garamond"; font-size: 1.8rem; color: var(--mag-2); }
-    .gift small { color: var(--muted); }
-    .amounts { display: flex; flex-wrap: wrap; gap: .4rem; }
-    .amounts button { border: 1.5px solid rgba(0,0,0,.1); background: rgba(255,255,255,.8); border-radius: 999px; padding: .45rem .9rem; font-weight: 600; font-size: .9rem; }
-    .amounts button.on { background: var(--mag); color: #fff; border-color: var(--mag); }
-
-    /* Clientas */
-    .clients { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); margin-top: 2rem; }
-    .clients figure { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #fbd3e5, #f4b6d2); display: grid; place-items: center; font-size: 2.4rem; }
-    .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(36,22,29,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
-
-    footer.site { background: var(--text); color: #d9c4cf; padding: 40px 0 100px; font-size: .9rem; }
-    footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
-    footer.site b { color: #fff; display: block; margin-bottom: .4rem; }
-    footer.site a { display: block; }
-    footer.site a:hover { color: #fff; }
-    .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
-    .wa-float svg { width: 32px; height: 32px; fill: #fff; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
 
@@ -231,11 +41,11 @@
   <header>
     <div class="wrap nav">
       <a href="#" class="logo">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#fff" stroke="#f2dde7"/><path d="M9 28V16q0-4 4-4t4 4v12M17 16q0-4 4-4t4 4v12" fill="none" stroke="#f4b6d2" stroke-width="3.2" stroke-linecap="round"/><path d="M23 28V16q0-4 4-4t4 4v12" fill="none" stroke="#d6247f" stroke-width="3.2" stroke-linecap="round"/></svg>
+        <img class="logo-m" src="img/logo-m.webp" width="63" height="40" alt="" decoding="async">
         <span>MULTICOSTURA<small>UNIFORMES</small></span>
       </a>
       <ul>
-        <li><a href="#modelos">Catálogo</a></li>
+        <li><a href="catalogo.html">Catálogo</a></li>
         <li><a href="#nosotros">Nosotros</a></li>
         <li><a href="#personaliza">Diseña</a></li>
         <li><a href="#agenda">Agenda</a></li>
@@ -251,7 +61,7 @@
       <div>
         <span class="eyebrow">Uniformes médicos · Catálogo 2026</span>
         <h1>Viste tu profesión <em>con estilo.</em></h1>
-        <p class="lead">Calidad, comodidad y estilo en antifluido. Llévate un modelo listo para entrega, pídelo en tu talla o mándalo a confeccionar a tu medida, con tu nombre bordado.</p>
+        <p class="lead">Calidad, comodidad y estilo en antifluido. Llévate un modelo listo para entrega, pídelo bajo pedido o mándalo a confeccionar a tu medida, con tu nombre bordado.</p>
         <div class="hero-actions">
           <a href="#agenda" class="btn btn-mag">Agendar toma de medidas</a>
           <a href="#personaliza" class="btn btn-ghost">Diseñar mi uniforme</a>
@@ -262,27 +72,79 @@
           <div><strong>Envíos</strong><small>a toda Colombia</small></div>
         </div>
       </div>
-      <div class="hero-pics" id="hero-pics"></div>
+      <div class="hero-show" id="hero-show" role="region" aria-roledescription="carrusel" aria-label="Pasarela de uniformes Multicostura">
+        <img class="hs-img on" id="hs-a" alt="" fetchpriority="high">
+        <img class="hs-img" id="hs-b" alt="">
+        <div class="hs-dots" id="hs-dots"></div>
+        <button type="button" class="hs-nav prev" id="hs-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+        <button type="button" class="hs-nav next" id="hs-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+        <p class="hs-cap" id="hs-cap"></p>
+        <button type="button" class="hero-pp" id="hero-pp" aria-label="Pausar pasarela de uniformes"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust" id="confianza" aria-label="Por qué comprar en Multicostura">
+    <div class="wrap">
+      <div class="trust-grid" id="trust"></div>
     </div>
   </section>
 
   <section id="modelos">
     <div class="wrap">
-      <span class="eyebrow">Catálogo 2026</span>
+      <span class="eyebrow">Recomendados</span>
       <h2>Encuentra tu próximo uniforme</h2>
-      <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch, línea de blancos, batas y pantalones.</p>
-      <div class="profs" id="profs"></div>
+      <p class="lead">Conjuntos de pantalón y blusa en antifluido licrado y stretch. Mira los recomendados o filtra todo el catálogo por categoría, color y modalidad.</p>
       <div class="models" id="models"></div>
+      <div class="ver-todo"><a class="btn btn-mag" href="catalogo.html">Ver todo el catálogo</a></div>
       <h3 class="tipos-title">Modalidades y precios</h3>
       <div class="tipos" id="tipos"></div>
     </div>
   </section>
 
+  <section id="look" class="look" aria-labelledby="look-t">
+    <div class="wrap look-grid">
+      <div class="look-foto" id="look-foto"></div>
+      <div class="look-info">
+        <span class="eyebrow">Mira cada detalle</span>
+        <h2 id="look-t">Descubre el look completo</h2>
+        <p class="lead">Toca los puntos de la foto para ver cada parte del uniforme.</p>
+        <div class="look-item" id="look-item" aria-live="polite"></div>
+        <button type="button" class="btn btn-mag" id="look-cta"></button>
+      </div>
+    </div>
+  </section>
+
   <section id="nosotros" class="alt">
-    <div class="wrap">
-      <span class="eyebrow">Quiénes somos</span>
-      <h2>Empresa Multicostura</h2>
-      <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+    <div class="wrap nos-grid">
+      <div>
+        <span class="eyebrow">Quiénes somos</span>
+        <h2>Empresa Multicostura</h2>
+        <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+        <!-- Invitación a la tienda: motiva a visitarla o a preguntar qué hay disponible -->
+        <div class="visita">
+          <p class="visita-tit">Ven a conocernos y pruébatelos</p>
+          <p class="visita-txt">En nuestra tienda puedes ver y tocar los uniformes, elegir tu color con la tela en la mano y llevarte uno listo hoy mismo.</p>
+          <ul class="visita-pts">
+            <li>Uniformes listos para entrega</li>
+            <li>Telas en su color real</li>
+            <li>Te tomamos las medidas ahí mismo</li>
+          </ul>
+          <p class="visita-dir"><b id="v-dir"></b><span id="v-hor"></span></p>
+          <div class="visita-btns">
+            <a class="btn btn-mag" id="v-mapa" target="_blank" rel="noopener">Cómo llegar</a>
+            <a class="btn btn-ghost" id="v-wa" target="_blank" rel="noopener">¿Qué hay en tienda hoy?</a>
+          </div>
+        </div>
+      </div>
+      <!-- Video de la tienda en bucle: sin sonido, se carga y reproduce solo cuando se ve en pantalla -->
+      <figure class="nos-video">
+        <video id="nos-video" muted loop playsinline preload="none" poster="video/nosotros-poster.webp" aria-label="Video de la tienda Multicostura en Tuluá">
+          <source src="video/nosotros.webm" type="video/webm">
+          <source src="video/nosotros.mp4" type="video/mp4">
+        </video>
+        <button type="button" class="nos-pp" id="nos-pp" aria-label="Pausar video"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+      </figure>
     </div>
   </section>
 
@@ -293,17 +155,22 @@
       <p class="lead">Elige modelo, color y bordado. Mira cómo queda y luego agenda tu toma de medidas: tu diseño se guarda con la cita.</p>
       <div class="studio">
         <div class="preview">
-          <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
-            <use href="#scrub"/>
-            <text id="pv-name" x="125" y="62" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="700" font-size="11" text-anchor="middle"></text>
-            <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
-          </svg>
+          <div class="pvbox" id="pv-box">
+            <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
+              <use href="#scrub"/>
+              <text id="pv-name" x="125" y="62" font-family="Montserrat, Inter, sans-serif" font-style="italic" font-weight="700" font-size="9.5" text-anchor="middle"></text>
+              <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
+            </svg>
+            <img id="pv-photo" alt="">
+            <div class="bordado" id="pv-bord" aria-hidden="true"><small>Tu bordado</small><span class="b-n" id="pv-bn"></span><span class="b-r" id="pv-br"></span></div>
+          </div>
           <span class="cap" id="pv-cap"></span>
         </div>
         <div class="panel">
           <div class="field"><span>Modelo</span><select id="s-model"></select></div>
           <div class="field"><span>Modalidad</span><div class="opts" id="s-tipo"></div></div>
-          <div class="field"><span>Color: <b id="s-color-name" style="color:var(--text)"></b></span><div class="opts" id="s-colors"></div></div>
+          <div class="field"><span>Color: <b id="s-color-name" style="color:var(--text)"></b></span><div class="opts" id="s-colors"></div>
+            <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Cuando vengas a la tienda a tomarte las medidas podrás ver las telas en su color real.</p></div>
           <div class="made">📏 <span><b id="made-t"></b> <span id="made-d"></span></span></div>
           <div class="two">
             <div class="field"><span>Nombre bordado</span><input id="s-name" maxlength="22" placeholder="Ej: Dra. Camila Ruiz"></div>
@@ -329,20 +196,23 @@
     <div class="wrap">
       <span class="eyebrow">Paso 2 · Medidas</span>
       <h2>Agenda tu toma de medidas</h2>
-      <p class="lead">Solo ves los horarios que de verdad están libres. Si estás en otra ciudad, te guiamos para que te midas en casa.</p>
+      <p class="lead">Elige un día en el calendario y mira las horas libres y las ocupadas. Si estás en otra ciudad, te guiamos para que te midas en casa.</p>
 
       <div class="flow" id="flow">
         <div class="step">
           <b><span>1</span>¿Cómo tomamos tus medidas?</b>
           <div class="modes" id="modes"></div>
         </div>
-        <div class="step off" id="st-day">
-          <b><span>2</span>Día</b>
-          <div class="chips" id="days"></div>
-        </div>
-        <div class="step off" id="st-hour">
-          <b><span>3</span>Hora</b>
-          <div class="slots" id="slots"><p class="empty">Elige un día primero.</p></div>
+        <div class="cal-row" id="cal-row">
+          <div class="step off" id="st-day">
+            <b><span>2</span>Día</b>
+            <div class="cal" id="days"></div>
+          </div>
+          <div class="step off" id="st-hour">
+            <b><span>3</span>Hora</b>
+            <div class="slots" id="slots" aria-live="polite"><p class="empty">Elige un día primero.</p></div>
+            <p class="dur hidden" id="dur"></p>
+          </div>
         </div>
         <div class="step off" id="st-data">
           <b><span id="data-num">4</span>Tus datos</b>
@@ -367,7 +237,7 @@
 
       <div class="step done hidden" id="done">
         <div class="big">💗</div>
-        <h3 style="font-size:2rem" id="done-title">¡Cita agendada!</h3>
+        <h3 style="font-size:1.6rem" id="done-title">¡Cita agendada!</h3>
         <p id="done-text"></p>
         <a class="btn btn-wa" id="done-wa" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
         <button class="btn btn-ghost" type="button" id="done-again">Agendar otra cita</button>
@@ -402,6 +272,34 @@
           </g>
         </svg>
       </div>
+      <details class="guia" id="guia-tallas">
+        <summary>Ver tabla de medidas por talla (S a XL)</summary>
+        <div class="guia-body">
+          <p>Úsala como referencia para comparar tus medidas. Igual confeccionamos a tu medida.</p>
+          <a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">
+            <img src="img/tabla-medidas.jpg" loading="lazy" width="1265" height="1246" alt="Tabla de medidas Multicostura: medidas de blusa y pantalón en centímetros para las tallas S, M, L y XL, con la modelo mostrando dónde medir busto, cintura, cadera y largo de pantalón.">
+          </a>
+          <div class="sr-only">
+            <table>
+              <caption>Blusa, medidas en centímetros</caption>
+              <tr><th scope="col">Medida</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th><th scope="col">XL</th></tr>
+              <tr><th scope="row">Busto</th><td>96</td><td>100</td><td>108</td><td>112</td></tr>
+              <tr><th scope="row">Cintura</th><td>78</td><td>84</td><td>90</td><td>96</td></tr>
+              <tr><th scope="row">Cadera</th><td>104</td><td>108</td><td>114</td><td>120</td></tr>
+              <tr><th scope="row">Largo de blusa</th><td>68</td><td>69</td><td>70</td><td>72</td></tr>
+            </table>
+            <table>
+              <caption>Pantalón, medidas en centímetros</caption>
+              <tr><th scope="col">Medida</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th><th scope="col">XL</th></tr>
+              <tr><th scope="row">Cintura</th><td>78</td><td>84</td><td>90</td><td>96</td></tr>
+              <tr><th scope="row">Cadera</th><td>104</td><td>108</td><td>114</td><td>120</td></tr>
+              <tr><th scope="row">Largo de pantalón</th><td>102</td><td>104</td><td>106</td><td>106</td></tr>
+              <tr><th scope="row">Largo entrepierna</th><td>80</td><td>81.5</td><td>83</td><td>84.5</td></tr>
+              <tr><th scope="row">Ancho de bota</th><td>22</td><td>23</td><td>24</td><td>25</td></tr>
+            </table>
+          </div>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -444,502 +342,131 @@
     </div>
   </section>
 
-  <footer class="site">
+  <section id="faq" class="alt">
     <div class="wrap">
-      <div><b>Multicostura Uniformes</b>Diseño, comodidad y calidad.<br>Envíos a toda Colombia 🚚</div>
-      <div><b>Taller</b><span id="f-address"></span></div>
-      <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
-      <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></div>
+      <span class="eyebrow">Centro de ayuda</span>
+      <h2>Preguntas frecuentes</h2>
+      <p class="lead">Lo que más nos preguntan sobre pagos, entregas y medidas. ¿No encuentras tu respuesta? Escríbenos por WhatsApp.</p>
+      <div class="faq-list" id="faq-list"></div>
+      <button type="button" class="btn btn-ghost faq-more" id="faq-more" aria-expanded="false" aria-controls="faq-list"></button>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="wrap foot-grid">
+      <div class="foot-brand">
+        <img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">
+        <p>Uniformes médicos para mujer, hechos en nuestro taller de Tuluá. Diseño, comodidad y calidad, con envíos a toda Colombia.</p>
+        <b class="foot-h">Síguenos</b>
+        <div class="socials">
+          <a id="f-ig" target="_blank" rel="noopener" aria-label="Instagram de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg></a>
+          <a id="f-tt" target="_blank" rel="noopener" aria-label="TikTok de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.4 2.8 2 4.4 5 4.6"/></svg></a>
+          <a id="f-fb" target="_blank" rel="noopener" aria-label="Facebook de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z"/></svg></a>
+          <a id="f-wa-ico" target="_blank" rel="noopener" aria-label="WhatsApp de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3Z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-1.9-1.3-2.3-2.3l.8-1-1-2Z"/></svg></a>
+        </div>
+      </div>
+      <nav aria-label="Explora">
+        <b class="foot-h">Explora</b>
+        <ul>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="#personaliza">Diseña tu uniforme</a></li>
+          <li><a href="#agenda">Agenda tu toma de medidas</a></li>
+          <li><a href="#empresas">Empresas</a></li>
+          <li><a href="#bono">Bono de regalo</a></li>
+          <li><a href="#nosotros">Quiénes somos</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Centro de ayuda">
+        <b class="foot-h">Centro de ayuda</b>
+        <ul>
+          <li><a href="#tipos">Modalidades y precios</a></li>
+          <li><a href="#faq">Preguntas frecuentes</a></li>
+          <li><a href="#medidas">Cómo tomar tus medidas</a></li>
+          <li><a href="#agenda">Medidas en el taller o a domicilio</a></li>
+          <li><a id="f-ayuda" target="_blank" rel="noopener">Pregúntanos por WhatsApp</a></li>
+        </ul>
+      </nav>
+      <div class="foot-contact">
+        <b class="foot-h">Contacto</b>
+        <ul>
+          <li><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a id="f-tel"></a></li>
+          <li><a id="f-mail"></a></li>
+        </ul>
+        <p id="f-address"></p>
+        <b class="foot-h foot-h-sm">Horario de atención</b>
+        <p id="f-horario"></p>
+      </div>
+      <div class="foot-map"><b class="foot-h">Ubicación</b><iframe id="f-map" title="Mapa del taller Multicostura en Tuluá" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><a id="f-map-link" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
+    </div>
+    <div class="wrap foot-bottom">
+      <span id="f-copy"></span>
+      <span>Hecho con 💗 en Tuluá, Valle del Cauca</span>
     </div>
   </footer>
+
+  <!-- Ficha ampliada del producto: galería con zoom, información, opciones y encargo por WhatsApp -->
+  <dialog class="pd" id="pd" aria-labelledby="pd-title">
+    <button type="button" class="pd-close" id="pd-close" aria-label="Cerrar ficha del producto">×</button>
+    <div class="pd-body">
+      <div class="pd-gal">
+        <div class="pd-main" id="pd-main" tabindex="0" role="img" aria-label="">
+          <img id="pd-img" alt="">
+          <svg class="pd-sil" id="pd-sil" viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub"/></svg>
+          <span class="pd-hint" aria-hidden="true">🔍 Pasa el cursor o toca para ampliar</span>
+        </div>
+        <div class="pd-thumbs" id="pd-thumbs" role="group" aria-label="Fotos del producto"></div>
+      </div>
+      <div class="pd-info">
+        <p class="eyebrow" id="pd-cat"></p>
+        <h2 id="pd-title"></h2>
+        <p class="pd-price" id="pd-price"></p>
+        <p class="pd-desc" id="pd-desc"></p>
+        <ul class="pd-feats" id="pd-feats"></ul>
+        <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
+          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
+          <p class="pd-nota-diseno" id="pd-otro" hidden>¿Quieres otro diseño? Tenemos muchos más estampados. <a id="pd-otro-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te mostramos los disponibles.</p>
+        </div>
+        <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
+        <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div></div>
+        <div class="pd-field"><span class="pd-lbl">Cantidad</span>
+          <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
+        </div>
+        <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small>El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</small></div>
+        <div class="pd-actions">
+          <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Encargar por WhatsApp</a>
+          <button type="button" class="btn btn-ghost" id="pd-pers">Personalizar y bordar</button>
+          <a class="btn btn-ghost" id="pd-agenda" href="#agenda">Agendar mis medidas</a>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Asistente de compra: guía el pedido y lo deja listo por WhatsApp; las dudas llevan a Preguntas frecuentes -->
+  <button type="button" class="chat-btn" id="chat-btn" aria-label="Abrir asistente de compra" aria-expanded="false" aria-controls="chat-panel">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 6.5a1.5 1.5 0 1 0 0 .01Zm5 0a1.5 1.5 0 1 0 0 .01Zm5 0a1.5 1.5 0 1 0 0 .01Z"/></svg>
+    <span class="chat-btn-tip" aria-hidden="true">¿Te ayudo con tu pedido?</span>
+  </button>
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Asistente de compra Multicostura" hidden>
+    <div class="chat-head">
+      <img src="img/logo-m.webp" width="38" height="24" alt="">
+      <div><b>Asistente Multicostura</b><small>Te ayudo a elegir y dejar tu pedido listo</small></div>
+      <button type="button" id="chat-close" aria-label="Cerrar asistente">×</button>
+    </div>
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <label class="sr-only" for="chat-in">Escribe tu mensaje</label>
+      <input id="chat-in" maxlength="120" placeholder="Escribe tu pregunta o respuesta…">
+      <button type="submit" class="btn btn-mag" aria-label="Enviar mensaje"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20 21 12 3 4v6l12 2-12 2Z"/></svg></button>
+    </form>
+  </div>
 
   <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
     <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.2Z"/></svg>
   </a>
 
-  <script>
-    // ===== DATOS DEL NEGOCIO: confirma todo con la dueña =====
-    const NEGOCIO = {
-      nombre: "Multicostura",
-      whatsapp: "573217830050",
-      instagram: "https://www.instagram.com/multicostura_uniformes/",
-      tiktok: "https://www.tiktok.com/@uniformes_multicostura",
-      direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
-      ciudad: "Tuluá",
-
-      // ---- Agenda de toma de medidas ----
-      // URL de la aplicación web de Google Apps Script. Vacío = modo demostración.
-      apiUrl: "",
-      // Horario por día (0 = domingo). Varios rangos para dejar la hora de almuerzo libre.
-      horario: {
-        0: null,
-        1: [["08:00", "12:00"], ["14:00", "18:00"]],
-        2: [["08:00", "12:00"], ["14:00", "18:00"]],
-        3: [["08:00", "12:00"], ["14:00", "18:00"]],
-        4: [["08:00", "12:00"], ["14:00", "18:00"]],
-        5: [["08:00", "12:00"], ["14:00", "18:00"]],
-        6: [["08:00", "13:00"]],
-      },
-      paso: 30,              // cada cuántos minutos empieza un turno
-      minutosPorPersona: 20, // tomar medidas a una persona
-      minutosBase: 10,       // saludo, mostrar telas, etc.
-      margen: { taller: 0, domicilio: 30 }, // minutos extra después de la cita (traslado)
-      anticipacion: 120,     // minutos mínimos para agendar hoy
-      diasVisibles: 14,
-      recargoDomicilio: 8000,
-      modalidades: [
-        { id: "taller", ico: "🧵", t: "En el taller", d: "Vienes, te medimos y ves las telas en persona." },
-        { id: "domicilio", ico: "🏠", t: "A domicilio", d: "Vamos a tu casa o consultorio en Tuluá." },
-        { id: "casa", ico: "📏", t: "Me mido en casa", d: "Estás en otra ciudad: nos envías tus medidas." },
-      ],
-
-      // ---- Diseño y precios (del catálogo 2026) ----
-      // precio: null = el precio tienda de cada modelo. Los modelos con precioFijo no cambian de precio.
-      tipos: [
-        { id: "tienda", t: "Precio tienda", d: "Modelos disponibles y listos para entrega.", precio: null },
-        { id: "pedido", t: "Diseño bajo pedido", d: "Elige uno de nuestros modelos y solicita tu talla.", precio: 175000 },
-        { id: "medida", t: "Diseño por medida", d: "Diseño y confección personalizada según tus necesidades.", precio: 185000 },
-      ],
-      // Colores de ejemplo: confirmar con la dueña
-      colores: {
-        "Rosa": "#f2a7c6", "Lila": "#b39ad6", "Azul cielo": "#8dc3e8", "Verde menta": "#a8dcc8",
-        "Fucsia": "#d6247f", "Azul rey": "#2456b8", "Verde jade": "#1f8a78", "Azul noche": "#1f2f5c",
-        "Vinotinto": "#7a1f36", "Rojo": "#d22b3a", "Negro": "#1f1d22", "Café": "#6b4634", "Blanco": "#ffffff",
-      },
-      hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
-      bordado: { nombre: 12000, profesion: 6000 },
-      descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
-      envio: "Para otras ciudades, el envío se cotiza según el destino.",
-      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones"],
-      // Sin "colores" = todos los colores de la lista de arriba
-      modelos: [
-        { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.jpg" },
-        { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.jpg" },
-        { id: "clasico", nombre: "Clásico", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido stretch y algodón, cuello en V. Pantalón y blusa con cuello y mangas en rib personalizado.", foto: "img/clasico.jpg" },
-        { id: "durango", nombre: "Durango", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado, escote en V y pantalón bota recta. Cuello y mangas en rib personalizado.", foto: "img/durango.jpg" },
-        { id: "neru", nombre: "Neru", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con cuello en V y mangas clásicas. Detalles que encantan.", foto: "img/neru.jpg" },
-        { id: "glam", nombre: "Glam", precio: 159000, cat: ["Conjuntos"], desc: "Conjunto de pantalón y blusa en antifluido licrado.", foto: "img/glam.jpg" },
-        { id: "mariee", nombre: "Mariee", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado y dacrón nacional, escote en pico redondeado, pantalón bota recta y 3 bolsillos.", foto: "img/mariee.jpg" },
-        { id: "luna", nombre: "Luna", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado. Blusa con escote redondo y ojal en el pecho, pantalón bota ancha.", foto: "img/luna.jpg" },
-        { id: "violet", nombre: "Violet", precio: 165000, cat: ["Conjuntos"], desc: "Diseño juvenil con bolsillos camuflados, manga corta y cuello redondo.", foto: "img/violet.jpg" },
-        { id: "paris", nombre: "París", precio: 165000, cat: ["Conjuntos", "Línea blancos"], desc: "Antifluido elástico con corte en el cuello y mangas zurcidas. Cómodo y elegante.", foto: "img/paris.jpg" },
-        { id: "lisboa", nombre: "Lisboa", precio: 165000, cat: ["Conjuntos"], desc: "Diseño exclusivo, ideal para quienes quieren lucir profesionales.", foto: "img/lisboa.jpg" },
-        { id: "jomper", nombre: "Jomper", precio: 165000, cat: ["Conjuntos"], desc: "Modelo enterizo tipo jumper.", foto: "img/jomper.jpg" },
-        { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.jpg" },
-        { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.jpg" },
-        { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco.jpg" },
-        { id: "bata", nombre: "Bata manga larga", precio: 140000, precioFijo: true, cat: ["Batas y pantalones", "Línea blancos"], desc: "Bata de manga larga.", foto: "img/bata.jpg" },
-        { id: "pantalon", nombre: "Pantalón", precio: 90000, precioFijo: true, cat: ["Batas y pantalones"], desc: "Pretina adelante, resorte atrás y bolsillos funcionales. Bota recta o jogger, a tu elección.", foto: "img/pantalon.jpg" },
-      ],
-      proceso: [
-        ["Diseña", "Elige modelo, color y bordado aquí o en el catálogo."],
-        ["Agenda tus medidas", "En el taller, a domicilio o midiéndote en casa."],
-        ["Abona y confeccionamos", "Con el 50% empezamos. Tu uniforme está en 5 a 8 días hábiles."],
-        ["Prueba y entrega", "Te lo entregamos o enviamos. Si hay que ajustar algo, lo ajustamos."],
-      ],
-      medidas: [
-        ["Busto o pecho", "Por la parte más llena, con el metro derecho por la espalda."],
-        ["Cintura", "En la parte más angosta del abdomen."],
-        ["Cadera", "En la parte más ancha de los glúteos."],
-        ["Largo de manga", "Del hombro hasta donde quieres que termine."],
-        ["Largo de pantalón", "De la cintura al tobillo, por el costado."],
-        ["Ancho de hombros", "De la punta de un hombro a la otra, por la espalda."],
-        ["Estatura", "Descalza, contra la pared."],
-      ],
-      bonos: [100000, 150000, 200000, 300000],
-      clientas: [
-        { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
-        { foto: "img/clienta-2.jpg", texto: "Enfermera jefe" },
-        { foto: "img/clienta-3.jpg", texto: "Esteticista" },
-        { foto: "img/clienta-4.jpg", texto: "Médica general" },
-      ],
-      portada: [
-        { foto: "img/portada-1.jpg", color: "Rojo" },
-        { foto: "img/portada-2.jpg", color: "Azul noche" },
-        { foto: "img/portada-3.jpg", color: "Café" },
-      ],
-    };
-    // ==========================================================
-    NEGOCIO.modelos.forEach(m => (m.colores ||= Object.keys(NEGOCIO.colores)));
-
-    const $ = id => document.getElementById(id);
-    const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
-    const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
-    const openWa = t => window.open(waLink(t), "_blank", "noopener");
-    const C = n => NEGOCIO.colores[n];
-    const pad = n => String(n).padStart(2, "0");
-    const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
-    const toHHMM = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
-    const hora12 = hhmm => { let [h, m] = hhmm.split(":").map(Number); const ap = h >= 12 ? "p. m." : "a. m."; h = h % 12 || 12; return `${h}:${pad(m)} ${ap}`; };
-    const isoDate = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-    const fromIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
-    const largo = s => fromIso(s).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
-    const scrub = color => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub" style="fill:${color}"/></svg>`;
-    const photoOr = (foto, color) => `${scrub(color)}<img src="${foto}" alt="" loading="lazy" onerror="this.remove()">`;
-
-    // ---------- Portada ----------
-    NEGOCIO.portada.forEach(p => $("hero-pics").insertAdjacentHTML("beforeend",
-      `<figure style="background:linear-gradient(180deg, #fff, ${C(p.color)}33)">${photoOr(p.foto, C(p.color))}</figure>`));
-
-    // ---------- Modelos ----------
-    let cat = "Todos";
-    function renderProfs() {
-      $("profs").innerHTML = "";
-      NEGOCIO.categorias.forEach(p => {
-        const b = document.createElement("button");
-        b.type = "button"; b.textContent = p; b.className = p === cat ? "on" : "";
-        b.onclick = () => { cat = p; renderProfs(); renderModels(); };
-        $("profs").appendChild(b);
-      });
-    }
-    function renderModels() {
-      $("models").innerHTML = "";
-      NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => {
-        const el = document.createElement("article");
-        el.className = "model";
-        const extra = m.colores.length - 8;
-        el.innerHTML = `
-          <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
-          <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
-            <div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
-            <div class="row"><strong>${pesos(m.precio)}</strong><button type="button">Diseñar</button></div>
-          </div>`;
-        el.querySelector("button").onclick = () => { $("s-model").value = m.id; design.color = m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
-        $("models").appendChild(el);
-      });
-    }
-
-    // ---------- Modalidades y precios ----------
-    const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
-    const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
-    $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
-
-    // ---------- Personalizador ----------
-    const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
-    const model = () => NEGOCIO.modelos.find(m => m.id === $("s-model").value);
-    const tipo = () => NEGOCIO.tipos.find(t => t.id === design.tipo);
-    const precio = (m, t) => (t.precio && !m.precioFijo ? t.precio : m.precio);
-    NEGOCIO.modelos.forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id)));
-    const tipoNombre = id => NEGOCIO.tipos.find(t => t.id === id).t;
-    $("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
-
-    function optButtons(box, items, current, onPick, swatch, label = it => it) {
-      box.innerHTML = "";
-      items.forEach(it => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = it === current ? "on" : "";
-        b.innerHTML = (swatch ? `<i style="background:${swatch(it)}"></i>` : "") + label(it);
-        b.onclick = () => { onPick(it); renderDesign(); };
-        box.appendChild(b);
-      });
-    }
-    const discount = q => NEGOCIO.descuentos.reduce((d, [min, pct]) => (q >= min ? pct : d), 0);
-
-    // Resumen del diseño (se usa en la cotización, la cita y los mensajes)
-    function designInfo() {
-      const m = model(), t = tipo();
-      const name = $("s-name").value.trim(), role = $("s-role").value.trim();
-      const bord = (name ? NEGOCIO.bordado.nombre : 0) + (role ? NEGOCIO.bordado.profesion : 0);
-      const base = precio(m, t);
-      const unit = base + bord;
-      const pct = discount(design.qty);
-      const sub = unit * design.qty;
-      const desc = Math.round(sub * pct);
-      const bordTxt = name || role ? `${[name, role].filter(Boolean).join(" / ")} (hilo ${design.hilo.toLowerCase()})` : "sin bordado";
-      return { m, t, base, name, role, bord, pct, sub, desc, total: sub - desc,
-        texto: `${m.nombre} (${t.t.toLowerCase()}), ${design.color.toLowerCase()}, bordado: ${bordTxt}, x${design.qty}` };
-    }
-
-    function renderDesign() {
-      const m = model();
-      if (!m.colores.includes(design.color)) design.color = m.colores[0];
-      optButtons($("s-tipo"), NEGOCIO.tipos.map(t => t.id), design.tipo, id => (design.tipo = id), null, tipoNombre);
-      $("made-t").textContent = tipo().t + ":";
-      $("made-d").textContent = tipo().d;
-      optButtons($("s-colors"), m.colores, design.color, c => (design.color = c), C);
-      optButtons($("s-thread"), Object.keys(NEGOCIO.hilos), design.hilo, h => (design.hilo = h), h => NEGOCIO.hilos[h]);
-      $("s-color-name").textContent = design.color;
-      $("q").textContent = design.qty;
-
-      const fill = C(design.color);
-      const use = $("pv").querySelector("use");
-      use.style.fill = fill;
-      use.style.stroke = design.color === "Blanco" ? "#e5d6dd" : "none";
-      const d = designInfo();
-      let thread = NEGOCIO.hilos[design.hilo];
-      if (thread.toLowerCase() === fill.toLowerCase()) thread = design.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
-      ["pv-name", "pv-role"].forEach(id => $(id).setAttribute("fill", thread));
-      $("pv-name").textContent = d.name || "Tu nombre";
-      $("pv-name").style.opacity = d.name ? 1 : .45;
-      $("pv-role").textContent = d.role.toUpperCase();
-      $("pv-cap").textContent = `${m.nombre} · ${design.color} · ${d.t.t.toLowerCase()}`;
-
-      $("quote").innerHTML = `
-        <div><span>${m.nombre} (${d.t.t.toLowerCase()})</span><span>${pesos(d.base)}</span></div>
-        ${d.bord ? `<div><span>Bordado</span><span>${pesos(d.bord)}</span></div>` : ""}
-        <div><span>Cantidad</span><span>× ${design.qty}</span></div>
-        ${d.desc ? `<div style="color:#9be3b3"><span>Descuento por cantidad (${d.pct * 100}%)</span><span>−${pesos(d.desc)}</span></div>` : ""}
-        <div class="total"><span>Total estimado</span><span>${pesos(d.total)}</span></div>
-        <small>El precio final se confirma al tomar tus medidas. ${NEGOCIO.envio}</small>`;
-      $("tiers").innerHTML = NEGOCIO.descuentos.filter(([, p]) => p).map(([min, p]) =>
-        `<span class="${d.pct === p ? "on" : ""}">${min}+ uniformes: −${p * 100}%</span>`).join("");
-      renderSummary();
-    }
-    ["s-name", "s-role"].forEach(id => $(id).addEventListener("input", renderDesign));
-    $("q-minus").onclick = () => { design.qty = Math.max(1, design.qty - 1); renderDesign(); renderAgenda(); };
-    $("q-plus").onclick = () => { design.qty = Math.min(30, design.qty + 1); renderDesign(); renderAgenda(); };
-    $("s-ask").onclick = () => {
-      const d = designInfo();
-      openWa(`Hola Multicostura 💗 tengo una pregunta sobre este diseño:\n• ${d.texto}\n• Total estimado: ${pesos(d.total)}`);
-    };
-
-    // ---------- Agenda: datos (Google Sheets o modo demo) ----------
-    const DEMO_KEY = "multicostura-demo-citas";
-    const demo = !NEGOCIO.apiUrl;
-    if (demo) $("demo-note").classList.remove("hidden");
-    const demoRead = () => { try { return JSON.parse(localStorage.getItem(DEMO_KEY)) || []; } catch { return []; } };
-    const demoWrite = l => { try { localStorage.setItem(DEMO_KEY, JSON.stringify(l)); } catch {} };
-
-    // [{fecha, hora, dur}] ya incluye el margen de traslado de cada cita
-    async function fetchBusy(from, to) {
-      if (demo) return demoRead().filter(c => c.fecha >= from && c.fecha <= to);
-      const r = await fetch(`${NEGOCIO.apiUrl}?action=busy&from=${from}&to=${to}`);
-      const j = await r.json();
-      if (!j.ok) throw new Error(j.error || "error");
-      return j.busy;
-    }
-    async function saveBooking(cita) {
-      if (demo) {
-        const l = demoRead();
-        if (overlaps(cita.fecha, toMin(cita.hora), cita.dur + cita.margen, l)) return { ok: false, error: "ocupado" };
-        l.push({ fecha: cita.fecha, hora: cita.hora, dur: cita.dur + cita.margen });
-        demoWrite(l);
-        return { ok: true };
-      }
-      // text/plain evita el "preflight" CORS que Apps Script no responde
-      const r = await fetch(NEGOCIO.apiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(cita) });
-      return r.json();
-    }
-    const overlaps = (fecha, start, len, busy) =>
-      busy.some(b => b.fecha === fecha && start < toMin(b.hora) + b.dur && toMin(b.hora) < start + len);
-
-    // ---------- Agenda: flujo ----------
-    const ag = { modo: null, fecha: null, hora: null, busy: [] };
-    const days = [];
-    const today = new Date();
-    for (let i = 0; i < NEGOCIO.diasVisibles; i++) days.push(isoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)));
-
-    const citaMin = () => NEGOCIO.minutosBase + NEGOCIO.minutosPorPersona * design.qty;
-    const margen = () => NEGOCIO.margen[ag.modo] || 0;
-    const presencial = () => ag.modo && ag.modo !== "casa";
-
-    function freeSlots(fecha) {
-      const rangos = NEGOCIO.horario[fromIso(fecha).getDay()];
-      if (!rangos || !presencial()) return [];
-      const dur = citaMin(), len = dur + margen();
-      const now = new Date();
-      const minStart = fecha === isoDate(now) ? now.getHours() * 60 + now.getMinutes() + NEGOCIO.anticipacion : -1;
-      const out = [];
-      rangos.forEach(([a, b]) => {
-        for (let m = toMin(a); m + dur <= toMin(b); m += NEGOCIO.paso) {
-          if (m >= minStart && !overlaps(fecha, m, len, ag.busy)) out.push(toHHMM(m));
-        }
-      });
-      return out;
-    }
-
-    function renderModes() {
-      $("modes").innerHTML = "";
-      NEGOCIO.modalidades.forEach(mo => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "mode" + (ag.modo === mo.id ? " on" : "");
-        const extra = mo.id === "domicilio" ? ` <b style="color:var(--mag-2)">+${pesos(NEGOCIO.recargoDomicilio)}</b>` : "";
-        b.innerHTML = `<span class="ico">${mo.ico}</span><b>${mo.t}${extra}</b><small>${mo.d}</small>`;
-        b.onclick = () => {
-          ag.modo = mo.id; ag.hora = null;
-          if (ag.fecha && !freeSlots(ag.fecha).length) ag.fecha = null;
-          renderAgenda();
-          (presencial() ? $("st-day") : $("st-data")).scrollIntoView({ block: "nearest" });
-        };
-        $("modes").appendChild(b);
-      });
-    }
-
-    function renderDays() {
-      $("days").innerHTML = "";
-      days.forEach((f, i) => {
-        const d = fromIso(f);
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "chip" + (ag.fecha === f ? " on" : "");
-        const label = i === 0 ? "Hoy" : i === 1 ? "Mañana" : d.toLocaleDateString("es-CO", { weekday: "short" });
-        b.innerHTML = `${d.getDate()} ${d.toLocaleDateString("es-CO", { month: "short" })}<small>${label}</small>`;
-        b.disabled = !freeSlots(f).length;
-        b.onclick = () => { ag.fecha = f; ag.hora = null; renderAgenda(); };
-        $("days").appendChild(b);
-      });
-    }
-
-    function renderSlots() {
-      const box = $("slots");
-      if (!ag.fecha) { box.innerHTML = `<p class="empty">Elige un día primero.</p>`; return; }
-      const s = freeSlots(ag.fecha);
-      box.innerHTML = s.length ? "" : `<p class="empty">No quedan horarios este día. Prueba otro.</p>`;
-      s.forEach(h => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "chip" + (ag.hora === h ? " on" : "");
-        b.textContent = hora12(h);
-        b.onclick = () => { ag.hora = h; renderAgenda(); $("st-data").scrollIntoView({ block: "nearest" }); };
-        box.appendChild(b);
-      });
-    }
-
-    function renderSummary() {
-      if (!ag.modo) return;
-      const d = designInfo();
-      const mo = NEGOCIO.modalidades.find(x => x.id === ag.modo);
-      const rows = [`<span>${mo.ico} <strong>${mo.t}</strong>${ag.modo === "domicilio" ? ` · recargo ${pesos(NEGOCIO.recargoDomicilio)}` : ""}</span>`];
-      if (presencial() && ag.hora) rows.push(`<span>📅 <strong>${largo(ag.fecha)}</strong> a las <strong>${hora12(ag.hora)}</strong> · ${citaMin()} min</span>`);
-      rows.push(`<span>💗 Tu diseño: ${d.texto}</span>`);
-      rows.push(`<span>💰 Estimado: <strong>${pesos(d.total)}</strong></span>`);
-      $("summary").innerHTML = rows.join("");
-    }
-
-    function renderAgenda() {
-      renderModes();
-      const p = presencial();
-      $("st-day").classList.toggle("hidden", ag.modo === "casa");
-      $("st-hour").classList.toggle("hidden", ag.modo === "casa");
-      $("st-day").classList.toggle("off", !p);
-      $("st-hour").classList.toggle("off", !ag.fecha);
-      $("st-data").classList.toggle("off", !(ag.modo === "casa" || ag.hora));
-      $("data-num").textContent = ag.modo === "casa" ? "2" : "4";
-      if (p) { renderDays(); renderSlots(); }
-      // Campos según modalidad
-      $("f-addr-wrap").classList.toggle("hidden", ag.modo !== "domicilio");
-      $("f-addr").required = ag.modo === "domicilio";
-      $("f-city-wrap").classList.toggle("hidden", ag.modo !== "casa");
-      $("f-city").required = ag.modo === "casa";
-      $("self-measures").classList.toggle("hidden", ag.modo !== "casa");
-      $("mgrid").querySelectorAll("input").forEach(i => (i.required = ag.modo === "casa"));
-      $("f-submit").textContent = ag.modo === "casa" ? "Enviar mis medidas por WhatsApp" : "Agendar mi cita";
-      renderSummary();
-    }
-
-    // Campos de medidas para "Me mido en casa"
-    NEGOCIO.medidas.forEach(([t], i) => $("mgrid").insertAdjacentHTML("beforeend",
-      `<label>${t} (cm)<input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
-
-    async function loadBusy() {
-      try { ag.busy = await fetchBusy(days[0], days[days.length - 1]); }
-      catch { $("slots").innerHTML = `<p class="err">No pude cargar la agenda. Escríbenos por WhatsApp.</p>`; }
-    }
-
-    $("form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const d = designInfo();
-      const nombre = $("f-name").value.trim(), tel = $("f-phone").value.replace(/\D/g, ""), notas = $("f-notes").value.trim();
-
-      // Otra ciudad: no hay cita, se mandan las medidas por WhatsApp
-      if (ag.modo === "casa") {
-        const ms = [...$("mgrid").querySelectorAll("input")].map(i => `• ${i.dataset.m}: ${i.value} cm`);
-        openWa([`Hola Multicostura 💗 soy ${nombre} y estoy en ${$("f-city").value.trim()}. Quiero este uniforme:`,
-          `• ${d.texto}`, `• Total estimado: ${pesos(d.total)}`, ``, `Mis medidas:`, ...ms,
-          notas ? `\nNotas: ${notas}` : null].filter(x => x !== null).join("\n"));
-        return;
-      }
-
-      const cita = {
-        fecha: ag.fecha, hora: ag.hora, dur: citaMin(), margen: margen(),
-        modalidad: ag.modo === "domicilio" ? "Domicilio" : "Taller",
-        nombre, telefono: tel, direccion: ag.modo === "domicilio" ? $("f-addr").value.trim() : "",
-        diseno: d.texto, cantidad: design.qty, total: d.total, notas,
-      };
-      const btn = $("f-submit"), err = $("f-error");
-      btn.disabled = true; btn.textContent = "Agendando…"; err.classList.add("hidden");
-      try {
-        const res = await saveBooking(cita);
-        if (!res.ok) {
-          await loadBusy(); ag.hora = null; renderAgenda();
-          err.textContent = res.error === "ocupado" ? "Ese horario se acaba de ocupar 😕 Elige otro, por favor." : "No se pudo agendar. Intenta de nuevo o escríbenos por WhatsApp.";
-          err.classList.remove("hidden");
-          return;
-        }
-        ag.busy.push({ fecha: cita.fecha, hora: cita.hora, dur: cita.dur + cita.margen });
-        const lugar = ag.modo === "domicilio" ? cita.direccion : `en el taller (${NEGOCIO.direccionTaller})`;
-        $("done-text").innerHTML = `Toma de medidas ${ag.modo === "domicilio" ? "a domicilio" : "en el taller"}<br><b>${largo(cita.fecha)} a las ${hora12(cita.hora)}</b><br>${lugar}`;
-        $("done-wa").href = waLink(
-          `Hola Multicostura 💗 agendé mi toma de medidas en la página:\n` +
-          `• ${cita.modalidad}: ${largo(cita.fecha)} a las ${hora12(cita.hora)}\n` +
-          (cita.direccion ? `• Dirección: ${cita.direccion}\n` : "") +
-          `• Diseño: ${d.texto}\n• Total estimado: ${pesos(d.total)}` +
-          (notas ? `\n• Notas: ${notas}` : "") + `\nSoy ${nombre}.`);
-        $("flow").classList.add("hidden");
-        $("done").classList.remove("hidden");
-        $("agenda").scrollIntoView();
-      } catch {
-        err.textContent = "Sin conexión. Intenta de nuevo o escríbenos por WhatsApp.";
-        err.classList.remove("hidden");
-      } finally {
-        btn.disabled = false; renderAgenda();
-      }
-    });
-    $("done-again").onclick = () => {
-      ag.fecha = ag.hora = null;
-      $("form").reset();
-      $("done").classList.add("hidden");
-      $("flow").classList.remove("hidden");
-      renderAgenda();
-    };
-
-    // ---------- Proceso y guía de medidas ----------
-    $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
-    $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
-
-    // ---------- Empresas ----------
-    const in3w = new Date(Date.now() + 21 * 86400000);
-    $("b-date").value = isoDate(in3w);
-    $("biz").addEventListener("submit", e => {
-      e.preventDefault();
-      const fecha = fromIso($("b-date").value).toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
-      openWa(`Hola Multicostura 💗 quiero cotizar uniformes para mi equipo y agendar visita para tomar medidas:\n` +
-        `• Empresa: ${$("b-company").value.trim()}\n• Personas: ${$("b-qty").value}\n` +
-        `• Ciudad: ${$("b-city").value.trim()}\n• Para el: ${fecha}\n• Logo bordado: ${$("b-logo").checked ? "sí" : "no"}`);
-    });
-
-    // ---------- Bono ----------
-    let bono = NEGOCIO.bonos[1];
-    function renderBono() {
-      $("amounts").innerHTML = "";
-      NEGOCIO.bonos.forEach(v => {
-        const b = document.createElement("button");
-        b.type = "button"; b.textContent = pesos(v); b.className = v === bono ? "on" : "";
-        b.onclick = () => { bono = v; renderBono(); };
-        $("amounts").appendChild(b);
-      });
-      $("g-amount").textContent = pesos(bono);
-      $("g-names").textContent = `Para: ${$("g-to").value.trim() || "—"} · De: ${$("g-from").value.trim() || "—"}`;
-    }
-    ["g-to", "g-from"].forEach(id => $(id).addEventListener("input", renderBono));
-    $("bono").addEventListener("submit", e => {
-      e.preventDefault();
-      openWa(`Hola Multicostura 💗 quiero comprar un bono de regalo:\n• Valor: ${pesos(bono)}\n• Para: ${$("g-to").value.trim()}\n• De: ${$("g-from").value.trim()}`);
-    });
-
-    // ---------- Clientas e info ----------
-    NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
-      `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
-    $("f-address").textContent = NEGOCIO.direccionTaller;
-    $("f-ig").href = NEGOCIO.instagram;
-    $("f-tt").href = NEGOCIO.tiktok;
-    $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
-
-    design.color = model().colores[0];
-    renderProfs(); renderModels(); renderDesign(); renderBono();
-    loadBusy().then(renderAgenda);
-  </script>
+  <script src="js/datos.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
