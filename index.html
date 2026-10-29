@@ -457,7 +457,7 @@
       <div><img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">Diseño, comodidad y calidad.<br>Envíos a toda Colombia 🚚</div>
       <div><b>Taller</b><span id="f-address"></span></div>
       <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
-      <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></div>
+      <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a><a id="f-tel"></a></div>
     </div>
   </footer>
 
@@ -944,6 +944,11 @@
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
+    // Número visible: 573217830050 -> 321 783 0050 (WhatsApp) y enlace para llamar
+    const numeroLocal = NEGOCIO.whatsapp.replace(/^57/, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3");
+    $("f-wa").textContent = `WhatsApp ${numeroLocal}`;
+    $("f-tel").href = `tel:+${NEGOCIO.whatsapp}`;
+    $("f-tel").textContent = `Llamar ${numeroLocal}`;
 
     design.color = model().colores[0];
     renderProfs(); renderModels(); renderDesign(); renderBono();
