@@ -844,7 +844,7 @@
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
-      $("pd-total").parentElement.hidden = sinPrecio(m);
+      $("pd-total").parentElement.hidden = $("pd-fino").hidden = sinPrecio(m);
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`
         + (pd.medidas === "casa" && pd.talla ? ` (talla de referencia: ${pd.talla})` : "");
       const bordTxt = bord ? `\n• Bordado: ${[nom && `nombre "${nom}"`, rol && `profesión "${rol}"`].filter(Boolean).join(" y ")}, hilo ${pd.hilo.toLowerCase()} (+${pesos(bord)} por prenda)` : "";

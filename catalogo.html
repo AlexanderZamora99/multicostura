@@ -150,15 +150,17 @@
           <span class="pd-hint" aria-hidden="true">🔍 Pasa el cursor o toca para ampliar</span>
         </div>
         <div class="pd-thumbs" id="pd-thumbs" role="group" aria-label="Fotos del producto"></div>
+        <div class="pd-about">
+          <p class="pd-desc" id="pd-desc"></p>
+          <ul class="pd-feats" id="pd-feats"></ul>
+          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
+        </div>
       </div>
       <div class="pd-info">
         <p class="eyebrow" id="pd-cat"></p>
         <h2 id="pd-title"></h2>
         <p class="pd-price" id="pd-price"></p>
-        <p class="pd-desc" id="pd-desc"></p>
-        <ul class="pd-feats" id="pd-feats"></ul>
         <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
-          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
           <p class="pd-nota-diseno" id="pd-otro" hidden>¿Quieres otro diseño? Tenemos muchos más estampados. <a id="pd-otro-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te mostramos los disponibles.</p>
         </div>
         <div class="pd-field" id="pd-bord-box"></div>
@@ -168,11 +170,14 @@
         <div class="pd-field"><span class="pd-lbl">Cantidad</span>
           <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
         </div>
-        <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small>El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</small></div>
-        <div class="pd-actions">
-          <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Encargar por WhatsApp</a>
-          <a class="btn btn-ghost" id="pd-agenda" href="index.html#agenda">Agendar mis medidas</a>
-        </div>
+      </div>
+    </div>
+    <div class="pd-barra">
+      <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong></div>
+      <p class="pd-fino" id="pd-fino">El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</p>
+      <div class="pd-actions">
+        <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Encargar por WhatsApp</a>
+        <a class="btn btn-ghost" id="pd-agenda" href="index.html#agenda">Agendar mis medidas</a>
       </div>
     </div>
   </dialog>

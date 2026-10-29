@@ -133,3 +133,63 @@ for (const page of ["index.html", "catalogo.html"]) {
     assert.deepEqual(o.reabre, { nombre: "", bord: true, total: o.t0 });
   });
 }
+
+// Layout of the dialog: info on the left under the gallery, choices on the right, total + actions in a sticky bar.
+const LAYOUT = `(() => { const out = {}; try {
+  const $ = id => document.getElementById(id), num = s => parseInt(String(s).replace(/\\D/g, ""), 10);
+  const tipea = (id, v) => { const e = $(id); e.value = v; e.dispatchEvent(new Event("input", { bubbles: true })); };
+  const m = NEGOCIO.modelos.find(x => !x.precioFijo && !x.accesorio);
+  abrirProducto(m, null, null);
+  const gal = document.querySelector(".pd-gal"), info = document.querySelector(".pd-info"), dlg = $("pd");
+  const barra = $("pd-total").closest(".pd-barra");
+  const dentro = (el, caja) => !!caja && caja.contains(el);
+  const aviso = dlg.querySelector(".pd-aviso");
+  out.izq = ["pd-desc", "pd-feats"].map(i => dentro($(i), gal));
+  out.aviso = dentro(aviso, gal);
+  out.noDer = ["pd-desc", "pd-feats"].map(i => dentro($(i), info)).concat(dentro(aviso, info));
+  out.primeros = [...info.children].map(e => e.id);
+  out.color = !!info.children[3] && !!info.children[3].querySelector("#pd-colors");
+  out.barra = !!barra; out.waEnBarra = dentro($("pd-wa"), barra); out.agendaEnBarra = dentro($("pd-agenda"), barra);
+  out.pos = barra ? getComputedStyle(barra).position : "";
+  out.t0 = num($("pd-total").textContent);
+  out.hint0 = getComputedStyle(dlg.querySelector(".pd-hint")).display;
+  $("pd-bord-t").click(); tipea("pd-nombre", "Dra. Camila Ruiz");
+  out.t1 = num($("pd-total").textContent);
+  out.conBordado = $("pd-main").classList.contains("con-bordado");
+  out.hint1 = getComputedStyle(dlg.querySelector(".pd-hint")).display;
+  out.pie = /se confirma/.test(barra ? barra.textContent : "");
+} catch (e) { out.error = String(e); }
+const p = document.createElement("pre"); p.id = "out"; p.textContent = JSON.stringify(out); document.body.appendChild(p); })();`;
+
+for (const page of ["index.html", "catalogo.html"]) {
+  const { html } = render({ page, inject: LAYOUT });
+  const raw = (html.match(/<pre id="out">([\s\S]*?)<\/pre>/) || [])[1] || "{}";
+  const o = JSON.parse(raw.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&"));
+
+  test(`${page}: description, features and color note sit in the left column`, () => {
+    assert.equal(o.error, undefined, o.error);
+    assert.deepEqual(o.izq, [true, true]);
+    assert.equal(o.aviso, true);
+    assert.deepEqual(o.noDer, [false, false, false]);
+  });
+
+  test(`${page}: right column goes category, title, price, then Color`, () => {
+    assert.deepEqual(o.primeros.slice(0, 3), ["pd-cat", "pd-title", "pd-price"]);
+    assert.equal(o.color, true);
+  });
+
+  test(`${page}: total and main actions live in a sticky bar that keeps updating`, () => {
+    assert.equal(o.barra, true);
+    assert.equal(o.waEnBarra, true);
+    assert.equal(o.agendaEnBarra, true);
+    assert.equal(o.pos, "sticky");
+    assert.equal(o.t1 - o.t0, 12000);
+    assert.equal(o.pie, true, "fine print still visible");
+  });
+
+  test(`${page}: the zoom hint hides while an embroidery text is shown`, () => {
+    assert.notEqual(o.hint0, "none", "visible without embroidery text");
+    assert.equal(o.conBordado, true, "embroidery patch shown over the photo");
+    assert.equal(o.hint1, "none");
+  });
+}
