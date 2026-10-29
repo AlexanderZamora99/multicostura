@@ -18,6 +18,7 @@ const probe = `
   const textRatio = sel => { let min = 99, n = 0; document.querySelectorAll(sel).forEach(el => { if (!el.offsetParent && getComputedStyle(el).position !== "fixed") return; const c = rgb(getComputedStyle(el).color); if (!c) return; n++; min = Math.min(min, ratio(c.c, bgOf(el))); }); return n ? min : 99; };
   out.labels = textRatio(".field .lbl, .field > label, .agenda label, .box label");
   out.helper = textRatio(".mhint, .lead, .empty, .lock-msg, .model .info p, .cat-name, .demo-note");
+  out.franja = textRatio("#confianza strong, #confianza small");
   out.lockedMsg = textRatio("#st-day .lock-msg");
   const border = sel => { let min = 99; document.querySelectorAll(sel).forEach(el => { const cs = getComputedStyle(el); const c = rgb(cs.borderTopColor); if (c && parseFloat(cs.borderTopWidth) > 0) min = Math.min(min, ratio(c.c, bgOf(el.parentElement))); }); return min; };
   out.inputBorder = border(".panel input, .panel select, .agenda input, .agenda textarea, .box input[type=text], .chat-form input");
@@ -38,6 +39,7 @@ const a = k => probed.match(new RegExp(`data-a-${k.toLowerCase()}="([^"]*)"`))[1
 test("field labels and helper text have at least 4.5:1 contrast", () => {
   assert.ok(Number(a("labels")) >= 4.5, `labels ${a("labels")}`);
   assert.ok(Number(a("helper")) >= 4.5, `helper ${a("helper")}`);
+  assert.ok(Number(a("franja")) >= 4.5, `franja ${a("franja")}`);
   assert.ok(Number(a("placeholder")) >= 4.5, `placeholder ${a("placeholder")}`);
 });
 

@@ -27,11 +27,11 @@ const lookDom = strip(look);
 
 test("look section follows the recommended section", () => {
   assert.ok(lookDom.indexOf('id="look"') > lookDom.indexOf('id="reco"'));
-  assert.ok(lookDom.indexOf('id="look"') < lookDom.indexOf('id="confianza"'));
+  assert.ok(lookDom.indexOf('id="look"') < lookDom.indexOf('id="personaliza"'));
 });
 
 test("look has 3 accessible hotspot buttons, first pressed", () => {
-  const sec = between(lookDom, 'id="look"', 'id="confianza"');
+  const sec = between(lookDom, 'id="look"', 'id="personaliza"');
   const dots = sec.match(/<button[^>]*class="punto"[^>]*>/g) || [];
   assert.equal(dots.length, 3);
   dots.forEach(d => assert.match(d, /aria-label="[^"]+"/));

@@ -795,6 +795,9 @@ addEventListener("resize", ajustarRail);
 renderTestimonios();
 function renderFooter() {
   $("f-address").textContent = $("n-address").textContent = NEGOCIO.direccionTaller;
+  const n = NEGOCIO.whatsapp;
+  $("f-tel").href = `tel:+${n}`;
+  $("f-tel").textContent = `+${n.slice(0, 2)} ${n.slice(2, 5)} ${n.slice(5, 8)} ${n.slice(8)}`;
   $("f-mail").href = `mailto:${NEGOCIO.correo}`;
   $("f-mail").textContent = NEGOCIO.correo;
   $("f-horario").textContent = NEGOCIO.horarioTexto;
@@ -820,7 +823,7 @@ if (NEGOCIO.videos.length) {
 }
 $("f-ig").href = $("ig-btn").href = NEGOCIO.instagram;
 $("f-tt").href = NEGOCIO.tiktok;
-$("f-wa").href = $("f-wa-txt").href = $("wa-float").href = $("hdr-wa").href = $("band-wa").href = waLink("Hola Multicostura 💗 quiero información");
+$("f-wa").href = $("f-wa-txt").href = $("wa-float").href = $("hdr-wa").href = waLink("Hola Multicostura 💗 quiero información");
 
 // ---------- Chatbot de preguntas frecuentes (sin IA ni red: coincidencia por palabras clave) ----------
 const normaliza = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");

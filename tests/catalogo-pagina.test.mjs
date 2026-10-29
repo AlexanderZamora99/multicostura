@@ -62,7 +62,7 @@ test("there is no Profesión filter: the profile tiles were purchase modes, alre
 });
 
 test("catalogo.html shares header and footer links with the home and links back to it", () => {
-  for (const id of ["personaliza", "agenda", "empresas", "bono"]) assert.ok(catDom.includes(`href="index.html#${id}"`), id);
+  for (const id of ["personaliza", "medidas", "agenda", "empresas", "regalo"]) assert.ok(catDom.includes(`href="index.html#${id}"`), id);
   assert.ok(catDom.includes('href="catalogo.html"'));
   assert.match(catDom, /<footer class="site">/);
 });

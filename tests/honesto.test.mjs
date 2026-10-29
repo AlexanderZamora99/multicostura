@@ -95,7 +95,7 @@ test("how it works is a calm numbered sequence, not bordered cards", () => {
 test("Tuluá appears only where it informs: title, about, address, home-visit coverage", () => {
   const head = dom.slice(0, dom.indexOf("<body"));
   assert.ok(head.includes("Tuluá"));
-  for (const id of ["banner", "contacto-band"]) // changed: "Taller propio en Tuluá" is a trust fact the client asked for, so the trust block may name the city
+  for (const id of ["banner"]) // changed: "Taller propio en Tuluá" is a trust fact the client asked for, so the trust block may name the city
    assert.ok(!section(dom, id).includes("Tuluá"), id);
   const foot = dom.slice(dom.indexOf("<footer"), dom.indexOf("</footer>"));
   assert.ok(!foot.replace(/Calle 24 T10-39[^<]*/g, "").includes("Tuluá"), "footer text and copyright");

@@ -26,8 +26,8 @@ test("backgrounds are neutral (no pink washes)", () => {
   assert.doesNotMatch(rule(".box.pinkbox"), /#fbd3e5|#f7a9cc/);
 });
 
-// changed: the trust block is now the canon light-grey block with line icons (it was a black strip)
-test("trust block is light grey with near-black text, not fuchsia", () => {
-  assert.match(rule(".trust"), /background:\s*var\(--bg-2\)/);
+// changed: the trust block is a compact dark band under the cover again, with white text (distinct from the light sections)
+test("trust block is a dark band with white text, not fuchsia", () => {
+  assert.match(rule(".trust"), /background:\s*var\(--ink\)/);
   assert.doesNotMatch(rule(".trust strong"), /var\(--mag\)/);
 });

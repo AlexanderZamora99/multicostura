@@ -8,12 +8,14 @@ const dom = strip(render().html);
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
 const FAQS = (source.match(/claves:\s*\[/g) || []).length;
 
-test("lower page order: testimonials, FAQ, photo grid, then footer", () => {
+// changed: testimonios, clientas and videos are one block (#comunidad) after Regala; then the FAQ and the footer
+test("lower page order: empresas, regalo, clientas block, FAQ, then footer", () => {
   const at = k => dom.indexOf(k);
-  assert.ok(at('id="testimonios"') > at('id="empresas"'));
-  assert.ok(at('id="testimonios"') < at('id="faq"'));
-  assert.ok(at('id="faq"') < at('id="clientas"'));
-  assert.ok(at('id="clientas"') < at('<footer'));
+  assert.ok(at('id="regalo"') > at('id="empresas"'));
+  assert.ok(at('id="testimonios"') > at('id="regalo"'));
+  assert.ok(at('id="clientas"') > at('id="testimonios"'));
+  assert.ok(at('id="clientas"') < at('id="faq"'));
+  assert.ok(at('id="faq"') < at('<footer'));
 });
 
 // changed: example entries are no longer shown or marked, the whole section stays hidden until a real one exists (see honesto.test.mjs)
@@ -52,7 +54,7 @@ test("photo grid shows an entry per NEGOCIO.clientas photo that loads and links 
 test("rich footer has navigation, contact, hours, address and social links", () => {
   const f = dom.slice(dom.indexOf("<footer"), dom.indexOf("</footer>"));
   assert.ok(f.includes('href="catalogo.html"'), "nav catalogo");
-  for (const id of ["personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(f.includes(`href="#${id}"`), `nav #${id}`);
+  for (const id of ["personaliza", "agenda", "empresas", "regalo", "nosotros"]) assert.ok(f.includes(`href="#${id}"`), `nav #${id}`);
   assert.ok(f.includes("Calle 24 T10-39"));
   assert.match(f, /Lunes a viernes/);
   assert.match(f, /id="f-wa"[^>]*href="https:\/\/wa\.me\/573217830050/);
@@ -61,10 +63,11 @@ test("rich footer has navigation, contact, hours, address and social links", () 
   assert.match(f, new RegExp(`© ${new Date().getFullYear()} Multicostura`));
 });
 
-test("a WhatsApp band closes the page above the footer", () => {
-  const i = dom.indexOf('id="contacto-band"');
-  assert.ok(i > dom.indexOf('id="clientas"') && i < dom.indexOf("<footer"));
-  assert.match(dom.slice(i, dom.indexOf("<footer")), /href="https:\/\/wa\.me\/573217830050/);
+// changed: the WhatsApp band left the body; its call to action lives in the footer contact column
+test("the footer carries a WhatsApp call to action and no separate contact band remains", () => {
+  assert.ok(!dom.includes('id="contacto-band"'));
+  const f = dom.slice(dom.indexOf("<footer"), dom.indexOf("</footer>"));
+  assert.match(f, /id="f-wa-txt"[^>]*href="https:\/\/wa\.me\/573217830050/);
 });
 
 test("filler copy is gone and the about text is concrete", () => {

@@ -23,9 +23,9 @@ test("fonts are one sans family (Open Sans), no script or italic display", () =>
   assert.doesNotMatch(source, /Poppins|Cormorant|cursive|font-style:\s*italic/);
 });
 
-test("header keeps Catálogo, Diseña, Agenda medidas, Empresas, Bonos regalo and has a WhatsApp icon", () => {
+test("header keeps Inicio, Catálogo, Diseña, Tallas, Agenda, Empresas and has a WhatsApp icon", () => {
   const head = dom.slice(dom.indexOf("<header"), dom.indexOf("</header>"));
-  for (const t of ["Catálogo", "Diseña", "Agenda medidas", "Empresas", "Bonos regalo"]) assert.ok(head.includes(`>${t}</a>`), t);
+  for (const t of ["Inicio", "Catálogo", "Diseña", "Tallas", "Agenda", "Empresas"]) assert.ok(head.includes(`>${t}</a>`), t);
   assert.match(head, /id="hdr-wa"[^>]*href="https:\/\/wa\.me\/573217830050/);
   assert.match(head, /id="hdr-wa"[^>]*aria-label="[^"]+"/);
 });

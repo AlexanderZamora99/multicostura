@@ -52,12 +52,13 @@ test("content additions run without uncaught errors", () => {
   assert.doesNotMatch(stderr, /Uncaught/);
 });
 
-test("map sits full width below the Nosotros text and is tall", () => {
-  const section = dom.slice(dom.indexOf('id="nosotros"'), dom.indexOf('id="personaliza"'));
-  assert.ok(section.indexOf('id="n-address"') < section.indexOf('id="map"'), "map must come after the text");
-  assert.doesNotMatch(section, /class="wrap about"/, "text and map must not share a two-column grid");
+// changed: the map moved from Nosotros to the footer (contact + location live there); it stays full width but is shorter
+test("map sits full width in the footer", () => {
+  assert.ok(!dom.slice(dom.indexOf('id="nosotros"'), dom.indexOf('id="personaliza"')).includes('id="map"'));
+  const foot = dom.slice(dom.indexOf("<footer"));
+  assert.ok(foot.indexOf('id="f-address"') < foot.indexOf('id="map"'), "map must come after the contact text");
   const css = estilos().match(/\.map iframe \{[^}]*height: (\d+)px/);
-  assert.ok(css && Number(css[1]) >= 440, "map iframe must be at least 440px tall on desktop");
+  assert.ok(css && Number(css[1]) >= 280, "map iframe must be at least 280px tall on desktop");
 });
 
 test("map pin comes from NEGOCIO.mapa when set", () => {

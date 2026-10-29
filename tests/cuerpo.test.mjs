@@ -31,7 +31,7 @@ test("a product with a second photo swaps it in on hover", () => {
   assert.doesNotMatch(section(dom, "reco"), /class="swap"/);
 });
 
-// changed: the trust block is four centred line-icon items on light grey (no dividers); "Más de 10 años" now lives in the marquee and the about text
+// changed: the trust block is four line-icon items on a dark band (no dividers); "Más de 10 años" now lives in the marquee and the about text
 test("trust block replaces the stats band: four items with inline line icons", () => {
   const s = section(dom, "confianza");
   assert.equal(count(s, 'class="trust-item"'), 4);

@@ -203,8 +203,8 @@ test("first viewport on desktop reaches the top of NUESTROS RECOMENDADOS", () =>
 const at = (d, id) => d.indexOf(`id="${id}"`);
 
 // changed: collections and profiles left the home; collections are the catalog's ?cat= links (see catalogo-pagina.test.mjs)
-test("page order on the home: recommended, look, trust; no catalog, collections or profile sections", () => {
-  const order = ["reco", "look", "confianza"].map(id => at(dom, id));
+test("page order on the home: trust, recommended, look; no catalog, collections or profile sections", () => {
+  const order = ["confianza", "reco", "look"].map(id => at(dom, id));
   assert.deepEqual([...order].sort((x, y) => x - y), order);
   assert.ok(order.every(i => i > 0));
   for (const id of ["colecciones", "perfiles", "modelos"]) assert.equal(at(dom, id), -1, id);
@@ -217,14 +217,13 @@ test("each collection maps to a category the catalog can preselect from the URL"
   assert.equal(n("?cat=Gorros%20y%20medias"), 2);
 });
 
-test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the business data, on light grey", () => {
+test("franja de confianza: four line icons, only facts from the business data, on a dark band", () => {
   const s = section(dom, "confianza");
-  assert.match(s, /<h2[^>]*>Confianza en cada paso de tu compra<\/h2>/);
   const items = s.match(/<div class="trust-item">/g);
   assert.equal(items.length, 4);
   for (const t of ["Envíos a toda Colombia", "Taller propio en Tuluá", "A tu medida", "Pago 50% para empezar"]) assert.ok(s.includes(t), t);
   assert.equal(count(s, "<svg"), 4);
-  assert.match(css, /\.trust\s*\{[^}]*background:\s*var\(--bg-2\)/);
+  assert.match(css, /\.trust\s*\{[^}]*background:\s*var\(--ink\)/);
 });
 
 // changed: the two real Facebook reviews are configured, so testimonials show; the social grid still has only examples
@@ -241,12 +240,12 @@ test("footer has Contacto, Centro de ayuda and Explora columns and invents no po
   const contacto = col("Contacto"), ayuda = col("Centro de ayuda"), explora = col("Explora");
   assert.match(contacto, /href="https:\/\/wa\.me\/573217830050/);
   assert.ok(contacto.includes("Calle 24 T10-39") && contacto.includes("Lunes a viernes"));
-  for (const [t, id] of [["Guía de tallas", "guia-tallas"], ["Cómo tomar medidas", "medidas"], ["Ubicación", "nosotros"], ["Preguntas frecuentes", "faq"]]) {
-    assert.match(ayuda, new RegExp(`href="#${id}"[^>]*>${t}<`), t);
+  for (const [t, id] of [["Guía de tallas", "guia-tallas"], ["Cómo tomar medidas", "medidas"], ["Preguntas frecuentes", "faq"]]) {
+    assert.match(ayuda, new RegExp(`href="(?:index\.html)?#${id}"[^>]*>${t}<`), t);
     assert.ok(at(dom, id) > -1, `#${id} exists`);
   }
   assert.ok(explora.includes('href="catalogo.html"'));
-  for (const id of ["personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
+  for (const id of ["personaliza", "agenda", "empresas", "regalo", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
   // changed: the only policy is the client's own (Instagram highlight "INFORMACIÓN"), and it lives in the FAQ
   const sinFaq = dom.replace(section(dom, "faq"), "").replaceAll("¿Hacen arreglos o devoluciones?", ""); // the question is also a chatbot chip
   assert.doesNotMatch(sinFaq, /devoluci|garant[ií]a|reembolso|cambios y/i);
