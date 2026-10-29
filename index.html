@@ -101,6 +101,16 @@
     .swatches { display: flex; gap: .3rem; flex-wrap: wrap; }
     .swatches i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); }
     .swatches small { font-size: .72rem; color: var(--muted); align-self: center; }
+    /* Colores que cambian la foto: punto de 14px dentro de un área táctil de 24px */
+    .swatches .sw { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; background: transparent; display: grid; place-items: center; }
+    .swatches .sw::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--c); border: 1px solid rgba(0,0,0,.12); transition: box-shadow .15s; }
+    .swatches .sw:hover::before { box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--line); }
+    .swatches .sw[aria-pressed="true"]::before { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--mag); }
+    .swatches .sw.extra { display: none; }
+    .swatches.all .sw.extra { display: grid; }
+    .swatches .sw-more { border: 0; background: transparent; padding: 0 .35rem; min-height: 24px; font-size: .72rem; font-weight: 600; color: var(--muted); }
+    .swatches .sw-more:hover { color: var(--text); }
+    .sw-name { display: block; min-height: 1.2em; font-size: .78rem; color: var(--muted); }
     .tipos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 1.2rem; }
     .tipos div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; display: grid; gap: .3rem; }
     .tipos b { text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
@@ -521,7 +531,13 @@
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones"],
       // Sin "colores" = todos los colores de la lista de arriba
       modelos: [
-        { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp" },
+        { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp",
+          // Foto por color. Reales: azul rey, lila, verde jade (catálogo 2026). simulados = recoloreadas desde una foto real.
+          fotos: { "Azul rey": "img/kaill-azul-rey.webp", "Lila": "img/kaill-lila.webp", "Verde jade": "img/kaill-verde-jade.webp", "Blanco": "img/kaill.webp",
+            "Rosa": "img/color/kaill-rosa.webp", "Azul cielo": "img/color/kaill-azul-cielo.webp", "Verde menta": "img/color/kaill-verde-menta.webp",
+            "Fucsia": "img/color/kaill-fucsia.webp", "Azul noche": "img/color/kaill-azul-noche.webp", "Vinotinto": "img/color/kaill-vinotinto.webp",
+            "Rojo": "img/color/kaill-rojo.webp", "Negro": "img/color/kaill-negro.webp", "Café": "img/color/kaill-cafe.webp" },
+          simulados: ["Rosa", "Azul cielo", "Verde menta", "Fucsia", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café"] },
         { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.jpg" },
         { id: "clasico", nombre: "Clásico", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido stretch y algodón, cuello en V. Pantalón y blusa con cuello y mangas en rib personalizado.", foto: "img/clasico.jpg" },
         { id: "durango", nombre: "Durango", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado, escote en V y pantalón bota recta. Cuello y mangas en rib personalizado.", foto: "img/durango.jpg" },
@@ -600,6 +616,25 @@
         $("profs").appendChild(b);
       });
     }
+    // Modelos con foto por color (m.fotos): los colores de la tarjeta son botones que cambian la foto
+    const swatchButtons = (m, extra) => `
+            <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${m.colores.map((c, i) =>
+              `<button type="button" class="sw${i >= 8 ? " extra" : ""}" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="Ver ${m.nombre} en color ${c}" aria-pressed="false"></button>`).join("")}${extra > 0 ? `<button type="button" class="sw-more" aria-label="Ver ${extra} colores más">+${extra}</button>` : ""}</div>
+            <small class="sw-name" aria-live="polite"></small>`;
+    function colorSwitch(el, m) {
+      const pic = el.querySelector(".pic"), nombre = el.querySelector(".sw-name");
+      el.querySelectorAll(".sw").forEach(b => (b.onclick = () => {
+        const c = b.dataset.color;
+        el.dataset.color = c;
+        el.querySelectorAll(".sw").forEach(x => x.setAttribute("aria-pressed", x === b));
+        pic.innerHTML = photoOr(m.fotos[c] || m.foto, C(c));
+        pic.querySelector("img").alt = `${m.nombre} en color ${c}`;
+        nombre.textContent = (m.simulados || []).includes(c) ? `${c} · color de referencia` : c;
+      }));
+      const mas = el.querySelector(".sw-more");
+      // Con teclado (detail = 0) el foco pasa al primer color nuevo; con el mouse no, para no parecer otra selección
+      if (mas) mas.onclick = e => { el.querySelector(".swatches").classList.add("all"); mas.remove(); if (!e.detail) el.querySelector(".sw.extra").focus(); };
+    }
     function renderModels() {
       $("models").innerHTML = "";
       NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => {
@@ -609,10 +644,11 @@
         el.innerHTML = `
           <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
           <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
-            <div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>
-            <div class="row"><strong>${pesos(m.precio)}</strong><button type="button">Diseñar</button></div>
+            ${m.fotos ? swatchButtons(m, extra) : `<div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>`}
+            <div class="row"><strong>${pesos(m.precio)}</strong><button type="button" class="design-btn">Diseñar</button></div>
           </div>`;
-        el.querySelector("button").onclick = () => { $("s-model").value = m.id; design.color = m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
+        el.querySelector(".design-btn").onclick = () => { $("s-model").value = m.id; design.color = el.dataset.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
+        if (m.fotos) colorSwitch(el, m);
         $("models").appendChild(el);
       });
     }
