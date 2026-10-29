@@ -371,6 +371,7 @@
     .pd-aviso b { color: var(--text); }
     /* Nota de accesorios: otros diseños por WhatsApp */
     .pd-nota-diseno, .nota-diseno { font-size: .82rem; color: var(--muted); }
+    .model .row strong.consultar { font-size: .92rem; white-space: nowrap; }
     .pd-nota-diseno a, .nota-diseno a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
     .nota-diseno { margin-top: .35rem; font-size: .78rem; }
     .pd-opts { display: flex; flex-wrap: wrap; gap: .45rem; }
@@ -912,12 +913,15 @@
         // estampados de los gorros
         "Dibujos animados": "linear-gradient(135deg, #f2c230 50%, #1f1d22 50%)", "Ratoncita rosa": "linear-gradient(135deg, #e7408a 50%, #1f1d22 50%)", "Flamencos": "linear-gradient(135deg, #1f1d22 50%, #f08bb3 50%)",
         "Estrellas": "linear-gradient(135deg, #1f1d22 50%, #e66fae 50%)", "Tropical": "linear-gradient(135deg, #1e6b5c 50%, #f4c9d8 50%)", "Ratoncito negro": "linear-gradient(135deg, #1f1d22 50%, #f2a7c6 50%)",
+        // estampados de las medias
+        "Perrito rosa": "linear-gradient(135deg, #f07aa8 50%, #ffffff 50%)", "Garabatos": "linear-gradient(135deg, #ffffff 50%, #1f1d22 50%)", "Muñequita roja": "linear-gradient(135deg, #1f1d22 50%, #d22b3a 50%)",
+        "Gatita rosa": "linear-gradient(135deg, #f4a3c4 50%, #ffffff 50%)", "Heroínas": "linear-gradient(135deg, #ffffff 50%, #e05a8f 50%)", "Monstruo azul": "linear-gradient(135deg, #1f4fb5 50%, #f2c230 50%)", "Amarillitos": "linear-gradient(135deg, #f2d330 50%, #3a6fb5 50%)",
         "Negro y rosa": "linear-gradient(90deg, #1f1d22 50%, #f4b6d2 50%)", "Rojo y gris": "linear-gradient(90deg, #d22b3a 50%, #c9ccd2 50%)" },
       hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
       bordado: { nombre: 12000, profesion: 6000 },
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
-      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos"],
+      categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
       // Sin "colores" = todos los colores de la lista de arriba
       modelos: [
         { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp",
@@ -1021,10 +1025,17 @@
           colores: ["Gris", "Lila", "Lavanda", "Palo de rosa", "Blanco"],
           fotos: { "Gris": "img/pantalon.webp", "Lila": "img/pantalon-lila.webp", "Lavanda": "img/pantalon-lavanda.webp", "Palo de rosa": "img/pantalon-palo-rosa.webp", "Blanco": "img/pantalon-blanco.webp" } },
         // Gorros (fotos de la dueña, 6 estampados). precio: promoción de Instagram "3 gorros por $60.000" (confirmar con la dueña)
-        { id: "gorro", nombre: "Gorro quirúrgico", precio: 20000, precioFijo: true, accesorio: true, cat: ["Gorros quirúrgicos"], desc: "Gorro quirúrgico antifluido y estampado, con moña para recoger el cabello y toalla para el sudor. Cómodo durante toda la jornada.", foto: "img/gorro-animados.webp",
+        { id: "gorro", nombre: "Gorro quirúrgico", precio: 20000, precioFijo: true, accesorio: true, articulo: "un", cat: ["Gorros quirúrgicos"],
+          caracteristicas: ["Tela antifluido", "Moña para recoger el cabello y toalla para el sudor", "Varios estampados: pregunta por los disponibles", "Envíos a toda Colombia"], desc: "Gorro quirúrgico antifluido y estampado, con moña para recoger el cabello y toalla para el sudor. Cómodo durante toda la jornada.", foto: "img/gorro-animados.webp",
           colores: ["Dibujos animados", "Ratoncita rosa", "Flamencos", "Estrellas", "Tropical", "Ratoncito negro"],
           fotos: { "Dibujos animados": "img/gorro-animados.webp", "Ratoncita rosa": "img/gorro-ratoncita-rosa.webp", "Flamencos": "img/gorro-flamencos.webp",
             "Estrellas": "img/gorro-estrellas.webp", "Tropical": "img/gorro-tropical.webp", "Ratoncito negro": "img/gorro-ratoncito-negro.webp" } },
+        // Medias de compresión (fotos de la dueña, 7 estampados). precio: null = "Precio a consultar" (falta el precio de la dueña)
+        { id: "medias", nombre: "Medias de compresión", precio: null, precioFijo: true, accesorio: true, articulo: "unas", cat: ["Medias de compresión"], desc: "Medias de compresión estampadas para largas jornadas de pie: tus piernas se sienten más descansadas y con mejor circulación al final del turno.", foto: "img/medias-perrito-rosa.webp",
+          caracteristicas: ["Compresión para largas jornadas de pie", "Estampados divertidos para tu turno", "Varios diseños: pregunta por los disponibles", "Envíos a toda Colombia"],
+          colores: ["Perrito rosa", "Garabatos", "Muñequita roja", "Gatita rosa", "Heroínas", "Monstruo azul", "Amarillitos"],
+          fotos: { "Perrito rosa": "img/medias-perrito-rosa.webp", "Garabatos": "img/medias-garabatos.webp", "Muñequita roja": "img/medias-munequita-roja.webp", "Gatita rosa": "img/medias-gatita-rosa.webp",
+            "Heroínas": "img/medias-heroinas.webp", "Monstruo azul": "img/medias-monstruo-azul.webp", "Amarillitos": "img/medias-amarillitos.webp" } },
       ],
       // Tiempos de entrega por modalidad (confirmar con la dueña). No se trabaja por tallas: siempre se toman las medidas
       tiempos: { tienda: "entrega inmediata", pedido: "3 a 5 días hábiles", medida: "5 a 8 días hábiles" },
@@ -1157,7 +1168,9 @@
       });
     }
     // Accesorios con estampados: enlace a WhatsApp para pedir un diseño que no está en el catálogo
-    const waOtroDiseno = m => waLink(`Hola Multicostura 💗 me interesa un ${m.nombre.toLowerCase()} con otro diseño. ¿Qué estampados tienen disponibles?`);
+    const waOtroDiseno = m => waLink(`Hola Multicostura 💗 me interesa${m.articulo === "unas" ? "n" : ""} ${m.articulo || "un"} ${m.nombre.toLowerCase()} con otro diseño. ¿Qué estampados tienen disponibles?`);
+    // precio: null = producto sin precio publicado ("Precio a consultar")
+    const sinPrecio = m => m.precio == null;
     // Modelos con foto por color (m.fotos): los colores de la tarjeta son botones que cambian la foto
     const swatchButtons = (m, extra) => `
             <div class="swatches" role="group" aria-label="Colores de ${m.nombre}">${m.colores.map((c, i) =>
@@ -1187,7 +1200,7 @@
           <div class="pic" role="button" tabindex="0" aria-label="Ver detalles de ${m.nombre}">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
           <div class="info"><b><button type="button" class="pd-open">${m.nombre}</button></b><p>${m.desc}</p>
             ${m.fotos ? swatchButtons(m, extra) : `<div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>`}
-            <div class="row"><strong>${pesos(m.precio)}</strong><button type="button" class="design-btn">Diseñar</button></div>
+            <div class="row">${sinPrecio(m) ? `<strong class="consultar">Consultar precio</strong>` : `<strong>${pesos(m.precio)}</strong>`}<button type="button" class="design-btn">Diseñar</button></div>
           </div>`;
         el.querySelector(".design-btn").onclick = () => { $("s-model").value = m.id; design.color = el.dataset.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
         if (m.fotos) colorSwitch(el, m);
@@ -1624,11 +1637,12 @@
       $("pd-title").textContent = m.nombre;
       $("pd-cat").textContent = m.cat.join(" · ");
       const precios = NEGOCIO.tipos.map(t => precio(m, t));
-      $("pd-price").innerHTML = m.precioFijo ? pesos(m.precio)
+      $("pd-price").innerHTML = sinPrecio(m) ? `Precio a consultar<small>Escríbenos y te contamos el valor y los diseños disponibles.</small>` : m.precioFijo ? pesos(m.precio)
         : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}<small>${NEGOCIO.tipos.map(t => `${t.t}: ${pesos(precio(m, t))}`).join(" · ")}</small>`;
       $("pd-desc").textContent = m.desc;
-      $("pd-feats").innerHTML = (m.accesorio ? ["Tela antifluido", "Moña para recoger el cabello y toalla para el sudor", "Varios estampados: pregunta por los disponibles", "Envíos a toda Colombia"]
-        : ["Tela antifluido de alta calidad", `Confeccionado en nuestro taller de ${NEGOCIO.ciudad}`, "Bordado de nombre y profesión disponible", "Envíos a toda Colombia"]).map(x => `<li>${x}</li>`).join("");
+      // características propias del producto (accesorios) o las de los uniformes
+      $("pd-feats").innerHTML = (m.caracteristicas
+        || ["Tela antifluido de alta calidad", `Confeccionado en nuestro taller de ${NEGOCIO.ciudad}`, "Bordado de nombre y profesión disponible", "Envíos a toda Colombia"]).map(x => `<li>${x}</li>`).join("");
       $("pd-thumbs").innerHTML = galeria(m).map(g => `<button type="button" data-src="${g.src}" data-color="${g.color}" aria-label="Ver foto en ${g.color.toLowerCase()}"><img src="${g.src}" alt="" loading="lazy"></button>`).join("");
       $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
       $("pd-tipo-box").hidden = !!m.precioFijo;
@@ -1667,8 +1681,9 @@
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
+      $("pd-total").parentElement.hidden = sinPrecio(m);
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
-      $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}\n¿Está disponible?`
+      $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
         : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
@@ -1779,7 +1794,7 @@
     const INDECISA = /\b(no se|nose|indecisa|indeciso|no estoy segura|no me decido|ayudame a elegir|mas fotos|mas videos|ver fotos|ver videos|fotos|videos|redes|instagram|tiktok|facebook)\b/;
     function elegirModelo(m) {
       P = { m };
-      bot(`<b>${m.nombre}</b> · desde ${pesos(m.precio)}\n${m.desc}<img src="${m.foto}" alt="${m.nombre}">`);
+      bot(`<b>${m.nombre}</b> · ${sinPrecio(m) ? "precio a consultar" : `desde ${pesos(m.precio)}`}\n${m.desc}<img src="${m.foto}" alt="${m.nombre}">`);
       paso(pedirColor);
     }
     function pedirColor() {
@@ -1863,8 +1878,9 @@
         ["Entrega", P.entrega], ["Nombre", P.nombre], ["Celular", P.cel],
       ];
       const precioTxt = [`${pesos(k.base + k.bord)} c/u × ${P.qty}`, k.desc ? `descuento ${k.pct * 100}%: −${pesos(k.desc)}` : "", k.recargo ? `domicilio de medidas: +${pesos(k.recargo)}` : ""].filter(Boolean).join(" · ");
-      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span></div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
-      const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`;
+      const totales = sinPrecio(P.m) ? `<span>Precio: <b>te lo confirmamos por WhatsApp</b></span>` : `<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span>`;
+      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}${totales}</div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
+      const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n` + (sinPrecio(P.m) ? "¿Qué precio tienen y están disponibles?" : `• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`);
       const opciones = [{ t: "✅ Enviar mi pedido por WhatsApp", href: waLink(msg), cls: "principal", fn: () => setTimeout(() => bot("¡Gracias! 💗 Te respondemos por WhatsApp para confirmar tu pedido y el abono."), 400) }];
       if (P.medidas && P.medidas.id !== "casa") opciones.push({ t: "📅 Agendar mis medidas", href: "#agenda", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "agenda"; } });
       if (P.medidas && P.medidas.id === "casa") opciones.push({ t: "📏 Cómo medirme en casa", href: "#medidas", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "medidas"; } });
