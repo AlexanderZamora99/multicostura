@@ -524,6 +524,8 @@
         "Fucsia": "#d6247f", "Azul rey": "#2456b8", "Verde jade": "#1f8a78", "Azul noche": "#1f2f5c",
         "Vinotinto": "#7a1f36", "Rojo": "#d22b3a", "Negro": "#1f1d22", "Café": "#6b4634", "Blanco": "#ffffff",
       },
+      // Colores que solo tienen algunos modelos (se nombran en su lista "colores"); no se agregan a todos
+      coloresExtra: { "Morado": "#5b2a86" },
       hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
       bordado: { nombre: 12000, profesion: 6000 },
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
@@ -538,7 +540,14 @@
             "Fucsia": "img/color/kaill-fucsia.webp", "Azul noche": "img/color/kaill-azul-noche.webp", "Vinotinto": "img/color/kaill-vinotinto.webp",
             "Rojo": "img/color/kaill-rojo.webp", "Negro": "img/color/kaill-negro.webp", "Café": "img/color/kaill-cafe.webp" },
           simulados: ["Rosa", "Azul cielo", "Verde menta", "Fucsia", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café"] },
-        { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.jpg" },
+        { id: "alondra", nombre: "Alondra", precio: 165000, cat: ["Conjuntos"], desc: "Antifluido stretch de alto desempeño: elongación para moverte libre y tecnología de repelencia. Detalle en el escote posterior.", foto: "img/alondra.webp",
+          colores: ["Rosa", "Lila", "Morado", "Azul cielo", "Verde menta", "Fucsia", "Azul rey", "Verde jade", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café", "Blanco"],
+          // Foto por color. Reales: azul rey, morado (pág. 7), negro (pág. 14), blanco (pág. 26). simulados = recoloreadas desde la azul.
+          fotos: { "Azul rey": "img/alondra.webp", "Morado": "img/alondra-morado.webp", "Negro": "img/alondra-negro.webp", "Blanco": "img/alondra-blanco.webp",
+            "Rosa": "img/color/alondra-rosa.webp", "Lila": "img/color/alondra-lila.webp", "Azul cielo": "img/color/alondra-azul-cielo.webp",
+            "Verde menta": "img/color/alondra-verde-menta.webp", "Fucsia": "img/color/alondra-fucsia.webp", "Verde jade": "img/color/alondra-verde-jade.webp",
+            "Azul noche": "img/color/alondra-azul-noche.webp", "Vinotinto": "img/color/alondra-vinotinto.webp", "Rojo": "img/color/alondra-rojo.webp", "Café": "img/color/alondra-cafe.webp" },
+          simulados: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Fucsia", "Verde jade", "Azul noche", "Vinotinto", "Rojo", "Café"] },
         { id: "clasico", nombre: "Clásico", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido stretch y algodón, cuello en V. Pantalón y blusa con cuello y mangas en rib personalizado.", foto: "img/clasico.jpg" },
         { id: "durango", nombre: "Durango", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido licrado, escote en V y pantalón bota recta. Cuello y mangas en rib personalizado.", foto: "img/durango.jpg" },
         { id: "neru", nombre: "Neru", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con cuello en V y mangas clásicas. Detalles que encantan.", foto: "img/neru.jpg" },
@@ -590,7 +599,7 @@
     const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
     const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
     const openWa = t => window.open(waLink(t), "_blank", "noopener");
-    const C = n => NEGOCIO.colores[n];
+    const C = n => NEGOCIO.colores[n] || NEGOCIO.coloresExtra[n];
     const pad = n => String(n).padStart(2, "0");
     const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
     const toHHMM = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
