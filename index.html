@@ -385,6 +385,8 @@
     .faq-list details[open] summary::after { transform: rotate(45deg); }
     .faq-list summary:focus-visible { outline: 2px solid var(--mag); outline-offset: 2px; border-radius: 14px; }
     .faq-list details p { padding: 0 1.1rem 1rem; color: var(--muted); }
+    .faq-mail { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+    .faq-mail:hover { color: var(--mag); }
     /* Retráctil: solo las primeras preguntas a la vista; el botón despliega o recoge el resto */
     .faq-list:not(.todas) details.extra { display: none; }
     .faq-more { margin-top: 1rem; }
@@ -995,6 +997,7 @@
         { id: "arreglos", q: "¿Hacen arreglos o devoluciones?", a: "Los arreglos (pinzas, ruedos, etc.) tienen un costo adicional. Si quieres modificar algún elemento, el uniforme se confecciona desde cero y el precio varía. No se hace devolución de dinero.", claves: ["arreglo", "arreglos", "ruedo", "pinza", "devolucion", "devolver", "cambio", "cambiar", "garantia"] },
         { id: "cuidado", q: "¿Cómo cuido mi uniforme?", a: "Lávalo con cuidado, no lo mezcles con otra ropa y evita el exceso de cloro. Así conserva el color y la tela por más tiempo.", claves: ["lavar", "lavado", "cuidar", "cuidado", "cloro", "planchar", "secar"] },
         { id: "empresas", q: "¿Hacen uniformes para empresas?", a: "Sí, somos fabricantes directos: clínicas, consultorios, spas, restaurantes y comercios. Vamos a tomar medidas a todo el equipo, bordamos el logo y damos precio por cantidad.", claves: ["empresa", "empresas", "clinica", "equipo", "dotacion", "personal", "restaurante", "spa", "mayor"] },
+        { id: "empleo", q: "¿Quieres trabajar con nosotros?", a: n => `¡Nos encantaría conocerte! Envíanos tu hoja de vida (CV) al correo <a class="faq-mail" href="mailto:${n.correo}?subject=${encodeURIComponent("Hoja de vida - Quiero trabajar en Multicostura")}&body=${encodeURIComponent("Hola Multicostura,\n\nMe interesa trabajar con ustedes. Adjunto mi hoja de vida.\n\nNombre:\nCelular:\nCargo o área que me interesa:\nExperiencia:\n\nGracias.")}">${n.correo}</a>, con el cargo o área que te interesa. Recuerda adjuntar el archivo antes de enviar.`, claves: ["trabajo", "trabajar", "empleo", "vacante", "vacantes", "hoja", "cv", "curriculum", "costurera", "contratar", "contratan", "oportunidad"] },
         { id: "bono", q: "¿Tienen bonos de regalo?", a: n => `Sí, bonos de ${n.bonos.map(pesos).join(", ")}. Quien lo recibe elige su modelo y agenda sus medidas.`, claves: ["bono", "bonos", "regalo", "regalar", "obsequio", "cumpleanos", "grado"] },
         { id: "ubicacion", q: "¿Dónde están y qué horario tienen?", a: n => `Estamos en ${n.direccionTaller}. Atendemos ${n.horarioTexto.charAt(0).toLowerCase() + n.horarioTexto.slice(1)}`, claves: ["donde", "ubicacion", "direccion", "taller", "tienda", "mapa", "horario", "abren", "abierto", "atienden"] },
       ],
