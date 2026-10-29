@@ -256,6 +256,9 @@
     .clients figure { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #fbd3e5, #f4b6d2); display: grid; place-items: center; font-size: 2.4rem; }
     .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(36,22,29,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
+    /* Tarjeta con video: mismo tamaño que las demás; el botón de pausa queda arriba para no tapar el título */
+    .clients .cli-video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .clients .cli-pp { top: .6rem; right: .6rem; bottom: auto; width: 36px; height: 36px; }
 
     /* Pie de página: marca y redes, Explora, Centro de ayuda, Contacto y, al final a la derecha, el mapa */
     footer.site { background: var(--text); color: #d9c4cf; padding: 56px 0 0; font-size: .9rem; line-height: 1.6; }
@@ -1022,6 +1025,8 @@
         { foto: "img/clienta-2.jpg", texto: "Enfermera jefe" },
         { foto: "img/clienta-3.jpg", texto: "Esteticista" },
         { foto: "img/clienta-4.jpg", texto: "Médica general" },
+        // video = ruta sin extensión: video/<nombre>.webm y .mp4, con portada video/<nombre>-poster.webp
+        { video: "video/clienta-psicologia", texto: "Psicología" }, // reel de Instagram DejlX_9xpLO (colaboración con la clienta)
       ],
       // Diseña tu uniforme: color de la foto base de cada modelo (img/disena/<id>.webp, a resolución original).
       // Los demás colores son esa misma foto recoloreada (img/disena/<id>-<color>.webp).
@@ -1498,8 +1503,19 @@
     });
 
     // ---------- Clientas e info ----------
-    NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
-      `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
+    NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend", c.video
+      ? `<figure class="cli-video"><video muted loop playsinline preload="none" poster="${c.video}-poster.webp" aria-label="Video de una clienta de ${c.texto} con su uniforme Multicostura"><source src="${c.video}.webm" type="video/webm"><source src="${c.video}.mp4" type="video/mp4"></video><button type="button" class="nos-pp cli-pp" aria-label="Pausar video"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button><figcaption>${c.texto}</figcaption></figure>`
+      : `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
+    // Videos de clientas: como el de Quiénes somos, se cargan y reproducen solo en pantalla, con pausa y movimiento reducido
+    document.querySelectorAll(".cli-video").forEach(fig => {
+      const v = fig.querySelector("video"), pp = fig.querySelector(".cli-pp"), reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      let pausado = reduce.matches, visible = false;
+      const sync = () => { pp.classList.toggle("paused", pausado); pp.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video"); };
+      const actualizar = () => { if (visible && !pausado) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); };
+      pp.onclick = () => { pausado = !pausado; sync(); actualizar(); };
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; actualizar(); }, { threshold: 0.25 }).observe(v);
+      sync();
+    });
     $("f-address").textContent = NEGOCIO.direccionTaller;
     $("f-map").src = `https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.mapa)}&z=17&output=embed`;
     $("f-map-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
