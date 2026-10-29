@@ -233,6 +233,18 @@
         ["Ancho de hombros", "De la punta de un hombro a la otra, por la espalda."],
         ["Estatura", "Descalza, contra la pared."],
       ],
+      // Tabla de medidas de referencia en cm (la misma de img/tabla-medidas.jpg): la calculadora de la ficha sugiere la talla más pequeña que cubre todas las medidas
+      tallas: {
+        orden: ["S", "M", "L", "XL"],
+        blusa: {
+          S: { busto: 96, cintura: 78, cadera: 104, largo: 68 }, M: { busto: 100, cintura: 84, cadera: 108, largo: 69 },
+          L: { busto: 108, cintura: 90, cadera: 114, largo: 70 }, XL: { busto: 112, cintura: 96, cadera: 120, largo: 72 },
+        },
+        pantalon: {
+          S: { cintura: 78, cadera: 104, largo: 102, entrepierna: 80, bota: 22 }, M: { cintura: 84, cadera: 108, largo: 104, entrepierna: 81.5, bota: 23 },
+          L: { cintura: 90, cadera: 114, largo: 106, entrepierna: 83, bota: 24 }, XL: { cintura: 96, cadera: 120, largo: 106, entrepierna: 84.5, bota: 25 },
+        },
+      },
       bonos: [100000, 150000, 200000, 300000],
       clientas: [
         { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
