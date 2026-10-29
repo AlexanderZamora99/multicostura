@@ -218,17 +218,37 @@
     .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .clients figcaption { position: absolute; inset: auto 0 0; padding: 2rem .8rem .7rem; background: linear-gradient(transparent, rgba(36,22,29,.75)); color: #fff; font-size: .84rem; font-weight: 600; }
 
-    footer.site { background: var(--text); color: #d9c4cf; padding: 40px 0 100px; font-size: .9rem; }
-    footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
-    footer.site b { color: #fff; display: block; margin-bottom: .4rem; }
-    footer.site .foot-logo { display: block; width: 110px; height: auto; margin-bottom: .8rem; }
-    footer.site a { display: block; }
-    footer.site a:hover { color: #fff; }
-    /* Mapa del taller: última columna del pie, a la derecha de Contacto */
-    footer.site .foot-map { flex: 0 1 300px; }
+    /* Pie de página: marca y redes, Explora, Centro de ayuda, Contacto y, al final a la derecha, el mapa */
+    footer.site { background: var(--text); color: #d9c4cf; padding: 56px 0 0; font-size: .9rem; line-height: 1.6; }
+    footer.site .foot-grid { display: grid; grid-template-columns: 1.3fr 1fr 1.1fr 1.2fr 1.4fr; gap: 2rem 1.8rem; align-items: start; }
+    footer.site .foot-h { display: block; color: #fff; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: .8rem; }
+    footer.site .foot-h-sm { margin: 1rem 0 .3rem; }
+    footer.site .foot-logo { display: block; width: 110px; height: auto; margin-bottom: .9rem; }
+    footer.site .foot-brand p { max-width: 260px; margin-bottom: 1.2rem; }
+    footer.site ul { list-style: none; display: grid; gap: .15rem; }
+    footer.site ul a { display: inline-flex; align-items: center; min-height: 30px; }
+    footer.site a { transition: color .15s; }
+    footer.site a:hover, footer.site a:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+    footer.site .foot-contact p { margin-top: .4rem; }
+    footer.site .socials { display: flex; gap: .5rem; }
+    footer.site .socials a { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); display: grid; place-items: center; }
+    footer.site .socials a:hover { background: var(--mag); border-color: var(--mag); text-decoration: none; }
+    footer.site .socials svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
     footer.site .foot-map iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: 12px; background: #3a2a32; }
-    footer.site .foot-map a { margin-top: .5rem; text-decoration: underline; text-underline-offset: 3px; }
-    @media (max-width: 700px) { footer.site .foot-map { flex-basis: 100%; } }
+    footer.site .foot-map a { display: inline-flex; align-items: center; min-height: 30px; margin-top: .4rem; text-decoration: underline; text-underline-offset: 3px; }
+    footer.site .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; margin-top: 2.5rem; padding: 1.3rem 0 100px; border-top: 1px solid rgba(255,255,255,.12); font-size: .8rem; color: #b9a3af; }
+    @media (max-width: 1000px) {
+      footer.site .foot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      footer.site .foot-brand { grid-column: 1 / -1; }
+      footer.site .foot-map { grid-column: 1 / -1; max-width: 520px; }
+    }
+    @media (max-width: 640px) {
+      footer.site .foot-grid { grid-template-columns: minmax(0, 1fr); }
+      footer.site .foot-map { max-width: none; }
+      /* En celular los enlaces se tocan con el dedo: 44px */
+      footer.site ul a, footer.site .foot-map a { min-height: 44px; }
+      footer.site .socials a { width: 44px; height: 44px; }
+    }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
   </style>
@@ -468,12 +488,54 @@
   </section>
 
   <footer class="site">
-    <div class="wrap">
-      <div><img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">Diseño, comodidad y calidad.<br>Envíos a toda Colombia 🚚</div>
-      <div><b>Taller</b><span id="f-address"></span></div>
-      <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
-      <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a><a id="f-tel"></a></div>
-      <div class="foot-map"><b>Ubicación</b><iframe id="f-map" title="Mapa del taller Multicostura en Tuluá" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><a id="f-map-link" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
+    <div class="wrap foot-grid">
+      <div class="foot-brand">
+        <img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">
+        <p>Uniformes médicos para mujer, hechos en nuestro taller de Tuluá. Diseño, comodidad y calidad, con envíos a toda Colombia.</p>
+        <b class="foot-h">Síguenos</b>
+        <div class="socials">
+          <a id="f-ig" target="_blank" rel="noopener" aria-label="Instagram de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg></a>
+          <a id="f-tt" target="_blank" rel="noopener" aria-label="TikTok de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.4 2.8 2 4.4 5 4.6"/></svg></a>
+          <a id="f-fb" target="_blank" rel="noopener" aria-label="Facebook de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z"/></svg></a>
+          <a id="f-wa-ico" target="_blank" rel="noopener" aria-label="WhatsApp de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3Z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-1.9-1.3-2.3-2.3l.8-1-1-2Z"/></svg></a>
+        </div>
+      </div>
+      <nav aria-label="Explora">
+        <b class="foot-h">Explora</b>
+        <ul>
+          <li><a href="#modelos">Catálogo</a></li>
+          <li><a href="#personaliza">Diseña tu uniforme</a></li>
+          <li><a href="#agenda">Agenda tu toma de medidas</a></li>
+          <li><a href="#empresas">Empresas</a></li>
+          <li><a href="#bono">Bono de regalo</a></li>
+          <li><a href="#nosotros">Quiénes somos</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Centro de ayuda">
+        <b class="foot-h">Centro de ayuda</b>
+        <ul>
+          <li><a href="#tipos">Modalidades y precios</a></li>
+          <li><a href="#medidas">Cómo tomar tus medidas</a></li>
+          <li><a href="#agenda">Medidas en el taller o a domicilio</a></li>
+          <li><a id="f-ayuda" target="_blank" rel="noopener">Pregúntanos por WhatsApp</a></li>
+        </ul>
+      </nav>
+      <div class="foot-contact">
+        <b class="foot-h">Contacto</b>
+        <ul>
+          <li><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a id="f-tel"></a></li>
+          <li><a id="f-mail"></a></li>
+        </ul>
+        <p id="f-address"></p>
+        <b class="foot-h foot-h-sm">Horario de atención</b>
+        <p id="f-horario"></p>
+      </div>
+      <div class="foot-map"><b class="foot-h">Ubicación</b><iframe id="f-map" title="Mapa del taller Multicostura en Tuluá" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><a id="f-map-link" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
+    </div>
+    <div class="wrap foot-bottom">
+      <span id="f-copy"></span>
+      <span>Hecho con 💗 en Tuluá, Valle del Cauca</span>
     </div>
   </footer>
 
@@ -488,6 +550,9 @@
       whatsapp: "573217830050",
       instagram: "https://www.instagram.com/multicostura_uniformes/",
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
+      facebook: "https://www.facebook.com/multicosturas2016",
+      correo: "multicostura222@gmail.com", // de la página de Facebook
+      horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
       // Pin del mapa (4°05'32.5"N 76°12'22.5"W, confirmado por la dueña)
       mapa: "4.092361,-76.206250",
@@ -1006,7 +1071,13 @@
     $("f-map-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
-    $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
+    $("f-fb").href = NEGOCIO.facebook;
+    $("f-wa").href = $("f-wa-ico").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
+    $("f-ayuda").href = waLink("Hola Multicostura 💗 tengo una pregunta");
+    $("f-mail").href = `mailto:${NEGOCIO.correo}`;
+    $("f-mail").textContent = NEGOCIO.correo;
+    $("f-horario").textContent = NEGOCIO.horarioTexto;
+    $("f-copy").textContent = `© ${new Date().getFullYear()} Multicostura Uniformes. Todos los derechos reservados.`;
     // Número visible: 573217830050 -> 321 783 0050 (WhatsApp) y enlace para llamar
     const numeroLocal = NEGOCIO.whatsapp.replace(/^57/, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3");
     $("f-wa").textContent = `WhatsApp ${numeroLocal}`;
