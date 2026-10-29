@@ -148,6 +148,21 @@
     .preview { position: sticky; top: 90px; background: radial-gradient(circle at 50% 35%, #fff, var(--bg-2) 70%); border: 1px solid var(--line); border-radius: 24px; padding: 1.5rem; display: grid; place-items: center; gap: .8rem; }
     @media (max-width: 880px) { .preview { position: static; } }
     .preview svg { width: min(100%, 340px); }
+    /* Foto del modelo en el color elegido (una foto por modelo que cambia de color); el dibujo queda de respaldo */
+    .pvbox { position: relative; width: min(100%, 380px); }
+    .pvbox svg { width: 100%; display: block; }
+    .pvbox img { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; border-radius: 16px; }
+    .pvbox.has-photo { aspect-ratio: 4 / 5; }
+    .pvbox.has-photo svg { visibility: hidden; position: absolute; inset: 0; }
+    .pvbox.has-photo img { display: block; }
+    /* Parche con el bordado sobre la foto: tela del color elegido e hilo elegido */
+    .pvbox .bordado { display: none; position: absolute; right: 4%; bottom: 4%; width: 62%; padding: .65rem .6rem .7rem; border-radius: 10px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 8px 20px rgba(0,0,0,.3); container-type: inline-size; }
+    .pvbox .bordado::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--hilo); border-radius: 6px; opacity: .35; pointer-events: none; }
+    .pvbox.has-photo .bordado { display: block; }
+    .bordado small { display: block; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; opacity: .75; margin-bottom: .3rem; }
+    .bordado .b-n { display: block; font-family: var(--font-titulos); font-style: italic; font-weight: 700; white-space: nowrap; font-size: min(1.05rem, calc(165cqi / var(--len, 10))); }
+    .bordado .b-r { display: block; white-space: nowrap; text-transform: uppercase; letter-spacing: .08em; margin-top: .15rem; font-size: min(.72rem, calc(130cqi / var(--len, 12))); }
+    .bordado .b-r:empty { display: none; }
     .preview .cap { font-size: .85rem; color: var(--muted); text-align: center; }
     .panel { display: grid; gap: 1.2rem; }
     .field > span { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .45rem; }
@@ -426,11 +441,15 @@
       <p class="lead">Elige modelo, color y bordado. Mira cómo queda y luego agenda tu toma de medidas: tu diseño se guarda con la cita.</p>
       <div class="studio">
         <div class="preview">
-          <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
-            <use href="#scrub"/>
-            <text id="pv-name" x="125" y="62" font-family="Montserrat, Inter, sans-serif" font-style="italic" font-weight="700" font-size="9.5" text-anchor="middle"></text>
-            <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
-          </svg>
+          <div class="pvbox" id="pv-box">
+            <svg viewBox="0 0 200 300" id="pv" role="img" aria-label="Vista previa del uniforme">
+              <use href="#scrub"/>
+              <text id="pv-name" x="125" y="62" font-family="Montserrat, Inter, sans-serif" font-style="italic" font-weight="700" font-size="9.5" text-anchor="middle"></text>
+              <text id="pv-role" x="125" y="73" font-family="Inter, sans-serif" font-size="6" text-anchor="middle" letter-spacing=".5"></text>
+            </svg>
+            <img id="pv-photo" alt="">
+            <div class="bordado" id="pv-bord" aria-hidden="true"><small>Tu bordado</small><span class="b-n" id="pv-bn"></span><span class="b-r" id="pv-br"></span></div>
+          </div>
           <span class="cap" id="pv-cap"></span>
         </div>
         <div class="panel">
@@ -871,6 +890,9 @@
         { foto: "img/clienta-3.jpg", texto: "Esteticista" },
         { foto: "img/clienta-4.jpg", texto: "Médica general" },
       ],
+      // Diseña tu uniforme: color de la foto base de cada modelo (img/disena/<id>.webp, a resolución original).
+      // Los demás colores son esa misma foto recoloreada (img/disena/<id>-<color>.webp).
+      disena: { kaill: "Azul rey", alondra: "Azul rey", clasico: "Azul cielo", durango: "Petróleo", neru: "Fucsia", mariee: "Petróleo", luna: "Petróleo", violet: "Rosa", paris: "Lavanda", lisboa: "Rojo" },
       // Pasarela de la portada: una foto a la vez en el recuadro grande. Fotos en alta resolución (img/pasarela/),
       // a la resolución original del catálogo; cambiar aquí para elegir otras
       pasarela: [
@@ -1017,6 +1039,18 @@
       });
     }
     const discount = q => NEGOCIO.descuentos.reduce((d, [min, pct]) => (q >= min ? pct : d), 0);
+    // Foto del diseñador: modelos de NEGOCIO.disena usan una sola foto base (img/disena/<id>.webp) recoloreada en cada
+    // color; el blanco usa la foto blanca real. Los demás (Glam, bata, pantalón, línea blanca) usan su foto real por color.
+    const slugColor = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, "-");
+    function fotoDisena(m, color) {
+      const base = NEGOCIO.disena[m.id];
+      if (base && color === base) return `img/disena/${m.id}.webp`;
+      if (base && color !== "Blanco") return `img/disena/${m.id}-${slugColor(color)}.webp`;
+      const f = (m.fotos || {})[color] || m.foto;
+      return /\.webp$/.test(f) ? f : null; // sin foto real: queda el dibujo
+    }
+    $("pv-photo").onload = () => $("pv-box").classList.add("has-photo");
+    $("pv-photo").onerror = () => { $("pv-box").classList.remove("has-photo"); $("pv-photo").removeAttribute("src"); };
 
     // Resumen del diseño (se usa en la cotización, la cita y los mensajes)
     function designInfo() {
@@ -1055,7 +1089,21 @@
       $("pv-name").textContent = d.name || "Tu nombre";
       $("pv-name").style.opacity = d.name ? 1 : .45;
       $("pv-role").textContent = d.role.toUpperCase();
-      $("pv-cap").textContent = `${m.nombre} · ${design.color} · ${d.t.t.toLowerCase()}`;
+      // Foto: la del modelo en el color elegido; el bordado va en el parche encima
+      const foto = fotoDisena(m, design.color), box = $("pv-box"), img = $("pv-photo");
+      if (!foto) { box.classList.remove("has-photo"); img.removeAttribute("src"); }
+      else if (img.getAttribute("src") !== foto) img.src = foto;
+      img.alt = `${m.nombre} en color ${design.color.toLowerCase()}` + (d.name || d.role ? `, con el bordado ${[d.name, d.role].filter(Boolean).join(", ")}` : "");
+      const bord = $("pv-bord"), nombreB = d.name || "Tu nombre";
+      bord.style.setProperty("--tela", fill.startsWith("linear") ? "#1f1d22" : fill);
+      bord.style.setProperty("--hilo", thread);
+      $("pv-bn").textContent = nombreB;
+      $("pv-bn").style.opacity = d.name ? 1 : .5;
+      $("pv-bn").style.setProperty("--len", Math.max(10, nombreB.length));
+      $("pv-br").textContent = d.role;
+      $("pv-br").style.setProperty("--len", Math.max(12, Math.ceil(d.role.length * 1.25)));
+      const ref = NEGOCIO.disena[m.id] && design.color !== NEGOCIO.disena[m.id] && design.color !== "Blanco";
+      $("pv-cap").textContent = `${m.nombre} · ${design.color} · ${d.t.t.toLowerCase()}` + (ref ? ". Color de referencia: el tono real de la tela puede variar." : "");
 
       $("quote").innerHTML = `
         <div><span>${m.nombre} (${d.t.t.toLowerCase()})</span><span>${pesos(d.base)}</span></div>
