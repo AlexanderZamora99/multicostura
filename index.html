@@ -1697,12 +1697,26 @@
         { t: "👩‍⚕️ Uniformes para mi equipo", fn: chatEquipo },
         { t: "🎁 Bono de regalo", fn: chatBono },
         { t: "❓ Tengo una pregunta", fn: pregunta },
+        { t: "📸 Ver más fotos y videos", fn: redes },
       ]);
     }
     function pedirModelo() {
       bot("¡Me encanta! ¿Qué modelo te gusta? Puedes tocarlo o escribir su nombre.");
-      chips(NEGOCIO.modelos.filter(m => m.fotos || m.colores.length).map(m => ({ t: m.nombre, fn: () => elegirModelo(m) })));
+      chips([{ t: "🤔 Aún no sé cuál elegir", fn: redes }, ...NEGOCIO.modelos.filter(m => m.fotos || m.colores.length).map(m => ({ t: m.nombre, fn: () => elegirModelo(m) }))]);
     }
+    // Clienta indecisa: la invita a ver más fotos y videos en las redes y luego a volver al pedido
+    function redes() {
+      espera = null;
+      bot("¡Te entiendo! 💗 Elegir tu uniforme es importante. En nuestras redes tenemos muchas más fotos y videos de cada modelo, colores reales y clientas usándolos en su día a día. Échales un vistazo y cuando te decidas, aquí te ayudo con tu pedido.");
+      chips([
+        { t: "📷 Instagram", href: NEGOCIO.instagram },
+        { t: "🎵 TikTok", href: NEGOCIO.tiktok },
+        { t: "👍 Facebook", href: NEGOCIO.facebook },
+        ultimo && P.m ? { t: "👉 Sigamos con mi pedido", fn: () => paso(ultimo) } : { t: "🛍️ Ya me decidí, hacer mi pedido", fn: () => paso(pedirModelo) },
+        { t: "💬 Que me asesoren por WhatsApp", href: waLink("Hola Multicostura 💗 no sé qué uniforme elegir, ¿me ayudan a escoger?") },
+      ]);
+    }
+    const INDECISA = /\b(no se|nose|indecisa|indeciso|no estoy segura|no me decido|ayudame a elegir|mas fotos|mas videos|ver fotos|ver videos|fotos|videos|redes|instagram|tiktok|facebook)\b/;
     function elegirModelo(m) {
       P = { m };
       bot(`<b>${m.nombre}</b> · desde ${pesos(m.precio)}\n${m.desc}<img src="${m.foto}" alt="${m.nombre}">`);
@@ -1851,6 +1865,7 @@
       if (espera) { espera(txt); return; }
       const modelo = NEGOCIO.modelos.find(m => norm(txt).includes(norm(m.nombre)));
       if (modelo && !P.m) { elegirModelo(modelo); return; }
+      if (INDECISA.test(norm(txt))) { redes(); return; }
       const f = buscarFaq(txt);
       if (f) { contestar(f); return; }
       bot("Esa no me la sé 🙈 pero la dueña te responde por WhatsApp en un momento.");
