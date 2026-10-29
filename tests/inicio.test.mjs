@@ -43,6 +43,15 @@ test("trust strip is a light strip using the redesign palette, not a dark band",
   assert.match(rule, /var\(--(bg|card)/);
 });
 
+test("how-it-works steps sit right after the trust strip, before the models", () => {
+  assert.ok(pos('id="proceso"') > pos('id="confianza"'));
+  assert.ok(pos('id="proceso"') < pos('id="modelos"'));
+  assert.ok(pos('id="proceso"') > 0 && html.indexOf("De la idea a tus manos") < pos('id="modelos"'));
+  assert.equal(section("proceso").split('id="process"').length - 1, 1);
+  assert.ok(pos('id="look"') > pos('id="modelos"') && pos('id="look"') < pos('id="nosotros"'));
+  assert.ok(strip(section("proceso")).includes(N.proceso[0][0]), "steps are rendered from NEGOCIO.proceso");
+});
+
 test("look section follows the recommended section, before the next one", () => {
   assert.ok(pos('id="look"') > pos('id="modelos"'));
   assert.ok(pos('id="look"') < pos('id="nosotros"'));
