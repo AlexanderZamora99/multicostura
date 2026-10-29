@@ -8,6 +8,13 @@
   <meta property="og:title" content="Multicostura · Calidad, comodidad y estilo">
   <meta property="og:description" content="Más de 10 años vistiendo profesionalismo. Mira el catálogo 2026 y agenda tu toma de medidas 💗">
   <meta property="og:type" content="website">
+  <!-- Vista previa al compartir: con dominio publicado, cambiar a la URL completa (https://.../img/og-image.jpg) -->
+  <meta property="og:image" content="img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -52,7 +59,7 @@
     header { position: sticky; top: 0; z-index: 30; background: rgba(255,250,252,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
     .nav { display: flex; align-items: center; justify-content: space-between; height: 66px; }
     .logo { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .02em; }
-    .logo svg { width: 40px; height: 40px; }
+    .logo .logo-m { height: 40px; width: auto; flex: none; }
     .logo small { display: block; font-size: .62rem; letter-spacing: .25em; color: var(--muted); font-weight: 600; }
     .nav ul { display: flex; gap: 1.4rem; list-style: none; color: var(--muted); font-size: .93rem; }
     .nav ul a:hover { color: var(--text); }
@@ -204,6 +211,7 @@
     footer.site { background: var(--text); color: #d9c4cf; padding: 40px 0 100px; font-size: .9rem; }
     footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
     footer.site b { color: #fff; display: block; margin-bottom: .4rem; }
+    footer.site .foot-logo { display: block; width: 110px; height: auto; margin-bottom: .8rem; }
     footer.site a { display: block; }
     footer.site a:hover { color: #fff; }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
@@ -231,7 +239,7 @@
   <header>
     <div class="wrap nav">
       <a href="#" class="logo">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#fff" stroke="#f2dde7"/><path d="M9 28V16q0-4 4-4t4 4v12M17 16q0-4 4-4t4 4v12" fill="none" stroke="#f4b6d2" stroke-width="3.2" stroke-linecap="round"/><path d="M23 28V16q0-4 4-4t4 4v12" fill="none" stroke="#d6247f" stroke-width="3.2" stroke-linecap="round"/></svg>
+        <img class="logo-m" src="img/logo-m.webp" width="63" height="40" alt="" decoding="async">
         <span>MULTICOSTURA<small>UNIFORMES</small></span>
       </a>
       <ul>
@@ -446,7 +454,7 @@
 
   <footer class="site">
     <div class="wrap">
-      <div><b>Multicostura Uniformes</b>Diseño, comodidad y calidad.<br>Envíos a toda Colombia 🚚</div>
+      <div><img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">Diseño, comodidad y calidad.<br>Envíos a toda Colombia 🚚</div>
       <div><b>Taller</b><span id="f-address"></span></div>
       <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
       <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a></div>
