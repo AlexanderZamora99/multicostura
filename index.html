@@ -224,6 +224,11 @@
     footer.site .foot-logo { display: block; width: 110px; height: auto; margin-bottom: .8rem; }
     footer.site a { display: block; }
     footer.site a:hover { color: #fff; }
+    /* Mapa del taller: última columna del pie, a la derecha de Contacto */
+    footer.site .foot-map { flex: 0 1 300px; }
+    footer.site .foot-map iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: 12px; background: #3a2a32; }
+    footer.site .foot-map a { margin-top: .5rem; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 700px) { footer.site .foot-map { flex-basis: 100%; } }
     .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 60px; height: 60px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
   </style>
@@ -468,6 +473,7 @@
       <div><b>Taller</b><span id="f-address"></span></div>
       <div><b>Síguenos</b><a id="f-ig" target="_blank" rel="noopener">Instagram</a><a id="f-tt" target="_blank" rel="noopener">TikTok</a></div>
       <div><b>Contacto</b><a id="f-wa" target="_blank" rel="noopener">WhatsApp</a><a id="f-tel"></a></div>
+      <div class="foot-map"><b>Ubicación</b><iframe id="f-map" title="Mapa del taller Multicostura en Tuluá" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><a id="f-map-link" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
     </div>
   </footer>
 
@@ -483,6 +489,8 @@
       instagram: "https://www.instagram.com/multicostura_uniformes/",
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
+      // Pin del mapa (4°05'32.5"N 76°12'22.5"W, confirmado por la dueña)
+      mapa: "4.092361,-76.206250",
       ciudad: "Tuluá",
 
       // ---- Agenda de toma de medidas ----
@@ -994,6 +1002,8 @@
     NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend",
       `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
     $("f-address").textContent = NEGOCIO.direccionTaller;
+    $("f-map").src = `https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.mapa)}&z=17&output=embed`;
+    $("f-map-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-wa").href = $("wa-float").href = waLink("Hola Multicostura 💗 quiero información");
