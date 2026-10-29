@@ -111,12 +111,12 @@ test("filter controls reflect the URL state and clearing resets the list", () =>
   assert.equal(t.vacio, false);
 });
 
-test("no size UI on either page", () => {
+test("no size filter or calculator on either page", () => {
   for (const page of ["index.html", "catalogo.html"]) {
     const { html } = render({ page });
     assert.ok(!/id="f-talla"/.test(html), `${page}: size filter`);
     assert.ok(!/<legend[^>]*>\s*Talla/i.test(html), `${page}: size legend`);
-    assert.ok(!/calculadora|guía de tallas|tabla de tallas/i.test(html), `${page}: size tools`);
+    assert.ok(!/calculadora/i.test(html), `${page}: size calculator`);
   }
 });
 

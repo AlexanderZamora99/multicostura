@@ -318,6 +318,16 @@
     .measure li b { display: block; }
     .measure li span { color: var(--muted); font-size: .92rem; }
     .measure svg { width: min(100%, 300px); margin-inline: auto; }
+    /* Tabla de medidas por talla: referencia desplegable bajo la guía para medirse en casa */
+    .guia { margin-top: 2rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+    .guia summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 52px; padding: .8rem 1.1rem; font-weight: 600; }
+    .guia summary::-webkit-details-marker { display: none; }
+    .guia summary::after { content: "+"; color: var(--mag); font-size: 1.4rem; line-height: 1; }
+    .guia[open] summary::after { content: "−"; }
+    .guia summary:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; border-radius: 14px; }
+    .guia-body { padding: 0 1.1rem 1.1rem; display: grid; gap: .8rem; }
+    .guia-body p { color: var(--muted); font-size: .92rem; }
+    .guia-body img { width: 100%; max-width: 900px; height: auto; margin-inline: auto; border-radius: 12px; }
 
     /* Empresas y bono */
     .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1.2rem; }
