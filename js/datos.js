@@ -65,6 +65,8 @@
       descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
+      // Ids de los modelos que se destacan en el inicio (8, en este orden)
+      recomendados: ["kaill", "alondra", "paris", "violet", "clasico", "durango", "luna", "lisboa"],
       // Sin "colores" = todos los colores de la lista de arriba
       modelos: [
         { id: "kaill", nombre: "Kaill", precio: 159000, cat: ["Conjuntos"], desc: "Antifluido elástico con detalle en el escote, cuello postizo y bolsillos funcionales. Cómodo y moderno.", foto: "img/kaill.webp",

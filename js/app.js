@@ -14,6 +14,11 @@
     const largo = s => fromIso(s).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
     const scrub = color => `<svg viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub" style="fill:${color}"/></svg>`;
     const photoOr = (foto, color) => `${scrub(color)}<img src="${foto}" alt="" loading="lazy" onerror="this.remove()">`;
+    // El mismo script corre en el inicio (diseñador, agenda...) y en el catálogo (filtros): cada bloque se activa solo donde están sus elementos
+    const HOME = !!$("personaliza"), CATALOGO = !!$("panel-filtros");
+    // Enlace a una sección del inicio, válido desde cualquiera de las dos páginas
+    const aSeccion = id => (HOME ? "#" : "index.html#") + id;
+    const irA = id => { if (HOME) location.hash = id; else location.href = aSeccion(id); };
 
     // ---------- Portada ----------
     // Pasarela: un recuadro grande con las fotos de NEGOCIO.pasarela (en alta resolución, img/pasarela/), una a la vez.
@@ -21,7 +26,7 @@
     // encima o con el foco, y queda quieta si la persona pidió reducir el movimiento.
     (function pasarela() {
       const fotos = NEGOCIO.pasarela, box = $("hero-show");
-      if (!fotos || !fotos.length) return;
+      if (!box || !fotos || !fotos.length) return;
       const capas = [$("hs-a"), $("hs-b")], cap = $("hs-cap"), dots = $("hs-dots"), pp = $("hero-pp");
       let k = 0, visible = 0, pausa = false, timer = null;
       dots.innerHTML = fotos.map((f, i) => `<button type="button" aria-label="Ver ${f.nombre}"></button>`).join("");
@@ -55,16 +60,6 @@
     })();
 
     // ---------- Modelos ----------
-    let cat = "Todos";
-    function renderProfs() {
-      $("profs").innerHTML = "";
-      NEGOCIO.categorias.forEach(p => {
-        const b = document.createElement("button");
-        b.type = "button"; b.textContent = p; b.className = p === cat ? "on" : "";
-        b.onclick = () => { cat = p; renderProfs(); renderModels(); };
-        $("profs").appendChild(b);
-      });
-    }
     // Accesorios con estampados: enlace a WhatsApp para pedir un diseño que no está en el catálogo
     const waOtroDiseno = m => waLink(`Hola Multicostura 💗 me interesa${m.articulo === "unas" ? "n" : ""} ${m.articulo || "un"} ${m.nombre.toLowerCase()} con otro diseño. ¿Qué estampados tienen disponibles?`);
     // precio: null = producto sin precio publicado ("Precio a consultar")
@@ -88,19 +83,27 @@
       // Con teclado (detail = 0) el foco pasa al primer color nuevo; con el mouse no, para no parecer otra selección
       if (mas) mas.onclick = e => { el.querySelector(".swatches").classList.add("all"); mas.remove(); if (!e.detail) el.querySelector(".sw.extra").focus(); };
     }
-    function renderModels() {
-      $("models").innerHTML = "";
-      NEGOCIO.modelos.filter(m => cat === "Todos" || m.cat.includes(cat)).forEach(m => {
+    // En el inicio lleva al diseñador con el modelo elegido; desde el catálogo vuelve al inicio con el modelo ya preseleccionado
+    function disenar(m, color) {
+      if (!HOME) { location.href = `index.html?modelo=${m.id}&color=${encodeURIComponent(color)}#personaliza`; return; }
+      $("s-model").value = m.id; design.color = color; renderDesign(); $("personaliza").scrollIntoView();
+    }
+    // Pinta las tarjetas de `lista` en `box`; op.forma (id de NEGOCIO.tipos) muestra el precio de esa modalidad
+    function renderModels(box, lista, op = {}) {
+      box.innerHTML = "";
+      const forma = NEGOCIO.tipos.find(t => t.id === op.forma);
+      lista.forEach(m => {
         const el = document.createElement("article");
         el.className = "model";
+        el.dataset.id = m.id;
         const extra = m.colores.length - 8;
         el.innerHTML = `
           <div class="pic" role="button" tabindex="0" aria-label="Ver detalles de ${m.nombre}">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
           <div class="info"><b><button type="button" class="pd-open">${m.nombre}</button></b><p>${m.desc}</p>
             ${m.fotos ? swatchButtons(m, extra) : `<div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>`}
-            <div class="row">${sinPrecio(m) ? `<strong class="consultar">Consultar precio</strong>` : `<strong>${pesos(m.precio)}</strong>`}<button type="button" class="design-btn">Diseñar</button></div>
+            <div class="row">${sinPrecio(m) ? `<strong class="consultar">Consultar precio</strong>` : `<strong>${pesos(forma ? precio(m, forma) : m.precio)}</strong>`}<button type="button" class="design-btn">Diseñar</button></div>
           </div>`;
-        el.querySelector(".design-btn").onclick = () => { $("s-model").value = m.id; design.color = el.dataset.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
+        el.querySelector(".design-btn").onclick = () => disenar(m, el.dataset.color || m.colores[0]);
         if (m.fotos) colorSwitch(el, m);
         // Ficha ampliada del producto: al tocar la foto o el nombre (con el color que la clienta tenga elegido)
         const abrir = () => abrirProducto(m, el.dataset.color, el.querySelector(".pd-open"));
@@ -113,23 +116,134 @@
         el.querySelector(".pd-open").onclick = abrir;
         el.querySelector(".pic").onclick = abrir;
         el.querySelector(".pic").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } };
-        $("models").appendChild(el);
+        box.appendChild(el);
       });
+    }
+
+    // ---------- Catálogo: filtros ----------
+    // Estado de los filtros; vive en la URL (?cat=gorros&forma=pedido&color=rosa&orden=asc) para poder compartir y volver atrás
+    const filtros = { cat: "Todos", forma: "", color: "", orden: "" };
+    const ORDENES = { "": "Recomendados", asc: "Precio: menor a mayor", desc: "Precio: mayor a menor", nombre: "Nombre (A–Z)" };
+    // "Gorros quirúrgicos" -> "gorros": la primera palabra identifica la categoría en la URL
+    const slugCat = c => slugColor(c).split("-")[0];
+    // Un modelo de precio fijo se vende solo en tienda; el resto también bajo pedido y por medida
+    const admiteForma = (m, f) => !f || f === "tienda" || !m.precioFijo;
+    const coloresCatalogo = () => {
+      const orden = [...Object.keys(NEGOCIO.colores), ...Object.keys(NEGOCIO.coloresExtra)];
+      return [...new Set(NEGOCIO.modelos.flatMap(m => m.colores))].sort((a, b) => orden.indexOf(a) - orden.indexOf(b));
+    };
+    function leerUrl() {
+      const q = new URLSearchParams(location.search), c = q.get("cat"), k = q.get("color");
+      filtros.cat = (c && NEGOCIO.categorias.find(x => x !== "Todos" && slugCat(x) === slugCat(c))) || "Todos";
+      filtros.forma = (NEGOCIO.tipos.find(t => t.id === q.get("forma")) || {}).id || "";
+      filtros.color = (k && coloresCatalogo().find(x => slugColor(x) === slugColor(k))) || "";
+      filtros.orden = q.get("orden") in ORDENES ? q.get("orden") : "";
+    }
+    function escribirUrl() {
+      const q = new URLSearchParams();
+      if (filtros.cat !== "Todos") q.set("cat", slugCat(filtros.cat));
+      if (filtros.forma) q.set("forma", filtros.forma);
+      if (filtros.color) q.set("color", slugColor(filtros.color));
+      if (filtros.orden) q.set("orden", filtros.orden);
+      try { history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); } catch {}
+    }
+    function listaFiltrada() {
+      const f = filtros, recomendado = m => { const i = NEGOCIO.recomendados.indexOf(m.id); return i < 0 ? 99 : i; };
+      const lista = NEGOCIO.modelos.filter(m => (f.cat === "Todos" || m.cat.includes(f.cat)) && admiteForma(m, f.forma) && (!f.color || m.colores.includes(f.color)));
+      if (f.orden === "nombre") return lista.sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+      if (f.orden) {
+        // Sin precio publicado siempre al final; el orden es estable
+        const forma = NEGOCIO.tipos.find(t => t.id === (f.forma || "tienda")), dir = f.orden === "asc" ? 1 : -1;
+        const p = m => (sinPrecio(m) ? null : precio(m, forma));
+        return lista.sort((x, y) => (p(x) == null ? (p(y) == null ? 0 : 1) : p(y) == null ? -1 : (p(x) - p(y)) * dir));
+      }
+      return lista.sort((a, b) => recomendado(a) - recomendado(b));
+    }
+    // Opciones de categoría y modalidad (con su cantidad) y muestras de color: se dibujan una sola vez
+    function renderFiltros() {
+      const opcion = (name, value, texto, extra) => `<label class="opt"><input type="radio" name="${name}" value="${value}"><span>${texto}${extra ? `<em>${extra}</em>` : ""}</span></label>`;
+      $("profs").innerHTML = NEGOCIO.categorias.map(c => opcion("cat", c, c, NEGOCIO.modelos.filter(m => c === "Todos" || m.cat.includes(c)).length)).join("");
+      $("f-forma").innerHTML = opcion("forma", "", "Todas") + NEGOCIO.tipos.map(t => opcion("forma", t.id, t.t)).join("");
+      $("f-colores").innerHTML = coloresCatalogo().map(c => `<button type="button" data-color="${c}" style="--c:${C(c)}" title="${c}" aria-label="${c}" aria-pressed="false"></button>`).join("");
+      $("orden").innerHTML = Object.entries(ORDENES).map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+    }
+    function renderCatalogo() {
+      const lista = listaFiltrada(), n = lista.length, f = filtros;
+      renderModels($("models"), lista, { forma: f.forma });
+      if (!n) $("models").innerHTML = `<div class="vacio"><b>No hay modelos con esos filtros.</b><p>Prueba quitar alguno o empieza de nuevo.</p><button type="button" class="btn btn-mag" id="f-vaciar">Limpiar filtros</button></div>`;
+      $("res-cuenta").textContent = `${n} ${n === 1 ? "modelo" : "modelos"}`;
+      document.querySelectorAll('#filtros input[name="cat"]').forEach(r => (r.checked = r.value === f.cat));
+      document.querySelectorAll('#filtros input[name="forma"]').forEach(r => (r.checked = r.value === f.forma));
+      document.querySelectorAll("#f-colores button").forEach(b => b.setAttribute("aria-pressed", b.dataset.color === f.color));
+      $("f-color-n").textContent = f.color ? `· ${f.color}` : "";
+      $("orden").value = f.orden;
+      const activos = [f.cat !== "Todos", f.forma, f.color].filter(Boolean).length;
+      $("abrir-filtros").textContent = activos ? `Filtros (${activos})` : "Filtros";
+      $("ver-resultados").textContent = `Ver ${n} ${n === 1 ? "modelo" : "modelos"}`;
+      escribirUrl();
+    }
+    const limpiarFiltros = () => { Object.assign(filtros, { cat: "Todos", forma: "", color: "", orden: "" }); renderCatalogo(); };
+    // En celular el menú es un cajón con velo; Escape, la X, el velo y "Ver N modelos" lo cierran y el foco vuelve al botón
+    let velo = null;
+    const cajon = () => $("panel-filtros").classList.contains("abierto");
+    function abrirFiltros() {
+      $("panel-filtros").classList.add("abierto");
+      $("abrir-filtros").setAttribute("aria-expanded", "true");
+      document.documentElement.classList.add("filtros-open");
+      velo = document.createElement("div"); velo.className = "velo"; velo.onclick = () => cerrarFiltros();
+      document.body.appendChild(velo);
+      $("cerrar-filtros").focus();
+    }
+    function cerrarFiltros(volver = true) {
+      if (!cajon()) return;
+      $("panel-filtros").classList.remove("abierto");
+      $("abrir-filtros").setAttribute("aria-expanded", "false");
+      document.documentElement.classList.remove("filtros-open");
+      velo && velo.remove(); velo = null;
+      if (volver) $("abrir-filtros").focus();
+    }
+    function iniciarCatalogo() {
+      renderFiltros(); leerUrl();
+      $("filtros").addEventListener("change", e => {
+        if (e.target.name === "cat" || e.target.name === "forma") { filtros[e.target.name] = e.target.value; renderCatalogo(); }
+      });
+      $("f-colores").addEventListener("click", e => {
+        const b = e.target.closest("button");
+        if (b) { filtros.color = filtros.color === b.dataset.color ? "" : b.dataset.color; renderCatalogo(); }
+      });
+      $("filtros").addEventListener("reset", e => { e.preventDefault(); limpiarFiltros(); });
+      $("models").addEventListener("click", e => { if (e.target.closest("#f-vaciar")) limpiarFiltros(); });
+      $("orden").addEventListener("change", e => { filtros.orden = e.target.value; renderCatalogo(); });
+      $("abrir-filtros").onclick = abrirFiltros;
+      $("cerrar-filtros").onclick = () => cerrarFiltros();
+      $("ver-resultados").onclick = () => cerrarFiltros();
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && cajon() && !$("pd").open) cerrarFiltros(); });
+      // El foco se queda dentro del cajón mientras está abierto
+      $("panel-filtros").addEventListener("keydown", e => {
+        if (e.key !== "Tab" || !cajon()) return;
+        const f = [...$("panel-filtros").querySelectorAll("button, input")].filter(x => x.offsetParent !== null);
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+      matchMedia("(min-width: 901px)").addEventListener("change", e => { if (e.matches) cerrarFiltros(false); });
+      renderCatalogo();
     }
 
     // ---------- Modalidades y precios ----------
     const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
     const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo).map(m => m.precio));
-    $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
+    if (HOME) $("tipos").innerHTML = NEGOCIO.tipos.map(t => `<div><b>${t.t}</b><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} – ${pesos(maxTienda)}`}</strong><p>${t.d}</p></div>`).join("");
 
     // ---------- Personalizador ----------
     const design = { color: null, hilo: "Blanco", qty: 1, tipo: "medida" };
     const model = () => NEGOCIO.modelos.find(m => m.id === $("s-model").value);
     const tipo = () => NEGOCIO.tipos.find(t => t.id === design.tipo);
     const precio = (m, t) => (t.precio && !m.precioFijo ? t.precio : m.precio);
-    NEGOCIO.modelos.filter(m => !m.accesorio).forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id))); // accesorios (gorros) no se diseñan
+    if (HOME) NEGOCIO.modelos.filter(m => !m.accesorio).forEach(m => $("s-model").add(new Option(`${m.nombre} — desde ${pesos(m.precio)}`, m.id))); // accesorios (gorros) no se diseñan
     const tipoNombre = id => NEGOCIO.tipos.find(t => t.id === id).t;
-    $("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
+    if (HOME) $("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
 
     function optButtons(box, items, current, onPick, swatch, label = it => it) {
       box.innerHTML = "";
@@ -153,8 +267,10 @@
       const f = (m.fotos || {})[color] || m.foto;
       return /\.webp$/.test(f) ? f : null; // sin foto real: queda el dibujo
     }
-    $("pv-photo").onload = () => $("pv-box").classList.add("has-photo");
-    $("pv-photo").onerror = () => { $("pv-box").classList.remove("has-photo"); $("pv-photo").removeAttribute("src"); };
+    if (HOME) {
+      $("pv-photo").onload = () => $("pv-box").classList.add("has-photo");
+      $("pv-photo").onerror = () => { $("pv-box").classList.remove("has-photo"); $("pv-photo").removeAttribute("src"); };
+    }
 
     // Resumen del diseño (se usa en la cotización, la cita y los mensajes)
     function designInfo() {
@@ -220,18 +336,20 @@
         `<span class="${d.pct === p ? "on" : ""}">${min}+ uniformes: −${p * 100}%</span>`).join("");
       renderSummary();
     }
-    ["s-name", "s-role"].forEach(id => $(id).addEventListener("input", renderDesign));
-    $("q-minus").onclick = () => { design.qty = Math.max(1, design.qty - 1); renderDesign(); renderAgenda(); };
-    $("q-plus").onclick = () => { design.qty = Math.min(30, design.qty + 1); renderDesign(); renderAgenda(); };
-    $("s-ask").onclick = () => {
-      const d = designInfo();
-      openWa(`Hola Multicostura 💗 tengo una pregunta sobre este diseño:\n• ${d.texto}\n• Total estimado: ${pesos(d.total)}`);
-    };
+    if (HOME) {
+      ["s-name", "s-role"].forEach(id => $(id).addEventListener("input", renderDesign));
+      $("q-minus").onclick = () => { design.qty = Math.max(1, design.qty - 1); renderDesign(); renderAgenda(); };
+      $("q-plus").onclick = () => { design.qty = Math.min(30, design.qty + 1); renderDesign(); renderAgenda(); };
+      $("s-ask").onclick = () => {
+        const d = designInfo();
+        openWa(`Hola Multicostura 💗 tengo una pregunta sobre este diseño:\n• ${d.texto}\n• Total estimado: ${pesos(d.total)}`);
+      };
+    }
 
     // ---------- Agenda: datos (Google Sheets o modo demo) ----------
     const DEMO_KEY = "multicostura-demo-citas";
     const demo = !NEGOCIO.apiUrl;
-    if (demo) $("demo-note").classList.remove("hidden");
+    if (HOME && demo) $("demo-note").classList.remove("hidden");
     const demoRead = () => { try { return JSON.parse(localStorage.getItem(DEMO_KEY)) || []; } catch { return []; } };
     const demoWrite = l => { try { localStorage.setItem(DEMO_KEY, JSON.stringify(l)); } catch {} };
 
@@ -364,7 +482,7 @@
     }
 
     // Campos de medidas para "Me mido en casa"
-    NEGOCIO.medidas.forEach(([t], i) => $("mgrid").insertAdjacentHTML("beforeend",
+    if (HOME) NEGOCIO.medidas.forEach(([t], i) => $("mgrid").insertAdjacentHTML("beforeend",
       `<label>${t} (cm)<input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
 
     async function loadBusy() {
@@ -372,118 +490,127 @@
       catch { $("slots").innerHTML = `<p class="err">No pude cargar la agenda. Escríbenos por WhatsApp.</p>`; }
     }
 
-    $("form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const d = designInfo();
-      const nombre = $("f-name").value.trim(), tel = $("f-phone").value.replace(/\D/g, ""), notas = $("f-notes").value.trim();
+    if (HOME) {
+      $("form").addEventListener("submit", async e => {
+        e.preventDefault();
+        const d = designInfo();
+        const nombre = $("f-name").value.trim(), tel = $("f-phone").value.replace(/\D/g, ""), notas = $("f-notes").value.trim();
 
-      // Otra ciudad: no hay cita, se mandan las medidas por WhatsApp
-      if (ag.modo === "casa") {
-        const ms = [...$("mgrid").querySelectorAll("input")].map(i => `• ${i.dataset.m}: ${i.value} cm`);
-        openWa([`Hola Multicostura 💗 soy ${nombre} y estoy en ${$("f-city").value.trim()}. Quiero este uniforme:`,
-          `• ${d.texto}`, `• Total estimado: ${pesos(d.total)}`, ``, `Mis medidas:`, ...ms,
-          notas ? `\nNotas: ${notas}` : null].filter(x => x !== null).join("\n"));
-        return;
-      }
-
-      const cita = {
-        fecha: ag.fecha, hora: ag.hora, dur: citaMin(), margen: margen(),
-        modalidad: ag.modo === "domicilio" ? "Domicilio" : "Taller",
-        nombre, telefono: tel, direccion: ag.modo === "domicilio" ? $("f-addr").value.trim() : "",
-        diseno: d.texto, cantidad: design.qty, total: d.total, notas,
-      };
-      const btn = $("f-submit"), err = $("f-error");
-      btn.disabled = true; btn.textContent = "Agendando…"; err.classList.add("hidden");
-      try {
-        const res = await saveBooking(cita);
-        if (!res.ok) {
-          await loadBusy(); ag.hora = null; renderAgenda();
-          err.textContent = res.error === "ocupado" ? "Ese horario se acaba de ocupar 😕 Elige otro, por favor." : "No se pudo agendar. Intenta de nuevo o escríbenos por WhatsApp.";
-          err.classList.remove("hidden");
+        // Otra ciudad: no hay cita, se mandan las medidas por WhatsApp
+        if (ag.modo === "casa") {
+          const ms = [...$("mgrid").querySelectorAll("input")].map(i => `• ${i.dataset.m}: ${i.value} cm`);
+          openWa([`Hola Multicostura 💗 soy ${nombre} y estoy en ${$("f-city").value.trim()}. Quiero este uniforme:`,
+            `• ${d.texto}`, `• Total estimado: ${pesos(d.total)}`, ``, `Mis medidas:`, ...ms,
+            notas ? `\nNotas: ${notas}` : null].filter(x => x !== null).join("\n"));
           return;
         }
-        ag.busy.push({ fecha: cita.fecha, hora: cita.hora, dur: cita.dur + cita.margen });
-        const lugar = ag.modo === "domicilio" ? cita.direccion : `en el taller (${NEGOCIO.direccionTaller})`;
-        $("done-text").innerHTML = `Toma de medidas ${ag.modo === "domicilio" ? "a domicilio" : "en el taller"}<br><b>${largo(cita.fecha)} a las ${hora12(cita.hora)}</b><br>${lugar}`;
-        $("done-wa").href = waLink(
-          `Hola Multicostura 💗 agendé mi toma de medidas en la página:\n` +
-          `• ${cita.modalidad}: ${largo(cita.fecha)} a las ${hora12(cita.hora)}\n` +
-          (cita.direccion ? `• Dirección: ${cita.direccion}\n` : "") +
-          `• Diseño: ${d.texto}\n• Total estimado: ${pesos(d.total)}` +
-          (notas ? `\n• Notas: ${notas}` : "") + `\nSoy ${nombre}.`);
-        $("flow").classList.add("hidden");
-        $("done").classList.remove("hidden");
-        $("agenda").scrollIntoView();
-      } catch {
-        err.textContent = "Sin conexión. Intenta de nuevo o escríbenos por WhatsApp.";
-        err.classList.remove("hidden");
-      } finally {
-        btn.disabled = false; renderAgenda();
-      }
-    });
-    $("done-again").onclick = () => {
-      ag.fecha = ag.hora = null;
-      $("form").reset();
-      $("done").classList.add("hidden");
-      $("flow").classList.remove("hidden");
-      renderAgenda();
-    };
 
-    // ---------- Proceso y guía de medidas ----------
-    $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
-    $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
-
-    // ---------- Empresas ----------
-    const in3w = new Date(Date.now() + 21 * 86400000);
-    $("b-date").value = isoDate(in3w);
-    $("biz").addEventListener("submit", e => {
-      e.preventDefault();
-      const fecha = fromIso($("b-date").value).toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
-      openWa(`Hola Multicostura 💗 quiero cotizar uniformes para mi equipo y agendar visita para tomar medidas:\n` +
-        `• Empresa: ${$("b-company").value.trim()}\n• Personas: ${$("b-qty").value}\n` +
-        `• Ciudad: ${$("b-city").value.trim()}\n• Para el: ${fecha}\n• Logo bordado: ${$("b-logo").checked ? "sí" : "no"}`);
-    });
-
-    // ---------- Bono ----------
-    let bono = NEGOCIO.bonos[1];
-    function renderBono() {
-      $("amounts").innerHTML = "";
-      NEGOCIO.bonos.forEach(v => {
-        const b = document.createElement("button");
-        b.type = "button"; b.textContent = pesos(v); b.className = v === bono ? "on" : "";
-        b.onclick = () => { bono = v; renderBono(); };
-        $("amounts").appendChild(b);
+        const cita = {
+          fecha: ag.fecha, hora: ag.hora, dur: citaMin(), margen: margen(),
+          modalidad: ag.modo === "domicilio" ? "Domicilio" : "Taller",
+          nombre, telefono: tel, direccion: ag.modo === "domicilio" ? $("f-addr").value.trim() : "",
+          diseno: d.texto, cantidad: design.qty, total: d.total, notas,
+        };
+        const btn = $("f-submit"), err = $("f-error");
+        btn.disabled = true; btn.textContent = "Agendando…"; err.classList.add("hidden");
+        try {
+          const res = await saveBooking(cita);
+          if (!res.ok) {
+            await loadBusy(); ag.hora = null; renderAgenda();
+            err.textContent = res.error === "ocupado" ? "Ese horario se acaba de ocupar 😕 Elige otro, por favor." : "No se pudo agendar. Intenta de nuevo o escríbenos por WhatsApp.";
+            err.classList.remove("hidden");
+            return;
+          }
+          ag.busy.push({ fecha: cita.fecha, hora: cita.hora, dur: cita.dur + cita.margen });
+          const lugar = ag.modo === "domicilio" ? cita.direccion : `en el taller (${NEGOCIO.direccionTaller})`;
+          $("done-text").innerHTML = `Toma de medidas ${ag.modo === "domicilio" ? "a domicilio" : "en el taller"}<br><b>${largo(cita.fecha)} a las ${hora12(cita.hora)}</b><br>${lugar}`;
+          $("done-wa").href = waLink(
+            `Hola Multicostura 💗 agendé mi toma de medidas en la página:\n` +
+            `• ${cita.modalidad}: ${largo(cita.fecha)} a las ${hora12(cita.hora)}\n` +
+            (cita.direccion ? `• Dirección: ${cita.direccion}\n` : "") +
+            `• Diseño: ${d.texto}\n• Total estimado: ${pesos(d.total)}` +
+            (notas ? `\n• Notas: ${notas}` : "") + `\nSoy ${nombre}.`);
+          $("flow").classList.add("hidden");
+          $("done").classList.remove("hidden");
+          $("agenda").scrollIntoView();
+        } catch {
+          err.textContent = "Sin conexión. Intenta de nuevo o escríbenos por WhatsApp.";
+          err.classList.remove("hidden");
+        } finally {
+          btn.disabled = false; renderAgenda();
+        }
       });
-      $("g-amount").textContent = pesos(bono);
-      $("g-names").textContent = `Para: ${$("g-to").value.trim() || "—"} · De: ${$("g-from").value.trim() || "—"}`;
+      $("done-again").onclick = () => {
+        ag.fecha = ag.hora = null;
+        $("form").reset();
+        $("done").classList.add("hidden");
+        $("flow").classList.remove("hidden");
+        renderAgenda();
+      };
     }
-    ["g-to", "g-from"].forEach(id => $(id).addEventListener("input", renderBono));
-    $("bono").addEventListener("submit", e => {
-      e.preventDefault();
-      openWa(`Hola Multicostura 💗 quiero comprar un bono de regalo:\n• Valor: ${pesos(bono)}\n• Para: ${$("g-to").value.trim()}\n• De: ${$("g-from").value.trim()}`);
-    });
 
-    // ---------- Clientas e info ----------
-    NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend", c.video
-      ? `<figure class="cli-video"><video muted loop playsinline preload="none" poster="${c.video}-poster.webp" aria-label="Video de una clienta de ${c.texto} con su uniforme Multicostura"><source src="${c.video}.webm" type="video/webm"><source src="${c.video}.mp4" type="video/mp4"></video><button type="button" class="nos-pp cli-pp" aria-label="Pausar video"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button><figcaption>${c.texto}</figcaption></figure>`
-      : `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
-    // Videos de clientas: como el de Quiénes somos, se cargan y reproducen solo en pantalla, con pausa y movimiento reducido
-    document.querySelectorAll(".cli-video").forEach(fig => {
-      const v = fig.querySelector("video"), pp = fig.querySelector(".cli-pp"), reduce = matchMedia("(prefers-reduced-motion: reduce)");
-      let pausado = reduce.matches, visible = false;
-      const sync = () => { pp.classList.toggle("paused", pausado); pp.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video"); };
-      const actualizar = () => { if (visible && !pausado) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); };
-      pp.onclick = () => { pausado = !pausado; sync(); actualizar(); };
-      new IntersectionObserver(([e]) => { visible = e.isIntersecting; actualizar(); }, { threshold: 0.25 }).observe(v);
-      sync();
-    });
+    if (HOME) {
+      // ---------- Proceso y guía de medidas ----------
+      $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
+      $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
+
+      // ---------- Empresas ----------
+      const in3w = new Date(Date.now() + 21 * 86400000);
+      $("b-date").value = isoDate(in3w);
+      $("biz").addEventListener("submit", e => {
+        e.preventDefault();
+        const fecha = fromIso($("b-date").value).toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
+        openWa(`Hola Multicostura 💗 quiero cotizar uniformes para mi equipo y agendar visita para tomar medidas:\n` +
+          `• Empresa: ${$("b-company").value.trim()}\n• Personas: ${$("b-qty").value}\n` +
+          `• Ciudad: ${$("b-city").value.trim()}\n• Para el: ${fecha}\n• Logo bordado: ${$("b-logo").checked ? "sí" : "no"}`);
+      });
+
+      // ---------- Bono ----------
+      let bono = NEGOCIO.bonos[1];
+      function renderBono() {
+        $("amounts").innerHTML = "";
+        NEGOCIO.bonos.forEach(v => {
+          const b = document.createElement("button");
+          b.type = "button"; b.textContent = pesos(v); b.className = v === bono ? "on" : "";
+          b.onclick = () => { bono = v; renderBono(); };
+          $("amounts").appendChild(b);
+        });
+        $("g-amount").textContent = pesos(bono);
+        $("g-names").textContent = `Para: ${$("g-to").value.trim() || "—"} · De: ${$("g-from").value.trim() || "—"}`;
+      }
+      ["g-to", "g-from"].forEach(id => $(id).addEventListener("input", renderBono));
+      $("bono").addEventListener("submit", e => {
+        e.preventDefault();
+        openWa(`Hola Multicostura 💗 quiero comprar un bono de regalo:\n• Valor: ${pesos(bono)}\n• Para: ${$("g-to").value.trim()}\n• De: ${$("g-from").value.trim()}`);
+      });
+
+      // ---------- Clientas e info ----------
+      NEGOCIO.clientas.forEach(c => $("clients").insertAdjacentHTML("beforeend", c.video
+        ? `<figure class="cli-video"><video muted loop playsinline preload="none" poster="${c.video}-poster.webp" aria-label="Video de una clienta de ${c.texto} con su uniforme Multicostura"><source src="${c.video}.webm" type="video/webm"><source src="${c.video}.mp4" type="video/mp4"></video><button type="button" class="nos-pp cli-pp" aria-label="Pausar video"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button><figcaption>${c.texto}</figcaption></figure>`
+        : `<figure>🩷<img src="${c.foto}" alt="${c.texto}" loading="lazy" onerror="this.remove()"><figcaption>${c.texto}</figcaption></figure>`));
+      // Videos de clientas: como el de Quiénes somos, se cargan y reproducen solo en pantalla, con pausa y movimiento reducido
+      document.querySelectorAll(".cli-video").forEach(fig => {
+        const v = fig.querySelector("video"), pp = fig.querySelector(".cli-pp"), reduce = matchMedia("(prefers-reduced-motion: reduce)");
+        let pausado = reduce.matches, visible = false;
+        const sync = () => { pp.classList.toggle("paused", pausado); pp.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video"); };
+        const actualizar = () => { if (visible && !pausado) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); };
+        pp.onclick = () => { pausado = !pausado; sync(); actualizar(); };
+        new IntersectionObserver(([e]) => { visible = e.isIntersecting; actualizar(); }, { threshold: 0.25 }).observe(v);
+        sync();
+      });
+      renderBono();
+    }
+
     $("f-address").textContent = NEGOCIO.direccionTaller;
     $("f-map").src = `https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.mapa)}&z=17&output=embed`;
-    $("f-map-link").href = $("v-mapa").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
+    $("f-map-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
     // Invitación a la tienda (Quiénes somos)
-    $("v-dir").textContent = NEGOCIO.direccionTaller;
-    $("v-hor").textContent = NEGOCIO.horarioTexto;
-    $("v-wa").href = waLink("Hola Multicostura 💗 ¿qué uniformes tienen disponibles hoy en la tienda? Me gustaría pasar a verlos.");
+    if (HOME) {
+      $("v-mapa").href = $("f-map-link").href;
+      $("v-dir").textContent = NEGOCIO.direccionTaller;
+      $("v-hor").textContent = NEGOCIO.horarioTexto;
+      $("v-wa").href = waLink("Hola Multicostura 💗 ¿qué uniformes tienen disponibles hoy en la tienda? Me gustaría pasar a verlos.");
+    }
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-fb").href = NEGOCIO.facebook;
@@ -499,15 +626,24 @@
     $("f-tel").href = `tel:+${NEGOCIO.whatsapp}`;
     $("f-tel").textContent = `Llamar ${numeroLocal}`;
 
-    design.color = model().colores[0];
-    renderProfs(); renderModels(); renderDesign(); renderBono();
-    loadBusy().then(renderAgenda);
+    if (HOME) {
+      // ?modelo=<id>&color=<color>: llegada desde el catálogo con el modelo ya elegido
+      const q = new URLSearchParams(location.search), pre = NEGOCIO.modelos.find(m => m.id === q.get("modelo") && !m.accesorio);
+      if (pre) $("s-model").value = pre.id;
+      design.color = pre && model().colores.includes(q.get("color")) ? q.get("color") : model().colores[0];
+      renderModels($("models"), NEGOCIO.recomendados.map(id => NEGOCIO.modelos.find(m => m.id === id)).filter(Boolean));
+      renderDesign();
+      loadBusy().then(renderAgenda);
+      if (pre) $("personaliza").scrollIntoView();
+    }
+    if (CATALOGO) iniciarCatalogo();
 
     // ---------- Video de Quiénes somos ----------
     // Se descarga y reproduce solo cuando la sección está en pantalla (ahorra datos); se pausa al salir.
     // Con "reducir movimiento" queda la portada quieta hasta que la persona lo active con el botón.
     (function videoNosotros() {
       const v = $("nos-video"), pp = $("nos-pp"), reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      if (!v) return;
       let pausado = reduce.matches, visible = false;
       const sync = () => { pp.classList.toggle("paused", pausado); pp.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video"); };
       const actualizar = () => { if (visible && !pausado) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); };
@@ -601,6 +737,7 @@
     $("pd").addEventListener("click", e => { if (e.target === $("pd")) $("pd").close(); });
     $("pd").addEventListener("close", () => { document.documentElement.classList.remove("pd-abierta"); pd.opener?.focus(); });
     $("pd-pers").onclick = () => {
+      if (!HOME) { disenar(pd.m, pd.color); return; }
       $("s-model").value = pd.m.id; design.color = pd.color; design.tipo = pd.tipo; design.qty = pd.qty;
       renderDesign(); $("pd").close(); $("personaliza").scrollIntoView();
     };
@@ -609,7 +746,7 @@
     // ---------- Preguntas frecuentes ----------
     const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);
     const FAQ_VISIBLES = 4; // preguntas a la vista con la sección recogida
-    $("faq-list").innerHTML = NEGOCIO.faq.map((f, i) => `<details id="faq-${f.id}"${i >= FAQ_VISIBLES ? ' class="extra"' : ""}><summary>${f.q}</summary><p>${respuesta(f)}</p></details>`).join("");
+    if (HOME) $("faq-list").innerHTML = NEGOCIO.faq.map((f, i) => `<details id="faq-${f.id}"${i >= FAQ_VISIBLES ? ' class="extra"' : ""}><summary>${f.q}</summary><p>${respuesta(f)}</p></details>`).join("");
     const faqMas = $("faq-more"), ocultas = NEGOCIO.faq.length - FAQ_VISIBLES;
     function desplegarFaq(abrir) {
       $("faq-list").classList.toggle("todas", abrir);
@@ -617,17 +754,20 @@
       faqMas.textContent = abrir ? "Ver menos preguntas" : `Ver las ${ocultas} preguntas más`;
       if (!abrir) $("faq-list").querySelectorAll("details.extra[open]").forEach(d => (d.open = false));
     }
-    faqMas.hidden = ocultas <= 0;
-    faqMas.onclick = () => {
-      const abrir = faqMas.getAttribute("aria-expanded") !== "true";
-      desplegarFaq(abrir);
-      if (abrir) $("faq-list").querySelector("details.extra summary").focus(); // el foco va a la primera pregunta nueva
-    };
-    desplegarFaq(false);
+    if (faqMas) {
+      faqMas.hidden = ocultas <= 0;
+      faqMas.onclick = () => {
+        const abrir = faqMas.getAttribute("aria-expanded") !== "true";
+        desplegarFaq(abrir);
+        if (abrir) $("faq-list").querySelector("details.extra summary").focus(); // el foco va a la primera pregunta nueva
+      };
+      desplegarFaq(false);
+      if (location.hash.startsWith("#faq-")) abrirFaq(location.hash.slice(5)); // llegada desde el asistente en otra página
+    }
     // Abre una pregunta del acordeón (desplegando la sección si estaba oculta), la muestra y la resalta un momento
     function abrirFaq(id) {
       const d = $("faq-" + id);
-      if (!d) return;
+      if (!d) { if (!HOME) location.href = aSeccion("faq-" + id); return; } // en el catálogo no hay preguntas: se abren en el inicio
       if (d.classList.contains("extra")) desplegarFaq(true);
       d.open = true;
       if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); // en celular el chat tapa la página
@@ -651,10 +791,10 @@
       chipsBox.innerHTML = "";
       lista.forEach(c => {
         const el = document.createElement(c.href ? "a" : "button");
-        if (c.href) { el.href = c.href; el.target = c.href.startsWith("#") ? "" : "_blank"; el.rel = "noopener"; } else el.type = "button";
+        if (c.href) { el.href = c.href; el.target = /^https?:/.test(c.href) ? "_blank" : ""; el.rel = "noopener"; } else el.type = "button";
         if (c.cls) el.className = c.cls;
         el.innerHTML = (c.dot ? `<i class="sw-dot" style="background:${c.dot}"></i>` : "") + esc(c.t);
-        el.onclick = e => { if (!c.href) { yo(c.t); chipsBox.innerHTML = ""; } if (c.fn) { if (c.href && c.href.startsWith("#")) e.preventDefault(); c.fn(); } };
+        el.onclick = e => { if (!c.href) { yo(c.t); chipsBox.innerHTML = ""; } if (c.fn) { if (c.href && !/^https?:/.test(c.href)) e.preventDefault(); c.fn(); } };
         chipsBox.appendChild(el);
       });
     }
@@ -780,8 +920,8 @@
       bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}${totales}</div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
       const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n` + (sinPrecio(P.m) ? "¿Qué precio tienen y están disponibles?" : `• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`);
       const opciones = [{ t: "✅ Enviar mi pedido por WhatsApp", href: waLink(msg), cls: "principal", fn: () => setTimeout(() => bot("¡Gracias! 💗 Te respondemos por WhatsApp para confirmar tu pedido y el abono."), 400) }];
-      if (P.medidas && P.medidas.id !== "casa") opciones.push({ t: "📅 Agendar mis medidas", href: "#agenda", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "agenda"; } });
-      if (P.medidas && P.medidas.id === "casa") opciones.push({ t: "📏 Cómo medirme en casa", href: "#medidas", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "medidas"; } });
+      if (P.medidas && P.medidas.id !== "casa") opciones.push({ t: "📅 Agendar mis medidas", href: aSeccion("agenda"), fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); irA("agenda"); } });
+      if (P.medidas && P.medidas.id === "casa") opciones.push({ t: "📏 Cómo medirme en casa", href: aSeccion("medidas"), fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); irA("medidas"); } });
       opciones.push({ t: "✏️ Empezar de nuevo", fn: () => paso(pedirModelo) });
       chips(opciones);
     }
@@ -816,7 +956,7 @@
     }
     // Responde con la pregunta frecuente y ofrece verla en la sección; luego invita a seguir con la compra
     function contestar(f) {
-      bot(`${respuesta(f)}<a class="faq-link" href="#faq-${f.id}" data-faq="${f.id}">Ver en preguntas frecuentes</a>`);
+      bot(`${respuesta(f)}<a class="faq-link" href="${aSeccion("faq-" + f.id)}" data-faq="${f.id}">Ver en preguntas frecuentes</a>`);
       if (ultimo && P.m) chips([{ t: "👉 Sigamos con mi pedido", fn: () => paso(ultimo) }, { t: "Otra pregunta", fn: pregunta }]);
       else chips([{ t: "🛍️ Hacer mi pedido", fn: () => paso(pedirModelo) }, { t: "Otra pregunta", fn: pregunta }, { t: "💬 Hablar con la dueña", href: waLink("Hola Multicostura 💗 tengo una pregunta") }]);
     }
@@ -847,7 +987,7 @@
       if (f) { contestar(f); return; }
       bot("Esa no me la sé 🙈 pero la dueña te responde por WhatsApp en un momento.");
       chips([{ t: "💬 Preguntarle por WhatsApp", href: waLink(`Hola Multicostura 💗 tengo una pregunta: ${txt}`), cls: "principal" },
-        { t: "Ver preguntas frecuentes", href: "#faq", fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); location.hash = "faq"; } },
+        { t: "Ver preguntas frecuentes", href: aSeccion("faq"), fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); irA("faq"); } },
         ...(ultimo && P.m ? [{ t: "👉 Sigamos con mi pedido", fn: () => paso(ultimo) }] : [{ t: "🛍️ Hacer un pedido", fn: () => paso(pedirModelo) }])]);
     };
     function abrirChat() {

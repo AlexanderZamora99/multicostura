@@ -11,8 +11,8 @@ const raw = readFileSync(join(ROOT, "index.html"), "utf8");
 const datos = readFileSync(join(ROOT, "js/datos.js"), "utf8");
 const { html, stderr } = render();
 
-// Number of entries in NEGOCIO.modelos, evaluated from the data file itself.
-const modelos = new Function(`${datos}; return NEGOCIO.modelos.length;`)();
+// Number of recommended models on the home page, evaluated from the data file itself.
+const modelos = new Function(`${datos}; return NEGOCIO.recomendados.length;`)();
 
 test("index.html links the shared css and js files", () => {
   assert.match(raw, /<link rel="stylesheet" href="css\/estilos\.css">/);
@@ -25,7 +25,7 @@ test("no inline script holds the business data", () => {
   assert.ok(!inline.some(s => s.includes("const NEGOCIO")));
 });
 
-test("models render one card per NEGOCIO.modelos entry", () => {
+test("home renders one card per NEGOCIO.recomendados entry", () => {
   assert.ok(modelos > 0);
   const cards = (html.match(/<article class="model[ "]/g) || []).length;
   assert.equal(cards, modelos);
