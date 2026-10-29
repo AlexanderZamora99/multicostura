@@ -51,7 +51,8 @@ test("photo grid shows an entry per NEGOCIO.clientas photo that loads and links 
 
 test("rich footer has navigation, contact, hours, address and social links", () => {
   const f = dom.slice(dom.indexOf("<footer"), dom.indexOf("</footer>"));
-  for (const id of ["modelos", "personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(f.includes(`href="#${id}"`), `nav #${id}`);
+  assert.ok(f.includes('href="catalogo.html"'), "nav catalogo");
+  for (const id of ["personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(f.includes(`href="#${id}"`), `nav #${id}`);
   assert.ok(f.includes("Calle 24 T10-39"));
   assert.match(f, /Lunes a viernes/);
   assert.match(f, /id="f-wa"[^>]*href="https:\/\/wa\.me\/573217830050/);

@@ -4,7 +4,7 @@ import { render, source as pageSource } from "./render.mjs";
 
 const source = pageSource();
 const strip = h => h.replace(/<script[\s\S]*?<\/script>/g, "");
-const dom = strip(render().html);
+const dom = strip(render({ page: "catalogo.html" }).html);
 const cards = dom.split('<article class="model"').slice(1);
 const cardOf = nombre => cards.find(c => c.includes(`<b>${nombre}</b>`)) || "";
 const media = query => // todas las líneas @media con esa condición

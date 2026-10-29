@@ -72,19 +72,12 @@ const NEGOCIO = {
   // Categorías que no son uniformes: sin foto muestran un recuadro neutro, no el uniforme en SVG
   categoriasNoUniforme: ["Gorros quirúrgicos", "Medias de compresión"],
   recomendados: ["kaill", "alondra", "paris", "violet", "clasico", "durango", "luna", "lisboa"],
-  // "Explora nuestras colecciones": cats = categorías del catálogo que filtra "Ver todo" (varias = un grupo con el nombre de la colección).
+  // Colecciones: cats = categorías del catálogo que filtra ?cat=<nombre> en catalogo.html (varias = un grupo con el nombre de la colección).
   // placeholder: replace with the client's photos (img = foto de la colección; sin img = tesela gris con el nombre y la cantidad)
   colecciones: [
     { t: "Uniformes", ico: "hanger", cats: ["Conjuntos"] },
     { t: "Línea blancos", ico: "coat", cats: ["Línea blancos"] },
     { t: "Gorros y medias", ico: "cap", cats: ["Gorros quirúrgicos", "Medias de compresión"] },
-  ],
-  // "¿Cuál es el uniforme para ti?": una foto por modalidad de NEGOCIO.tipos.
-  // placeholder: replace with the client's photos
-  perfiles: [
-    { tipo: "tienda", cta: "Ver disponibles en tienda" },
-    { tipo: "pedido", cta: "Elegir mi modelo" },
-    { tipo: "medida", cta: "Agendar mis medidas" },
   ],
   // "Confianza en cada paso de tu compra" (ico = nombre en ICONO). Solo hechos del negocio.
   confianza: [
@@ -205,7 +198,7 @@ const NEGOCIO = {
   portada: [
     { img: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&h=620&crop=top&q=70",
       imgMovil: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
-      titulo: "Uniformes médicos hechos con cuidado", texto: "Conjuntos de pantalón y blusa en antifluido, cómodos para toda la jornada.", cta: "Ver catálogo", href: "#modelos" },
+      titulo: "Uniformes médicos hechos con cuidado", texto: "Conjuntos de pantalón y blusa en antifluido, cómodos para toda la jornada.", cta: "Ver catálogo", href: "catalogo.html" },
     { img: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=1920&h=620&crop=top&q=70",
       imgMovil: "https://images.unsplash.com/photo-1758691462651-611d730c5272?auto=format&fit=crop&w=800&h=640&crop=top&q=70",
       titulo: "Hechos a tu medida", texto: "Agenda la toma de medidas en el taller, a domicilio o desde tu casa.", cta: "Agendar medidas", href: "#agenda" },

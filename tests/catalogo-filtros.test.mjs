@@ -96,8 +96,8 @@ const mobile = `
 })();
 `;
 
-const desk = render({ inject: probe }).html;
-const phone = render({ width: 500, height: 900, inject: mobile }).html;
+const desk = render({ page: "catalogo.html", inject: probe }).html;
+const phone = render({ page: "catalogo.html", width: 500, height: 900, inject: mobile }).html;
 
 test("sidebar has category, purchase form, size and color fieldsets and sits left of the grid", () => {
   assert.equal(attr(desk, "fieldsets"), "4");

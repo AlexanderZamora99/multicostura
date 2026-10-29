@@ -70,7 +70,7 @@ test("every image has an alt attribute and product photos describe the garment",
   const imgs = [...dom.matchAll(/<img\b[^>]*>/g)].map(m => m[0]);
   assert.ok(imgs.length > 3);
   for (const i of imgs) assert.match(i, /\balt="/, i);
-  const withPhoto = strip(render({ inject: 'const k = NEGOCIO.modelos.find(m => m.id === "kaill"); delete k.fotos; k.foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E"; renderModels();' }).html);
+  const withPhoto = strip(render({ page: "catalogo.html", inject: 'const k = NEGOCIO.modelos.find(m => m.id === "kaill"); delete k.fotos; k.foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E"; renderModels();' }).html);
   assert.match(withPhoto, /<img src="data:image[^>]*alt="Uniforme Kaill, color Azul rey"/);
 });
 

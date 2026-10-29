@@ -7,22 +7,10 @@ const strip = h => h.replace(/<script[\s\S]*?<\/script>/g, "");
 const dom = strip(render().html);
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
 
-// changed: the five category circles became three large collection tiles (Uniformes, Línea blancos, Gorros y medias); the new shape is covered in canon.test.mjs
-test("three 'uniforme para ti' tiles map to the price tiers with their price and delivery time", () => {
-  const s = section(dom, "perfiles");
-  assert.ok(s.includes("¿Cuál es el uniforme para ti?"));
-  assert.equal(count(s, '<a class="tile'), 3);
-  for (const t of ["Precio tienda", "Diseño bajo pedido", "Diseño por medida", "Entrega inmediata", "3 a 5 días hábiles", "5 a 8 días hábiles", "$175.000", "$185.000"]) {
-    assert.ok(s.includes(t), `missing ${t}`);
-  }
-  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="https:\/\/wa\.me\/573217830050\?text=[^"]*"/); // tienda, fallback while tiendaOnline is empty
-  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="#personaliza"/);
-  assert.match(s, /<a[^>]*class="tile[^"]*"[^>]*href="#agenda"/);
-});
-
-test("the store tile links to Mecodes when tiendaOnline is set", () => {
-  const html = strip(render({ inject: 'NEGOCIO.tiendaOnline = "https://tienda.example/mecodes"; renderPerfiles();' }).html);
-  assert.match(section(html, "perfiles"), /href="https:\/\/tienda\.example\/mecodes"/);
+// changed: the "uniforme para ti" tiles were purchase modes; they are now the "Forma de compra" filter of catalogo.html (see catalogo-filtros.test.mjs)
+test("the store button on the catalog links to Mecodes when tiendaOnline is set", () => {
+  const html = strip(render({ page: "catalogo.html", inject: 'NEGOCIO.tiendaOnline = "https://tienda.example/mecodes"; $("stock-btn").href = tiendaHref();' }).html);
+  assert.match(html, /id="stock-btn"[^>]*href="https:\/\/tienda\.example\/mecodes"/);
 });
 
 const ALL_PHOTOS = `NEGOCIO.recomendados.forEach(id => (NEGOCIO.modelos.find(m => m.id === id).foto = "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%271%27%20height=%271%27/%3E")); renderRecomendados();`;

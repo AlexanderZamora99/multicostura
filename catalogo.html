@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de uniformes médicos antifluido | Multicostura Tuluá</title>
+  <meta name="description" content="Catálogo de uniformes médicos para mujer en antifluido: conjuntos, línea blancos, batas, gorros y medias. Filtra por categoría, talla y color, y pide por WhatsApp. Taller en Tuluá, envíos a toda Colombia.">
+  <meta property="og:title" content="Catálogo de uniformes médicos | Multicostura">
+  <meta property="og:description" content="Conjuntos, línea blancos, batas, gorros y medias en antifluido. Filtra por talla y color y pide por WhatsApp.">
+  <meta property="og:type" content="website">
+  <!-- Vista previa al compartir: con dominio publicado, cambiar a la URL completa (https://.../img/og-image.jpg) -->
+  <meta property="og:image" content="img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+
+  <!-- Plantilla del uniforme (se reutiliza en todas partes) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="scrub" viewBox="0 0 200 300">
+        <path class="top" d="M62 20 L88 14 Q100 40 112 14 L138 20 L176 44 L190 98 L160 106 L150 74 L152 150 L48 150 L50 74 L40 106 L10 98 L24 44 Z"/>
+        <path d="M88 14 Q100 40 112 14" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <path d="M100 38 L100 52" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+        <rect x="58" y="104" width="30" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <rect x="112" y="104" width="30" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <path class="pants" d="M52 156 L148 156 L156 292 L114 292 L100 196 L86 292 L44 292 Z"/>
+        <path d="M60 162 L140 162" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+        <path d="M96 164 Q92 176 98 180 M104 164 Q108 176 102 180" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
+      </symbol>
+      <symbol id="sil-pantalon" viewBox="0 0 200 300">
+        <path d="M46 40 L154 40 L164 286 L114 286 L100 120 L86 286 L36 286 Z"/>
+        <path d="M54 50 L146 50" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+        <path d="M96 52 Q92 66 98 70 M104 52 Q108 66 102 70" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
+      </symbol>
+      <symbol id="sil-bata" viewBox="0 0 200 300">
+        <path d="M66 16 L88 10 L100 60 L112 10 L134 16 L172 40 L194 200 L166 206 L150 92 L152 290 L48 290 L50 92 L34 206 L6 200 L28 40 Z"/>
+        <path d="M88 10 L100 60 L112 10 M100 60 L100 290" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <rect x="62" y="190" width="28" height="30" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <rect x="110" y="190" width="28" height="30" rx="3" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header>
+    <div class="wrap nav" id="nav">
+      <a href="index.html" class="logo">
+        <img class="logo-m" src="img/logo-m.webp" width="63" height="40" alt="" decoding="async">
+        <span>MULTICOSTURA<small>Uniformes médicos</small></span>
+      </a>
+      <nav aria-label="Principal" class="mainnav"><ul id="nav-list">
+        <li><a href="catalogo.html" aria-current="page">Catálogo</a></li>
+        <li><a href="index.html#personaliza">Diseña</a></li>
+        <li><a href="index.html#agenda">Agenda medidas</a></li>
+        <li><a href="index.html#empresas">Empresas</a></li>
+        <li><a href="index.html#bono">Bonos regalo</a></li>
+      </ul></nav>
+      <div class="nav-actions">
+        <a class="icon-btn" id="hdr-wa" target="_blank" rel="noopener" aria-label="Escribir a Multicostura por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.2Z"/></svg></a>
+        <a href="index.html#agenda" class="btn btn-mag">Agendar medidas</a>
+        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+  <section id="modelos">
+    <div class="wrap">
+      <div class="sec-head">
+        <h1>Catálogo de uniformes médicos</h1>
+        <p class="lead" id="cat-lead"></p>
+      </div>
+      <div class="stock" id="stock"><span class="stock-ico" aria-hidden="true" id="stock-ico"></span><p><b>¿Lo necesitas hoy?</b><br><span class="lead">Mira qué modelos, tallas y colores hay listos en el taller.</span></p><a class="btn btn-ghost" id="stock-btn" target="_blank" rel="noopener">Ver disponibles en tienda física</a></div>
+      <div class="con-filtros">
+        <aside class="panel-filtros" id="panel-filtros" aria-label="Filtros">
+          <div class="pf-cabeza"><b>Filtros</b><button type="button" class="icon-btn" id="cerrar-filtros" aria-label="Cerrar filtros">&times;</button></div>
+          <form id="filtros" class="pf-cuerpo">
+            <fieldset><legend>Categoría</legend><div id="profs" role="radiogroup" aria-label="Filtrar por categoría"></div></fieldset>
+            <fieldset><legend>Forma de compra</legend><div id="f-forma"></div><small class="lead">Cambia el precio que ves en cada modelo.</small></fieldset>
+            <fieldset><legend>Talla</legend><div class="chips-f" id="f-talla"></div><a class="enlace" href="index.html#calc">Calcula tu talla</a></fieldset>
+            <fieldset><legend>Color <span class="lead" id="f-color-n"></span></legend><div class="muestras-f" id="f-colores"></div><small class="lead">Muestra los modelos que tienen foto en ese color. Todos se hacen en cualquier color bajo pedido.</small></fieldset>
+            <button type="reset" class="btn btn-ghost" id="f-reset">Quitar filtros</button>
+          </form>
+          <div class="pf-pie"><button type="button" class="btn btn-dark" id="ver-resultados">Ver modelos</button></div>
+        </aside>
+        <div class="resultados">
+          <div class="barra-res">
+            <button type="button" class="btn btn-ghost btn-filtros" id="abrir-filtros" aria-controls="panel-filtros" aria-expanded="false">Filtros</button>
+            <p class="lead" id="res-cuenta" aria-live="polite"></p>
+            <label class="orden"><span class="sr-only">Ordenar</span><select id="orden"><option value="">Más pedidos</option><option value="asc">Precio menor</option><option value="desc">Precio mayor</option></select></label>
+          </div>
+          <div class="models" id="models"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap foot-grid">
+      <div>
+        <h3><img class="foot-logo" src="img/logo-claro.webp" width="120" height="90" alt="Multicostura Uniformes" loading="lazy"></h3>
+        <p>Uniformes médicos para mujer, hechos en nuestro taller y enviados a toda Colombia.</p>
+        <div class="socials">
+          <a id="f-ig" target="_blank" rel="noopener" aria-label="Instagram de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r=".6"/></svg></a>
+          <a id="f-tt" target="_blank" rel="noopener" aria-label="TikTok de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500M14 3c.4 2.800 2 4.400 5 4.600"/></svg></a>
+          <a id="f-wa" target="_blank" rel="noopener" aria-label="WhatsApp de Multicostura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.700 13.600L3 21l4.500-1.200A9 9 0 1 0 12 3Z"/><path d="M9 8.500c0 3.500 3 6.500 6.500 6.500l1-1.500-2-1-1 .8c-1-.4-1.900-1.300-2.300-2.300l.8-1-1-2Z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h3>Explora</h3>
+        <ul>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="index.html#personaliza">Diseña tu uniforme</a></li>
+          <li><a href="index.html#agenda">Agenda medidas</a></li>
+          <li><a href="index.html#empresas">Empresas</a></li>
+          <li><a href="index.html#bono">Bonos regalo</a></li>
+          <li><a href="index.html#nosotros">Quiénes somos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Centro de ayuda</h3>
+        <ul>
+          <li><a href="index.html#guia-tallas">Guía de tallas</a></li>
+          <li><a href="index.html#medidas">Cómo tomar medidas</a></li>
+          <li><a href="index.html#nosotros">Ubicación</a></li>
+          <li><a href="index.html#faq">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contacto</h3>
+        <p><a id="f-wa-txt" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>
+        <p><a id="f-mail"></a></p>
+        <p id="f-address"></p>
+        <p id="f-horario"></p>
+      </div>
+    </div>
+    <div class="wrap foot-bottom" id="f-copy"></div>
+  </footer>
+
+  <dialog id="qv" class="qv-dialog" role="dialog" aria-modal="true" aria-labelledby="qv-title">
+    <button type="button" class="qv-close" id="qv-close" aria-label="Cerrar vista rápida"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="qv-body" id="qv-body"></div>
+  </dialog>
+
+  <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+    <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.2Z"/></svg>
+  </a>
+
+  <button type="button" class="chat-btn" id="chat-btn" aria-label="Abrir preguntas frecuentes" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-panel">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 6v2h10V9H7Zm0 4v2h7v-2H7Z"/></svg>
+  </button>
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Preguntas frecuentes" hidden>
+    <div class="chat-head"><span>Asistente Multicostura</span><button type="button" id="chat-close" aria-label="Cerrar preguntas frecuentes">×</button></div>
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <input id="chat-input" maxlength="120" placeholder="Escribe tu pregunta" aria-label="Escribe tu pregunta">
+      <button class="btn btn-dark" type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script src="js/datos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -27,11 +27,12 @@ export function source(page = "index.html") {
 export const estilos = () => readFileSync(join(ROOT, "css/estilos.css"), "utf8");
 
 // `page`: archivo HTML de la raíz del repo (por defecto index.html).
+// `query`: cadena como "?cat=Uniformes" que se agrega a la URL de la página.
 // `inject`: script opcional que se ejecuta al final del <body> (para simular clics y escritura en los tests).
 // `transform`: función opcional que recibe el HTML de la página y devuelve el que se renderiza.
 // Las copias modificadas se escriben JUNTO al original (raíz del repo, ignoradas por git) para que css/ js/ img/ sigan resolviendo, y se borran al terminar.
-export function render({ width = 1366, height = 900, inject = "", page = "index.html", transform = null } = {}) {
-  const key = `${page}|${width}x${height}|${inject}|${transform ? transform.toString() : ""}`;
+export function render({ width = 1366, height = 900, inject = "", page = "index.html", transform = null, query = "" } = {}) {
+  const key = `${page}${query}|${width}x${height}|${inject}|${transform ? transform.toString() : ""}`;
   if (cache.has(key)) return cache.get(key);
   let url = pathToFileURL(join(ROOT, page)).href;
   let copia = null;
@@ -43,6 +44,7 @@ export function render({ width = 1366, height = 900, inject = "", page = "index.
     writeFileSync(copia, html);
     url = pathToFileURL(copia).href;
   }
+  url += query;
   const run = spawnSync(chromeBin(), [
     "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
     "--enable-logging=stderr", "--v=0",

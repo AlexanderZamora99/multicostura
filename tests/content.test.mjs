@@ -20,6 +20,7 @@ test("workshop address text is shown in the Nosotros section", () => {
 });
 
 test("store button falls back to a WhatsApp link when tiendaOnline is empty", () => {
+  const dom = render({ page: "catalogo.html" }).html.replace(/<script[\s\S]*?<\/script>/g, "");
   const m = dom.match(/<a[^>]*id="stock-btn"[^>]*>/);
   assert.ok(m, "stock button missing");
   assert.match(m[0], /href="https:\/\/wa\.me\/573217830050\?text=/);
@@ -40,11 +41,11 @@ test("TikTok and Instagram videos are embedded vertically, without hosting the f
   assert.ok((s.match(/<iframe[^>]*loading="lazy"/g) || []).length === 4);
 });
 
-test("each price tier shows its delivery time", () => {
-  const tipos = dom.slice(dom.indexOf('id="perfiles"'), dom.indexOf('id="modelos"')); // changed: recommended now comes first on the page, so the tiers section ends where the catalog begins
-  for (const t of ["Entrega inmediata", "3 a 5 días hábiles", "5 a 8 días hábiles"]) {
-    assert.ok(tipos.includes(t), `missing ${t}`);
-  }
+// changed: the profile tiles moved into the catalog; each purchase form shows its delivery time in the sidebar
+test("each purchase form shows its delivery time in the catalog filters", () => {
+  const cat = render({ page: "catalogo.html" }).html.replace(/<script[\s\S]*?<\/script>/g, "");
+  const forma = cat.slice(cat.indexOf('id="f-forma"'), cat.indexOf("</fieldset>", cat.indexOf('id="f-forma"')));
+  for (const t of ["hoy", "3 a 5 días", "5 a 8 días"]) assert.ok(forma.includes(t), `missing ${t}`);
 });
 
 test("content additions run without uncaught errors", () => {

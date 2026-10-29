@@ -201,7 +201,9 @@ function quickView(m, color, opener, pre = {}) {
   $("qv-tipos")?.querySelectorAll("button").forEach(b => (b.onclick = () => { qv.tipo = b.dataset.tipo; qvSync(); }));
   if (lista) $("qv-pers").onclick = () => {
     $("s-model").value = m.id; design.color = qv.color; design.tipo = qv.tipo; renderDesign(); renderAgenda();
-    quickViewClose(false); $("personaliza").scrollIntoView();
+    quickViewClose(false);
+    if (document.getElementById("personaliza")) $("personaliza").scrollIntoView();
+    else location.href = `index.html?modelo=${m.id}&color=${encodeURIComponent(qv.color)}#personaliza`;
   };
   qvSync();
   document.documentElement.classList.add("qv-open");
@@ -225,6 +227,18 @@ $("qv").addEventListener("keydown", e => {
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $("qv").open) quickViewClose(); });
+// Estado en la URL (?cat=, ?talla=): "cat" acepta una categoría o el nombre de una colección
+function leerUrl() {
+  const q = new URLSearchParams(location.search), c = q.get("cat"), t = q.get("talla");
+  const col = NEGOCIO.colecciones.find(x => x.t === c);
+  if (c && NEGOCIO.categorias.includes(c)) cat = c;
+  else if (col) cat = col.cats.length > 1 ? col.t : col.cats[0];
+  if (t && NEGOCIO.tallas.orden.includes(t)) filtros.talla = t;
+}
+// Entrada del catálogo: tiempos de entrega de cada forma de compra, sacados de NEGOCIO.tipos
+function catLead() {
+  $("cat-lead").textContent = `Conjuntos, línea blancos, batas, gorros y medias en antifluido. Entrega: ${NEGOCIO.tipos.map(t => `${t.forma.toLowerCase()}, ${t.dias === "hoy" ? "hoy mismo" : t.dias}`).join("; ")}.`;
+}
 function renderModels() {
   const f = filtros, precioOrden = m => (diseñable(m) ? precio(m, tipoDe(f.forma || "tienda")) : null);
   let lista = NEGOCIO.modelos.filter(m => enCat(m, cat) && (!f.color || tieneFoto(m, f.color)));
@@ -332,11 +346,11 @@ function calcTalla(med) {
   const completo = m.busto > 0 && m.cintura > 0 && m.cadera > 0;
   const b = completo ? tallaDe("blusa", m) : null, p = completo ? tallaDe("pantalon", { cintura: m.cintura, cadera: m.cadera }) : null;
   if (med) return { blusa: b, pantalon: p };
-  let res, nota, cta = ["Ver modelos", "#modelos", "btn-dark"];
+  let res, nota, cta = ["Ver modelos", "catalogo.html", "btn-dark"];
   if (!completo) { res = "Escribe tus medidas"; nota = "Con busto, cintura y cadera te decimos la talla de blusa y de pantalón."; }
   else if (!b || !p) { res = `Blusa ${b || "a medida"} · Pantalón ${p || "a medida"}`; nota = "Pasas la talla XL: te la hacemos a tu medida para que no te quede justo."; cta = ["Agendar mis medidas", "#agenda", "btn-mag"]; }
   else if (b !== p) { res = `Blusa ${b} · Pantalón ${p}`; nota = `Pide blusa ${b} y pantalón ${p} al hacer tu pedido.`; }
-  else { res = `Blusa ${b} · Pantalón ${p}`; nota = `Te queda la talla ${b} en blusa y pantalón.`; }
+  else { res = `Blusa ${b} · Pantalón ${p}`; nota = `Te queda la talla ${b} en blusa y pantalón.`; cta[1] = `catalogo.html?talla=${b}`; }
   $("r-tallas").textContent = res; $("r-nota").textContent = nota;
   Object.assign($("r-cta"), { textContent: cta[0], href: cta[1], className: "btn " + cta[2] });
   document.querySelectorAll("#tabla-tallas [data-t]").forEach(c => c.classList.toggle("on", c.tagName === "TH" ? (c.dataset.t === b || c.dataset.t === p) : c.dataset.t === (c.dataset.p === "blusa" ? b : p)));
@@ -360,7 +374,6 @@ function renderLook() {
     else $("personaliza").scrollIntoView();
   };
 }
-$("reco-all").onclick = () => { cat = "Todos"; renderProfs(); renderModels(); };
 // Flechas del carrusel de desplazamiento (testimonios)
 const railNav = (rail, prev, next) => {
   const paso = dir => $(rail).scrollBy({ left: dir * $(rail).clientWidth * .85, behavior: reduceMotion.matches ? "auto" : "smooth" });
@@ -369,35 +382,11 @@ const railNav = (rail, prev, next) => {
 };
 railNav("testi", "testi-prev", "testi-next");
 
-// ---------- Colecciones ----------
-function renderColecciones() {
-  $("cols").innerHTML = NEGOCIO.colecciones.map(c => {
-    const n = NEGOCIO.modelos.filter(m => c.cats.some(x => m.cat.includes(x))).length;
-    return `<article class="col-tile${c.img ? " has-photo" : ""}">${c.img ? `<img src="${c.img}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-photo'); this.remove()">` : ""}
-      <div class="col-body">${(ICONO[c.ico] || "").replace('class="ico"', 'class="ico col-ico"')}<h3>${c.t}</h3><p class="col-n">${n} ${n === 1 ? "modelo" : "modelos"}</p><a class="ver-todo" href="#modelos">Ver todo</a></div></article>`;
-  }).join("");
-  [...$("cols").querySelectorAll(".ver-todo")].forEach((a, i) => (a.onclick = () => {
-    const c = NEGOCIO.colecciones[i];
-    cat = c.cats.length > 1 ? c.t : c.cats[0]; renderProfs(); renderModels();
-  }));
-}
-
-// ---------- Perfiles: "¿Cuál es el uniforme para ti?" ----------
+// ---------- Tienda física ----------
 const tiendaHref = () => NEGOCIO.tiendaOnline || waLink("Hola Multicostura 💗 quiero saber qué modelos hay disponibles en la tienda física");
-// Precio y destino de cada modalidad (el precio tienda es un rango, calculado del catálogo)
+// Rango del precio tienda, calculado del catálogo (lo usan las preguntas frecuentes)
 const minTienda = Math.min(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
 const maxTienda = Math.max(...NEGOCIO.modelos.filter(m => !m.precioFijo && diseñable(m)).map(m => m.precio));
-function renderPerfiles() {
-  const destino = { tienda: () => ({ href: tiendaHref(), ext: true }), pedido: () => ({ href: "#personaliza" }), medida: () => ({ href: "#agenda" }) };
-  $("tiles").innerHTML = NEGOCIO.perfiles.map(p => {
-    const t = NEGOCIO.tipos.find(x => x.id === p.tipo), d = destino[p.tipo]();
-    return `<a class="tile${p.img ? " has-photo" : ""}" data-tipo="${p.tipo}" href="${d.href}"${d.ext ? ' target="_blank" rel="noopener"' : ""}>${p.img ? `<img src="${p.img}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-photo'); this.remove()">` : ""}
-      <span class="tile-body"><h3>${t.t}</h3><strong>${t.precio ? pesos(t.precio) : `${pesos(minTienda)} a ${pesos(maxTienda)}`}</strong><small>${t.d}</small><small>${t.tiempo}</small><span class="tile-cta">${p.cta}</span></span></a>`;
-  }).join("");
-  $("tiles").querySelectorAll(".tile").forEach(a => (a.onclick = () => {
-    if (a.dataset.tipo !== "tienda") { design.tipo = a.dataset.tipo; renderDesign(); }
-  }));
-}
 
 // ---------- Franja de confianza ----------
 $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<strong>${c.t}</strong><small>${c.d}</small></div>`).join("");
@@ -411,7 +400,11 @@ NEGOCIO.modelos.filter(diseñable).forEach(m => $("s-model").add(new Option(`${m
 const tipoNombre = id => NEGOCIO.tipos.find(t => t.id === id).t;
 $("pv-photo").onload = () => $("pv-box").classList.add("has-photo");
 $("pv-photo").onerror = () => { $("pv-box").classList.remove("has-photo"); $("pv-photo").removeAttribute("src"); };
-$("s-model").addEventListener("change", () => { design.color = model().colores[0]; renderDesign(); });
+$("s-model").addEventListener("change", () => { design.color = model().colores[0];
+{ // vienen de la vista rápida del catálogo (?modelo=&color=)
+  const q = new URLSearchParams(location.search), m = NEGOCIO.modelos.find(x => x.id === q.get("modelo") && diseñable(x));
+  if (m) { $("s-model").value = m.id; design.color = m.colores.includes(q.get("color")) ? q.get("color") : m.colores[0]; }
+} renderDesign(); });
 
 function optButtons(box, items, current, onPick, swatch, label = it => it) {
   box.innerHTML = "";
@@ -897,6 +890,10 @@ function renderFaq() {
 renderFaq();
 
 design.color = model().colores[0];
+{ // vienen de la vista rápida del catálogo (?modelo=&color=)
+  const q = new URLSearchParams(location.search), m = NEGOCIO.modelos.find(x => x.id === q.get("modelo") && diseñable(x));
+  if (m) { $("s-model").value = m.id; design.color = m.colores.includes(q.get("color")) ? q.get("color") : m.colores[0]; }
+}
 if (NEGOCIO.guiaTallas) {
   const g = $("guia-img");
   g.onerror = () => ($("guia").closest("details") || {}).hidden = true; // si no carga, la guía original queda oculta
@@ -912,5 +909,6 @@ if (NEGOCIO.guiaTallas) {
     movil.addEventListener("change", sync);
   }
 }
-renderProfs(); renderModels(); renderRecomendados(); renderLook(); renderTallas(); renderColecciones(); renderDesign(); renderPerfiles(); renderBono();
+if (document.getElementById("models")) { leerUrl(); renderProfs(); renderModels(); catLead(); }
+renderRecomendados(); renderLook(); renderTallas(); renderDesign(); renderBono();
 loadBusy().then(renderAgenda);

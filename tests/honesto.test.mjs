@@ -79,7 +79,7 @@ test("designer labels are sentence case, not tracked capitals", () => {
 test("catalog media is 4:5 and the grid has two columns on phones", () => {
   assert.match(css, /\.pic\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*5/);
   const probe = `const g = document.getElementById("models"); const p = g.querySelector(".pic"); document.body.setAttribute("data-cols", getComputedStyle(g).gridTemplateColumns.split(" ").length); document.body.setAttribute("data-pich", Math.round(p.getBoundingClientRect().height)); document.body.setAttribute("data-picw", Math.round(p.getBoundingClientRect().width));`;
-  const h = render({ width: 500, height: 900, inject: probe }).html;
+  const h = render({ page: "catalogo.html", width: 500, height: 900, inject: probe }).html;
   assert.equal(h.match(/data-cols="(\d+)"/)[1], "2");
   const w = Number(h.match(/data-picw="(\d+)"/)[1]), ph = Number(h.match(/data-pich="(\d+)"/)[1]);
   assert.ok(Math.abs(ph - w * 1.25) <= 2, `media ${w}x${ph} is 4:5`);

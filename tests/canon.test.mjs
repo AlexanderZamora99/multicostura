@@ -103,12 +103,13 @@ test("a slide with img is image-only: picture inside one link, alt from titulo, 
 // ---- C3: product cards, quick view and the recommended grid ----
 const section = (d, id) => { const i = d.indexOf(`id="${id}"`); return d.slice(i, d.indexOf("</section>", i)); };
 const dom = strip(render().html);
+const catDom = strip(render({ page: "catalogo.html" }).html); // changed: the catalog grid lives in catalogo.html now
 const cardOf = (d, nombre) => (d.split('<article class="model"').slice(1).find(c => c.includes(`<b>${nombre}</b>`)) || "");
 
 const probe3 = `
 (() => {
   const b = document.body, cs = el => getComputedStyle(el), r = el => el.getBoundingClientRect(), set = (k, v) => b.setAttribute("data-" + k, v);
-  const card = [...document.querySelectorAll("#models .model")].find(c => c.textContent.includes("Kaill"));
+  const card = [...document.querySelectorAll("#recomendados .model")].find(c => c.textContent.includes("Kaill")); // changed: quick view is exercised from the home recommended cards
   set("pic-ar", cs(card.querySelector(".pic")).aspectRatio);
   set("reco-cols", cs(document.getElementById("recomendados")).gridTemplateColumns.split(" ").length);
   set("reco-n", document.querySelectorAll("#recomendados .model").length);
@@ -138,20 +139,20 @@ const c = k => p3.match(new RegExp(`data-${k}="([^"]*)"`))[1];
 
 test("product card: 4:5 media, name, price range, color names and a Vista rápida button", () => {
   assert.equal(c("pic-ar"), "4 / 5");
-  const kaill = cardOf(dom, "Kaill");
+  const kaill = cardOf(catDom, "Kaill");
   assert.match(kaill, /class="price">\$159\.000 - \$185\.000</);
   assert.match(kaill, /<p class="cols">Azul rey, Lila, Verde jade \+15<\/p>/); // colores con foto primero
   assert.match(kaill, /<button[^>]*class="qv"[^>]*>Vista rápida<\/button>/);
-  assert.match(cardOf(dom, "Alondra blanco"), /<p class="cols">Blanco<\/p>/);
-  assert.match(cardOf(dom, "Pantalón"), /class="price">\$90\.000</, "fixed-price items show one price");
-  assert.match(cardOf(dom, "Gorro quirúrgico"), /class="price ask">Consultar</);
-  const articles = dom.split('<article class="model"').length - 1;
-  assert.equal(count(dom, 'class="qv"'), articles, "every card has its quick view");
+  assert.match(cardOf(catDom, "Alondra blanco"), /<p class="cols">Blanco<\/p>/);
+  assert.match(cardOf(catDom, "Pantalón"), /class="price">\$90\.000</, "fixed-price items show one price");
+  assert.match(cardOf(catDom, "Gorro quirúrgico"), /class="price ask">Consultar</);
+  const articles = catDom.split('<article class="model"').length - 1;
+  assert.equal(count(catDom, 'class="qv"'), articles, "every card has its quick view");
   assert.ok(count(kaill, 'data-color="') >= 3, "swatch dots stay beside the color names");
 });
 
 test("a second photo swaps in on hover when the model has foto2", () => {
-  const html = strip(render({ inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto2 = "${PIX}"; renderModels(); renderRecomendados();` }).html);
+  const html = strip(render({ page: "catalogo.html", inject: `NEGOCIO.modelos.find(m => m.id === "kaill").foto2 = "${PIX}"; renderModels();` }).html);
   assert.match(cardOf(html, "Kaill"), /<img class="swap" src="data:image/);
   assert.match(css, /\.pic:hover \.swap/);
 });
@@ -188,7 +189,7 @@ test("NUESTROS RECOMENDADOS is a grid of 4 cards without photos (8 with photos) 
   assert.equal(c("reco-cols"), "4");
   const reco = section(dom, "reco");
   assert.ok(reco.includes('href="#scrub"'), "calm silhouette fallback while photos are missing");
-  assert.match(reco, /<a class="btn btn-dark" id="reco-all" href="#modelos">Ver todo el catálogo<\/a>/);
+  assert.match(reco, /<a class="btn btn-dark" id="reco-all" href="catalogo.html">Ver todo el catálogo<\/a>/);
   const phone = render({ width: 390, height: 900, inject: 'document.body.setAttribute("data-rc", getComputedStyle(document.getElementById("recomendados")).gridTemplateColumns.split(" ").length);' }).html;
   assert.equal(phone.match(/data-rc="(\d+)"/)[1], "2");
 });
@@ -200,38 +201,20 @@ test("first viewport on desktop reaches the top of NUESTROS RECOMENDADOS", () =>
 
 // ---- C4: body to canon ----
 const at = (d, id) => d.indexOf(`id="${id}"`);
-const models = h => count(section(h, "models"), '<article class="model"');
-const click = (sel, i) => strip(render({ inject: `document.querySelectorAll("${sel}")[${i}].click();` }).html);
 
-test("page order follows the store canon: recommended, collections, trust, uniform picker, catalog", () => {
-  const order = ["reco", "colecciones", "confianza", "perfiles", "modelos"].map(id => at(dom, id));
+// changed: collections and profiles left the home; collections are the catalog's ?cat= links (see catalogo-pagina.test.mjs)
+test("page order on the home: recommended, look, trust; no catalog, collections or profile sections", () => {
+  const order = ["reco", "look", "confianza"].map(id => at(dom, id));
   assert.deepEqual([...order].sort((x, y) => x - y), order);
   assert.ok(order.every(i => i > 0));
+  for (const id of ["colecciones", "perfiles", "modelos"]) assert.equal(at(dom, id), -1, id);
 });
 
-test("EXPLORA NUESTRAS COLECCIONES: three large tiles with name, item count and a Ver todo link", () => {
-  const s = section(dom, "colecciones");
-  assert.match(s, /<h2>Explora nuestras colecciones<\/h2>/);
-  assert.equal(count(s, 'class="col-tile'), 3);
-  assert.deepEqual([...s.matchAll(/<h3>([^<]+)<\/h3>/g)].map(m => m[1]), ["Uniformes", "Línea blancos", "Gorros y medias"]);
-  assert.deepEqual([...s.matchAll(/<p class="col-n">([^<]+)<\/p>/g)].map(m => m[1]), ["12 modelos", "5 modelos", "2 modelos"]);
-  assert.equal(count(s, 'class="ver-todo" href="#modelos"'), 3);
-  assert.doesNotMatch(s, /<img/, "no stock posing as product: a calm grey tile until a photo is configured");
-});
-
-test("collection tiles show their photo when one is configured", () => {
-  const html = strip(render({ inject: `NEGOCIO.colecciones[0].img = "${PIX}"; renderColecciones();` }).html);
-  const s = section(html, "colecciones");
-  assert.equal(count(s, "<img"), 1);
-  assert.match(s, /class="col-tile has-photo"/);
-});
-
-test("Ver todo filters the catalog, including the Gorros y medias group", () => {
-  assert.equal(models(click("#colecciones .ver-todo", 1)), 5); // París, Alondra/Clásico/Durango blanco, Bata
-  const caps = click("#colecciones .ver-todo", 2);
-  assert.equal(models(caps), 2);
-  assert.match(caps, /<input type="radio" name="cat" value="Gorros y medias" checked(="")?>/);
-  assert.equal(models(click("#colecciones .ver-todo", 0)), 12); // conjuntos del catálogo 2026 (con Valencia, sin Jomper)
+test("each collection maps to a category the catalog can preselect from the URL", () => {
+  const n = q => count(strip(render({ page: "catalogo.html", query: q }).html), '<article class="model"');
+  assert.equal(n("?cat=Uniformes"), 12); // conjuntos del catálogo 2026 (con Valencia, sin Jomper)
+  assert.equal(n("?cat=L%C3%ADnea%20blancos"), 5); // París, Alondra/Clásico/Durango blanco, Bata
+  assert.equal(n("?cat=Gorros%20y%20medias"), 2);
 });
 
 test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the business data, on light grey", () => {
@@ -242,14 +225,6 @@ test("CONFIANZA EN CADA PASO DE TU COMPRA: four line icons, only facts from the 
   for (const t of ["Envíos a toda Colombia", "Taller propio en Tuluá", "A tu medida", "Pago 50% para empezar"]) assert.ok(s.includes(t), t);
   assert.equal(count(s, "<svg"), 4);
   assert.match(css, /\.trust\s*\{[^}]*background:\s*var\(--bg-2\)/);
-});
-
-test("¿CUÁL ES EL UNIFORME PARA TI? shows the three buying modes with price and delivery time", () => {
-  const s = section(dom, "perfiles");
-  assert.match(s, /<h2>¿Cuál es el uniforme para ti\?<\/h2>/);
-  assert.equal(count(s, '<a class="tile'), 3);
-  for (const t of ["Precio tienda", "Diseño bajo pedido", "Diseño por medida", "$175.000", "$185.000", "Entrega inmediata"]) assert.ok(s.includes(t), t);
-  assert.doesNotMatch(css, /\.tile\s*\{[^}]*linear-gradient/);
 });
 
 // changed: the two real Facebook reviews are configured, so testimonials show; the social grid still has only examples
@@ -270,7 +245,8 @@ test("footer has Contacto, Centro de ayuda and Explora columns and invents no po
     assert.match(ayuda, new RegExp(`href="#${id}"[^>]*>${t}<`), t);
     assert.ok(at(dom, id) > -1, `#${id} exists`);
   }
-  for (const id of ["modelos", "personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
+  assert.ok(explora.includes('href="catalogo.html"'));
+  for (const id of ["personaliza", "agenda", "empresas", "bono", "nosotros"]) assert.ok(explora.includes(`href="#${id}"`), id);
   // changed: the only policy is the client's own (Instagram highlight "INFORMACIÓN"), and it lives in the FAQ
   const sinFaq = dom.replace(section(dom, "faq"), "").replaceAll("¿Hacen arreglos o devoluciones?", ""); // the question is also a chatbot chip
   assert.doesNotMatch(sinFaq, /devoluci|garant[ií]a|reembolso|cambios y/i);
@@ -279,7 +255,7 @@ test("footer has Contacto, Centro de ayuda and Explora columns and invents no po
 
 // ---- C5 QA: the no-photo silhouette matches the garment (trousers alone, long coat) ----
 test("trousers and coat cards fall back to their own silhouette, not the full set", () => {
-  const { html } = render();
+  const { html } = render({ page: "catalogo.html" });
   const card = id => html.match(new RegExp(`data-id="${id}"[\\s\\S]*?</article>`))?.[0] || "";
   assert.match(card("pantalon"), /href="#sil-pantalon"/);
   assert.match(card("bata"), /href="#sil-bata"/);

@@ -27,11 +27,11 @@ const lookDom = strip(look);
 
 test("look section follows the recommended section", () => {
   assert.ok(lookDom.indexOf('id="look"') > lookDom.indexOf('id="reco"'));
-  assert.ok(lookDom.indexOf('id="look"') < lookDom.indexOf('id="colecciones"'));
+  assert.ok(lookDom.indexOf('id="look"') < lookDom.indexOf('id="confianza"'));
 });
 
 test("look has 3 accessible hotspot buttons, first pressed", () => {
-  const sec = between(lookDom, 'id="look"', 'id="colecciones"');
+  const sec = between(lookDom, 'id="look"', 'id="confianza"');
   const dots = sec.match(/<button[^>]*class="punto"[^>]*>/g) || [];
   assert.equal(dots.length, 3);
   dots.forEach(d => assert.match(d, /aria-label="[^"]+"/));
@@ -124,7 +124,7 @@ test("busto 98 cintura 80 cadera 110 gives L in both garments", () => {
   const [res, nota, href, cls] = partes("igual");
   assert.match(res, /Blusa L/); assert.match(res, /Pantalón L/);
   assert.match(nota, /Te queda la talla L/);
-  assert.equal(href, "#modelos"); assert.match(cls, /btn-dark/);
+  assert.equal(href, "catalogo.html?talla=L"); assert.match(cls, /btn-dark/);
   const on = attr(tl, "c-on").split(",");
   assert.ok(on.includes("THL") && on.includes("TDLblusa") && on.includes("TDLpantalon"));
   assert.ok(!on.some(x => /^T[HD](S|M|XL)/.test(x)));
