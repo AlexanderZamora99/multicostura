@@ -297,6 +297,17 @@
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+    /* Invitación a la tienda debajo de Quiénes somos */
+    .visita { margin-top: 1.6rem; padding: 1.3rem 1.4rem; border-radius: 20px; background: var(--card); border: 1.5px solid var(--pink); box-shadow: 0 18px 40px -28px rgba(173,23,101,.55); display: grid; gap: .7rem; max-width: 560px; }
+    .visita-tit { font-family: var(--font-titulos); font-size: 1.3rem; font-weight: 700; color: var(--mag-2); line-height: 1.2; }
+    .visita-txt { color: var(--muted); }
+    .visita-pts { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; }
+    .visita-pts li { padding: .35rem .8rem; border-radius: 999px; background: var(--bg-2); font-size: .85rem; font-weight: 600; }
+    .visita-dir { display: grid; gap: .15rem; font-size: .9rem; }
+    .visita-dir span { color: var(--muted); font-size: .84rem; }
+    .visita-btns { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .2rem; }
+    .visita-btns .btn { flex: 1 1 auto; white-space: nowrap; padding-inline: 1.1rem; }
+
     /* Quiénes somos: texto a la izquierda y video vertical de la tienda a la derecha */
     .nos-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 2.5rem; align-items: center; }
     .nos-video { position: relative; justify-self: end; width: min(100%, 320px); aspect-ratio: 9 / 16; border-radius: 24px; overflow: hidden; background: var(--text); box-shadow: 0 24px 50px -28px rgba(173,23,101,.55); }
@@ -527,6 +538,21 @@
         <span class="eyebrow">Quiénes somos</span>
         <h2>Empresa Multicostura</h2>
         <p class="lead">Somos una empresa con experiencia en la fabricación de uniformes y dotaciones. Nos especializamos en elaborar prendas de alta calidad y durabilidad, ofreciendo soluciones confiables para tus necesidades.</p>
+        <!-- Invitación a la tienda: motiva a visitarla o a preguntar qué hay disponible -->
+        <div class="visita">
+          <p class="visita-tit">✨ Ven a conocernos y pruébatelos</p>
+          <p class="visita-txt">En nuestra tienda puedes ver y tocar los uniformes, elegir tu color favorito con la tela en la mano y llevarte uno listo hoy mismo.</p>
+          <ul class="visita-pts">
+            <li>👚 Uniformes listos para entrega</li>
+            <li>🎨 Telas y colores reales</li>
+            <li>📏 Te tomamos las medidas ahí mismo</li>
+          </ul>
+          <p class="visita-dir"><b id="v-dir"></b><span id="v-hor"></span></p>
+          <div class="visita-btns">
+            <a class="btn btn-mag" id="v-mapa" target="_blank" rel="noopener">📍 Cómo llegar</a>
+            <a class="btn btn-wa" id="v-wa" target="_blank" rel="noopener">💬 ¿Qué hay en tienda hoy?</a>
+          </div>
+        </div>
       </div>
       <!-- Video de la tienda en bucle: sin sonido, se carga y reproduce solo cuando se ve en pantalla -->
       <figure class="nos-video">
@@ -1541,7 +1567,11 @@
     });
     $("f-address").textContent = NEGOCIO.direccionTaller;
     $("f-map").src = `https://www.google.com/maps?q=${encodeURIComponent(NEGOCIO.mapa)}&z=17&output=embed`;
-    $("f-map-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
+    $("f-map-link").href = $("v-mapa").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NEGOCIO.mapa)}`;
+    // Invitación a la tienda (Quiénes somos)
+    $("v-dir").textContent = `📍 ${NEGOCIO.direccionTaller}`;
+    $("v-hor").textContent = `🕒 ${NEGOCIO.horarioTexto}`;
+    $("v-wa").href = waLink("Hola Multicostura 💗 ¿qué uniformes tienen disponibles hoy en la tienda? Me gustaría pasar a verlos.");
     $("f-ig").href = NEGOCIO.instagram;
     $("f-tt").href = NEGOCIO.tiktok;
     $("f-fb").href = NEGOCIO.facebook;
