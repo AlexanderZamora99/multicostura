@@ -292,6 +292,78 @@
     .wa-float svg { width: 32px; height: 32px; fill: #fff; }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+    /* Tarjeta: la foto y el nombre abren la ficha ampliada */
+    .model .pic[role="button"] { cursor: zoom-in; }
+    .model .pic[role="button"]::after { content: "Ver detalles"; position: absolute; left: 50%; bottom: .8rem; translate: -50% 0; z-index: 2; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--text); font-size: .8rem; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; }
+    .model .pic[role="button"]:hover::after, .model .pic[role="button"]:focus-visible::after { opacity: 1; }
+    @media (hover: none) { .model .pic[role="button"]::after { opacity: 1; } }
+    .model .pic[role="button"]:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
+    .pd-open { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: inherit; text-align: left; }
+    .pd-open:hover { color: var(--mag-2); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Ficha ampliada del producto (diálogo) */
+    .pd { width: min(1080px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 24px; background: var(--card); color: var(--text); box-shadow: 0 30px 80px -20px rgba(36,22,29,.5); overflow: auto; }
+    .pd::backdrop { background: rgba(36,22,29,.55); backdrop-filter: blur(3px); }
+    .pd-close { position: absolute; right: .8rem; top: .8rem; z-index: 3; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); font-size: 1.7rem; line-height: 1; box-shadow: 0 2px 10px rgba(0,0,0,.15); }
+    .pd-close:hover { background: #fff; }
+    .pd-body { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 2rem; padding: 1.6rem; }
+    .pd-gal { display: grid; gap: .8rem; align-content: start; position: sticky; top: 0; }
+    .pd-main { position: relative; aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden; background: var(--bg-2); cursor: zoom-in; }
+    .pd-main img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform .25s ease; transform-origin: 50% 30%; }
+    .pd-main.zoom { cursor: zoom-out; }
+    /* Sin foto: el dibujo del uniforme en el color elegido */
+    .pd-sil { display: none; width: 62%; margin: 12% auto 0; }
+    .pd-main.sin-foto { cursor: default; }
+    .pd-main.sin-foto img, .pd-main.sin-foto .pd-hint { display: none; }
+    .pd-main.sin-foto .pd-sil { display: block; }
+    .pd-main.zoom img { transform: scale(2.2); transition: none; }
+    .pd-main:focus-visible { outline: 3px solid var(--mag); outline-offset: 3px; }
+    .pd-hint { position: absolute; left: .8rem; bottom: .8rem; padding: .35rem .75rem; border-radius: 999px; background: rgba(255,255,255,.9); font-size: .76rem; font-weight: 600; pointer-events: none; transition: opacity .2s; }
+    .pd-main.zoom .pd-hint { opacity: 0; }
+    .pd-thumbs { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .2rem; }
+    .pd-thumbs button { flex: none; width: 64px; aspect-ratio: 4 / 5; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--bg-2); }
+    .pd-thumbs button[aria-current="true"] { border-color: var(--mag); }
+    .pd-thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .pd-info { display: grid; gap: 1rem; align-content: start; padding-top: .4rem; }
+    .pd-info h2 { margin: 0; }
+    .pd-price { font-family: var(--font-titulos); font-size: 1.7rem; font-weight: 700; color: var(--mag-2); line-height: 1.1; }
+    .pd-price small { display: block; font-family: "Inter", sans-serif; font-size: .82rem; font-weight: 500; color: var(--muted); margin-top: .25rem; }
+    .pd-desc { color: var(--muted); }
+    .pd-feats { list-style: none; display: grid; gap: .35rem; font-size: .9rem; }
+    .pd-feats li::before { content: "✓"; color: var(--mag); font-weight: 700; margin-right: .5rem; }
+    .pd-field { display: grid; gap: .5rem; }
+    .pd-lbl { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .pd-lbl b { color: var(--text); letter-spacing: 0; text-transform: none; font-size: .9rem; }
+    .pd-colors { display: flex; flex-wrap: wrap; gap: .3rem; }
+    .pd-colors button { width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; display: grid; place-items: center; }
+    .pd-colors button::before { content: ""; width: 24px; height: 24px; border-radius: 50%; background: var(--c); border: 1px solid rgba(0,0,0,.15); }
+    .pd-colors button[aria-pressed="true"]::before { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--mag); }
+    .pd-aviso { font-size: .8rem; color: var(--muted); background: var(--bg-2); border-left: 3px solid var(--mag); border-radius: 8px; padding: .55rem .75rem; }
+    .pd-aviso b { color: var(--text); }
+    .pd-opts { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .pd-opts button { min-height: 44px; padding: .45rem .9rem; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); font-size: .88rem; text-align: left; line-height: 1.3; }
+    .pd-opts button small { display: block; color: var(--muted); font-size: .74rem; }
+    .pd-opts button[aria-pressed="true"] { border-color: var(--mag); background: var(--bg-2); font-weight: 600; }
+    .pd-qty { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    .pd-qty button { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--card); font-size: 1.2rem; }
+    .pd-qty output { min-width: 2rem; text-align: center; font-weight: 700; font-size: 1.1rem; }
+    .pd-qty small { color: var(--mag-2); font-weight: 600; font-size: .8rem; }
+    .pd-total { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .2rem 1rem; padding: 1rem 1.1rem; border-radius: 16px; background: var(--text); color: #fff; }
+    .pd-total strong { font-family: var(--font-titulos); font-size: 1.5rem; }
+    .pd-total small { grid-column: 1 / -1; color: #d9c4cf; font-size: .78rem; }
+    .pd-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .pd-actions .btn-wa { grid-column: 1 / -1; font-size: 1rem; }
+    .pd-actions [hidden] { display: none; }
+    @media (max-width: 820px) {
+      .pd { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; }
+      .pd-body { grid-template-columns: minmax(0, 1fr); gap: 1.2rem; padding: 1rem 16px 1.5rem; }
+      .pd-gal { position: static; }
+      .pd-main { width: min(100%, 480px); margin-inline: auto; }
+      .pd-actions { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) { .pd-main img { transition: none; } }
+    html.pd-abierta { overflow: hidden; }
+
     /* Preguntas frecuentes: acordeón nativo (details/summary) */
     .faq-list { margin-top: 1.8rem; display: grid; gap: .6rem; max-width: 820px; }
     .faq-list details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; transition: box-shadow .3s, border-color .3s; }
@@ -455,7 +527,8 @@
         <div class="panel">
           <div class="field"><span>Modelo</span><select id="s-model"></select></div>
           <div class="field"><span>Modalidad</span><div class="opts" id="s-tipo"></div></div>
-          <div class="field"><span>Color: <b id="s-color-name" style="color:var(--text)"></b></span><div class="opts" id="s-colors"></div></div>
+          <div class="field"><span>Color: <b id="s-color-name" style="color:var(--text)"></b></span><div class="opts" id="s-colors"></div>
+            <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Cuando vengas a la tienda a tomarte las medidas podrás ver las telas en su color real.</p></div>
           <div class="made">📏 <span><b id="made-t"></b> <span id="made-d"></span></span></div>
           <div class="two">
             <div class="field"><span>Nombre bordado</span><input id="s-name" maxlength="22" placeholder="Ej: Dra. Camila Ruiz"></div>
@@ -658,6 +731,42 @@
       <span>Hecho con 💗 en Tuluá, Valle del Cauca</span>
     </div>
   </footer>
+
+  <!-- Ficha ampliada del producto: galería con zoom, información, opciones y encargo por WhatsApp -->
+  <dialog class="pd" id="pd" aria-labelledby="pd-title">
+    <button type="button" class="pd-close" id="pd-close" aria-label="Cerrar ficha del producto">×</button>
+    <div class="pd-body">
+      <div class="pd-gal">
+        <div class="pd-main" id="pd-main" tabindex="0" role="img" aria-label="">
+          <img id="pd-img" alt="">
+          <svg class="pd-sil" id="pd-sil" viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub"/></svg>
+          <span class="pd-hint" aria-hidden="true">🔍 Pasa el cursor o toca para ampliar</span>
+        </div>
+        <div class="pd-thumbs" id="pd-thumbs" role="group" aria-label="Fotos del producto"></div>
+      </div>
+      <div class="pd-info">
+        <p class="eyebrow" id="pd-cat"></p>
+        <h2 id="pd-title"></h2>
+        <p class="pd-price" id="pd-price"></p>
+        <p class="pd-desc" id="pd-desc"></p>
+        <ul class="pd-feats" id="pd-feats"></ul>
+        <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
+          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
+        </div>
+        <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
+        <div class="pd-field"><span class="pd-lbl" id="pd-talla-lbl">Talla</span><div class="pd-opts" id="pd-tallas" role="group" aria-labelledby="pd-talla-lbl"></div></div>
+        <div class="pd-field"><span class="pd-lbl">Cantidad</span>
+          <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
+        </div>
+        <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small>El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</small></div>
+        <div class="pd-actions">
+          <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Encargar por WhatsApp</a>
+          <button type="button" class="btn btn-ghost" id="pd-pers">Personalizar y bordar</button>
+          <a class="btn btn-ghost" id="pd-agenda" href="#agenda">Agendar mis medidas</a>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Asistente de compra: guía el pedido y lo deja listo por WhatsApp; las dudas llevan a Preguntas frecuentes -->
   <button type="button" class="chat-btn" id="chat-btn" aria-label="Abrir asistente de compra" aria-expanded="false" aria-controls="chat-panel">
@@ -1002,13 +1111,18 @@
         el.className = "model";
         const extra = m.colores.length - 8;
         el.innerHTML = `
-          <div class="pic">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
-          <div class="info"><b>${m.nombre}</b><p>${m.desc}</p>
+          <div class="pic" role="button" tabindex="0" aria-label="Ver detalles de ${m.nombre}">${m.tag ? `<span class="tag">${m.tag}</span>` : ""}${photoOr(m.foto, C(m.colores[0]))}</div>
+          <div class="info"><b><button type="button" class="pd-open">${m.nombre}</button></b><p>${m.desc}</p>
             ${m.fotos ? swatchButtons(m, extra) : `<div class="swatches">${m.colores.slice(0, 8).map(c => `<i style="background:${C(c)}" title="${c}"></i>`).join("")}${extra > 0 ? `<small>+${extra}</small>` : ""}</div>`}
             <div class="row"><strong>${pesos(m.precio)}</strong><button type="button" class="design-btn">Diseñar</button></div>
           </div>`;
         el.querySelector(".design-btn").onclick = () => { $("s-model").value = m.id; design.color = el.dataset.color || m.colores[0]; renderDesign(); $("personaliza").scrollIntoView(); };
         if (m.fotos) colorSwitch(el, m);
+        // Ficha ampliada del producto: al tocar la foto o el nombre (con el color que la clienta tenga elegido)
+        const abrir = () => abrirProducto(m, el.dataset.color, el.querySelector(".pd-open"));
+        el.querySelector(".pd-open").onclick = abrir;
+        el.querySelector(".pic").onclick = abrir;
+        el.querySelector(".pic").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } };
         $("models").appendChild(el);
       });
     }
@@ -1383,6 +1497,92 @@
     design.color = model().colores[0];
     renderProfs(); renderModels(); renderDesign(); renderBono();
     loadBusy().then(renderAgenda);
+
+    // ---------- Ficha ampliada del producto ----------
+    // Galería: la foto base en alta resolución (si el modelo tiene) y las fotos reales de cada color.
+    // La foto grande muestra el color elegido: la real si existe; si no, la de referencia.
+    const pd = {};
+    function galeria(m) {
+      const lista = [], vistos = new Set(), add = (src, color) => { if (src && /\.webp$/.test(src) && !vistos.has(src)) { vistos.add(src); lista.push({ src, color }); } };
+      if (NEGOCIO.disena[m.id]) add(`img/disena/${m.id}.webp`, NEGOCIO.disena[m.id]);
+      // fotos reales de los otros colores (la del color de la base ya está, en mejor resolución)
+      Object.entries(m.fotos || {}).filter(([c]) => !(m.simulados || []).includes(c) && c !== NEGOCIO.disena[m.id]).forEach(([c, f]) => add(f, c));
+      if (!lista.length) add(m.foto, m.colores[0]);
+      return lista;
+    }
+    const fotoProducto = (m, c) => { const real = (m.fotos || {})[c]; return real && !(m.simulados || []).includes(c) && c !== NEGOCIO.disena[m.id] ? real : fotoDisena(m, c) || m.foto; };
+    function abrirProducto(m, color, opener) {
+      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", talla: null, medidas: null, qty: 1 });
+      if (!m.colores.includes(pd.color)) pd.color = m.colores[0];
+      $("pd-title").textContent = m.nombre;
+      $("pd-cat").textContent = m.cat.join(" · ");
+      const precios = NEGOCIO.tipos.map(t => precio(m, t));
+      $("pd-price").innerHTML = m.precioFijo ? pesos(m.precio)
+        : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}<small>${NEGOCIO.tipos.map(t => `${t.t}: ${pesos(precio(m, t))}`).join(" · ")}</small>`;
+      $("pd-desc").textContent = m.desc;
+      $("pd-feats").innerHTML = ["Tela antifluido de alta calidad", `Confeccionado en nuestro taller de ${NEGOCIO.ciudad}`, "Bordado de nombre y profesión disponible", "Envíos a toda Colombia"].map(x => `<li>${x}</li>`).join("");
+      $("pd-thumbs").innerHTML = galeria(m).map(g => `<button type="button" data-src="${g.src}" data-color="${g.color}" aria-label="Ver foto en ${g.color.toLowerCase()}"><img src="${g.src}" alt="" loading="lazy"></button>`).join("");
+      $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
+      $("pd-tipo-box").hidden = !!m.precioFijo;
+      pintarProducto();
+      document.documentElement.classList.add("pd-abierta");
+      $("pd").showModal();
+      $("pd").scrollTop = 0;
+    }
+    function pintarProducto(srcElegida) {
+      const m = pd.m, c = pd.color, src = srcElegida || fotoProducto(m, c);
+      const img = $("pd-img"), conFoto = /\.webp$/.test(src);
+      $("pd-main").classList.remove("zoom");
+      $("pd-main").classList.toggle("sin-foto", !conFoto);
+      $("pd-sil").querySelector("use").style.fill = C(c);
+      if (!conFoto) img.removeAttribute("src");
+      else if (img.getAttribute("src") !== src) img.src = src;
+      const ref = !srcElegida && src.includes("/disena/") && c !== NEGOCIO.disena[m.id];
+      img.alt = `${m.nombre} en color ${c.toLowerCase()}`;
+      $("pd-main").setAttribute("aria-label", `${img.alt}. Toca para ampliar`);
+      $("pd-thumbs").querySelectorAll("button").forEach(b => b.setAttribute("aria-current", b.dataset.src === src));
+      $("pd-color-name").textContent = c + (ref || (m.simulados || []).includes(c) && !srcElegida ? " · color de referencia" : "");
+      $("pd-colors").innerHTML = m.colores.map(x => `<button type="button" data-color="${x}" style="--c:${C(x)}" title="${x}" aria-label="Color ${x}" aria-pressed="${x === c}"></button>`).join("");
+      $("pd-colors").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(); }));
+      // modalidad, talla (o cómo tomar medidas) y cantidad
+      $("pd-tipos").innerHTML = NEGOCIO.tipos.map(t => `<button type="button" data-t="${t.id}" aria-pressed="${t.id === pd.tipo}">${t.t} · ${pesos(precio(m, t))}<small>${NEGOCIO.tiempos[t.id]}</small></button>`).join("");
+      $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
+      const porMedida = pd.tipo === "medida";
+      $("pd-talla-lbl").textContent = porMedida ? "¿Cómo tomamos tus medidas?" : "Talla";
+      const opciones = porMedida ? NEGOCIO.modalidades.map(x => ({ v: x.id, t: x.t, s: x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d })) : NEGOCIO.tallas.map(t => ({ v: t, t }));
+      const sel = porMedida ? pd.medidas : pd.talla;
+      $("pd-tallas").innerHTML = opciones.map(o => `<button type="button" data-v="${o.v}" aria-pressed="${o.v === sel}">${o.t}${o.s ? `<small>${o.s}</small>` : ""}</button>`).join("");
+      $("pd-tallas").querySelectorAll("button").forEach(b => (b.onclick = () => { if (porMedida) pd.medidas = b.dataset.v; else pd.talla = b.dataset.v; pintarProducto(srcElegida); }));
+      $("pd-q").textContent = pd.qty;
+      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = discount(pd.qty);
+      const recargo = porMedida && pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
+      const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
+      $("pd-desc-qty").textContent = pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
+      $("pd-total").textContent = pesos(total);
+      const eleccion = porMedida ? `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}` : `Talla: ${pd.talla || "por definir"}`;
+      $("pd-wa").href = waLink(`Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
+      $("pd-agenda").hidden = !(porMedida && pd.medidas !== "casa");
+    }
+    $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarProducto(); };
+    $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarProducto(); };
+    // Zoom: con el mouse se amplía al pasar por encima y sigue el cursor; con el dedo o el teclado, tocar alterna
+    const pdMain = $("pd-main"), finoPuntero = matchMedia("(hover: hover) and (pointer: fine)");
+    const mover = (x, y) => { const r = pdMain.getBoundingClientRect(); $("pd-img").style.transformOrigin = `${((x - r.left) / r.width) * 100}% ${((y - r.top) / r.height) * 100}%`; };
+    pdMain.addEventListener("mouseenter", () => { if (finoPuntero.matches && !pdMain.classList.contains("sin-foto")) pdMain.classList.add("zoom"); });
+    pdMain.addEventListener("mouseleave", () => { if (finoPuntero.matches) pdMain.classList.remove("zoom"); });
+    pdMain.addEventListener("mousemove", e => mover(e.clientX, e.clientY));
+    pdMain.addEventListener("click", e => { if (!finoPuntero.matches) { pdMain.classList.toggle("zoom"); mover(e.clientX, e.clientY); } });
+    pdMain.addEventListener("touchmove", e => { if (pdMain.classList.contains("zoom")) { e.preventDefault(); mover(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+    pdMain.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pdMain.classList.toggle("zoom"); } });
+    // Cerrar: botón, Escape (nativo del diálogo) o tocar fuera; el foco vuelve a la tarjeta
+    $("pd-close").onclick = () => $("pd").close();
+    $("pd").addEventListener("click", e => { if (e.target === $("pd")) $("pd").close(); });
+    $("pd").addEventListener("close", () => { document.documentElement.classList.remove("pd-abierta"); pd.opener?.focus(); });
+    $("pd-pers").onclick = () => {
+      $("s-model").value = pd.m.id; design.color = pd.color; design.tipo = pd.tipo; design.qty = pd.qty;
+      renderDesign(); $("pd").close(); $("personaliza").scrollIntoView();
+    };
+    $("pd-agenda").onclick = () => $("pd").close();
 
     // ---------- Preguntas frecuentes ----------
     const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);
