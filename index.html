@@ -414,7 +414,8 @@
     .faq-more { margin-top: 1rem; }
     .faq-more::after { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .2s; }
     .faq-more[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
-    .faq-list details.destacada { border-color: var(--mag); box-shadow: 0 0 0 3px rgba(214,36,127,.18); }
+    .faq-list details.destacada, .steps-row div.destacada { border-color: var(--mag); box-shadow: 0 0 0 3px rgba(214,36,127,.18); }
+    .steps-row div:focus { outline: none; }
 
     /* Asistente de compra: botón encima del de WhatsApp y panel de conversación */
     .chat-btn { position: fixed; right: 20px; bottom: 92px; z-index: 41; width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--mag); color: #fff; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(173,23,101,.4); transition: transform .15s; }
@@ -663,7 +664,7 @@
     </div>
   </section>
 
-  <section class="alt">
+  <section class="alt" id="como-funciona">
     <div class="wrap">
       <span class="eyebrow">Cómo funciona</span>
       <h2>De la idea a tus manos</h2>
@@ -1042,7 +1043,9 @@
       // ---- Preguntas frecuentes (sección #faq y chatbot) ----
       // claves: palabras que activan la respuesta en el chat (sin tildes, en minúscula). Si "a" es función, recibe NEGOCIO.
       faq: [
-        { id: "pago", q: "¿Cómo se paga?", a: "Con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar"] },
+        // paso: en el chat también enlaza al paso de "Cómo funciona" que lo explica (índice en NEGOCIO.proceso)
+        { id: "pago", q: "¿Cómo se paga?", a: "No necesitas tener todo el dinero: con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", paso: 2,
+          claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar", "dinero", "plata", "mitad", "cuotas", "partes", "adelantado", "completo"] },
         { id: "tiempos", q: "¿En cuánto tiempo me lo entregan?", a: n => `Precio tienda: ${n.tiempos.tienda}. Bajo pedido: ${n.tiempos.pedido}. Por medida: ${n.tiempos.medida}.`, claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "dias", "entrega", "entregan", "listo", "rapido"] },
         { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
         { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No. No trabajamos por tallas: te tomamos las medidas en el taller, a domicilio o te guiamos para que te midas en casa, y el uniforme queda a tu cuerpo.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
@@ -1532,7 +1535,7 @@
     };
 
     // ---------- Proceso y guía de medidas ----------
-    $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
+    $("process").innerHTML = NEGOCIO.proceso.map(([t, d], i) => `<div id="paso-${i}" tabindex="-1"><b>${t}</b><p>${d}</p></div>`).join("");
     $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
 
     // ---------- Empresas ----------
@@ -1727,17 +1730,22 @@
     };
     desplegarFaq(false);
     // Abre una pregunta del acordeón (desplegando la sección si estaba oculta), la muestra y la resalta un momento
+    // Lleva a un elemento de la página y lo resalta un momento (desde el chat)
+    function destacar(d, foco) {
+      if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); // en celular el chat tapa la página
+      d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      d.classList.add("destacada");
+      setTimeout(() => d.classList.remove("destacada"), 2600);
+      foco.focus({ preventScroll: true });
+    }
     function abrirFaq(id) {
       const d = $("faq-" + id);
       if (!d) return;
       if (d.classList.contains("extra")) desplegarFaq(true);
       d.open = true;
-      if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); // en celular el chat tapa la página
-      d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-      d.classList.add("destacada");
-      setTimeout(() => d.classList.remove("destacada"), 2600);
-      d.querySelector("summary").focus({ preventScroll: true });
+      destacar(d, d.querySelector("summary"));
     }
+    function abrirPaso(i) { const d = $("paso-" + i); if (d) destacar(d, d); }
 
     // ---------- Asistente de compra ----------
     // Guía a la clienta paso a paso hasta dejar el pedido completo (lo que la dueña necesita para cerrarlo)
@@ -1918,7 +1926,10 @@
     }
     // Responde con la pregunta frecuente y ofrece verla en la sección; luego invita a seguir con la compra
     function contestar(f) {
-      bot(`${respuesta(f)}<a class="faq-link" href="#faq-${f.id}" data-faq="${f.id}">Ver en preguntas frecuentes</a>`);
+      // con paso: enlaza al paso de "Cómo funciona"; si no, a la pregunta frecuente
+      bot(respuesta(f) + (f.paso != null
+        ? `<a class="faq-link" href="#paso-${f.paso}" data-paso="${f.paso}">Ver en Cómo funciona: paso ${f.paso + 1}, ${NEGOCIO.proceso[f.paso][0]}</a>`
+        : `<a class="faq-link" href="#faq-${f.id}" data-faq="${f.id}">Ver en preguntas frecuentes</a>`));
       if (ultimo && P.m) chips([{ t: "👉 Sigamos con mi pedido", fn: () => paso(ultimo) }, { t: "Otra pregunta", fn: pregunta }]);
       else chips([{ t: "🛍️ Hacer mi pedido", fn: () => paso(pedirModelo) }, { t: "Otra pregunta", fn: pregunta }, { t: "💬 Hablar con la dueña", href: waLink("Hola Multicostura 💗 tengo una pregunta") }]);
     }
@@ -1931,7 +1942,12 @@
       }
       return mejor;
     }
-    log.addEventListener("click", e => { const a = e.target.closest("[data-faq]"); if (a) { e.preventDefault(); abrirFaq(a.dataset.faq); } });
+    log.addEventListener("click", e => {
+      const a = e.target.closest("[data-faq], [data-paso]");
+      if (!a) return;
+      e.preventDefault();
+      if (a.dataset.paso) abrirPaso(a.dataset.paso); else abrirFaq(a.dataset.faq);
+    });
     $("chat-form").onsubmit = e => {
       e.preventDefault();
       const txt = input.value.trim();
