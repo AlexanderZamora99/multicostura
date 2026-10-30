@@ -746,9 +746,8 @@
     }
 
     if (HOME) {
-      // ---------- Proceso y guía de medidas ----------
+      // ---------- Proceso ----------
       $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
-      $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
 
       // ---------- Empresas ----------
       const in3w = new Date(Date.now() + 21 * 86400000);
@@ -880,7 +879,6 @@
       $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio;
       $("pd-name").value = $("pd-role").value = "";
       $("pd-guia").open = false;
-      $("pd-measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
       $("pd-hilos").innerHTML = Object.entries(NEGOCIO.hilos).map(([h, hex]) => `<button type="button" data-hilo="${h}" aria-pressed="${h === pd.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("");
       $("pd-hilos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.hilo = b.dataset.hilo; $("pd-hilos").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintarTotal(); }));
       $("pd-otro").hidden = !m.accesorio;

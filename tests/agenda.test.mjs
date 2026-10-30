@@ -122,3 +122,23 @@ test("casa mode hides the calendar and the catalog page does not throw", () => {
   const cat = render({ page: "catalogo.html" });
   assert.doesNotMatch(cat.stderr, /Uncaught|TypeError|ReferenceError/);
 });
+
+test("casa mode has its own collapsible measuring guide with the size chart, above the measurement fields", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const box = h.slice(h.indexOf('id="self-measures"'), h.indexOf('id="f-notes"'));
+  const det = (box.match(/<details[\s\S]*?<\/details>/) || [""])[0];
+  assert.ok(det, "details inside #self-measures");
+  assert.doesNotMatch(det.match(/<details[^>]*>/)[0], /\sopen/, "collapsed by default");
+  assert.match(det, /<summary[^>]*>\s*¿Cómo medirme en casa\?\s*<\/summary>/);
+  assert.match(det, /<img[^>]*src="img\/tabla-medidas\.jpg"[^>]*loading="lazy"/);
+  assert.match(det, /cinta métrica flexible/i);
+  assert.ok(box.indexOf("<details") < box.indexOf('id="mgrid"'), "guide comes before the inputs");
+  assert.doesNotMatch(box, /guía más abajo/);
+  assert.match(box, /Todo en centímetros/);
+});
+
+test("casa mode keeps every measurement field", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const inputs = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"')).match(/<input[^>]*data-m="[^"]+"/g) || [];
+  assert.equal(inputs.length, 7);
+});

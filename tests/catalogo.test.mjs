@@ -228,10 +228,10 @@ test("product dialog: embroidery is hidden for accessories and the old 'Personal
   assert.equal(pd.pers, false);
 });
 
-test("product dialog: measuring guide sits in the right column as an in-place <details> with the steps and size chart", () => {
+test("product dialog: measuring guide sits in the right column as an in-place <details> with only the size chart image", () => {
   assert.equal(pd.guia, true);
   assert.equal(pd.guiaParent, true);
-  assert.equal(pd.guiaSteps, N.medidas.length);
+  assert.equal(pd.guiaSteps, 0, "no numbered <ol> list");
   assert.match(pd.guiaImg, /tabla-medidas\.jpg$/);
 });
 

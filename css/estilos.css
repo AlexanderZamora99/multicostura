@@ -344,14 +344,10 @@
     .steps-row b { display: block; margin: .3rem 0 .2rem; }
     .steps-row p { color: var(--muted); font-size: .9rem; }
 
-    /* Guía de medidas */
-    .measure { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; margin-top: 2rem; }
-    @media (max-width: 780px) { .measure { grid-template-columns: minmax(0, 1fr); } }
-    .measure ol { display: grid; gap: .8rem; padding-left: 1.2rem; }
-    .measure li b { display: block; }
-    .measure li span { color: var(--muted); font-size: .92rem; }
-    .measure svg { width: min(100%, 300px); margin-inline: auto; }
-    /* Tabla de medidas por talla: referencia desplegable bajo la guía para medirse en casa */
+    /* Guía de medidas: solo la imagen de la tabla de medidas */
+    .guia-img { margin: 2rem auto 0; max-width: 900px; }
+    .guia-img img { width: 100%; height: auto; border-radius: 12px; display: block; }
+    /* Guía desplegable con la tabla de medidas (ficha del producto y formulario de la agenda) */
     .guia { margin-top: 2rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
     .guia summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 52px; padding: .8rem 1.1rem; font-weight: 600; }
     .guia summary::-webkit-details-marker { display: none; }
@@ -360,6 +356,8 @@
     .guia summary:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; border-radius: 14px; }
     .guia-body { padding: 0 1.1rem 1.1rem; display: grid; gap: .8rem; }
     .guia-body p { color: var(--muted); font-size: .92rem; }
+    .guia-tips { display: grid; gap: .35rem; padding-left: 1.2rem; color: var(--muted); font-size: .92rem; }
+    .guia-casa { margin: 0 0 .9rem; }
     .guia-body img { width: 100%; max-width: 900px; height: auto; margin-inline: auto; border-radius: 12px; }
 
     /* Empresas y bono */
@@ -530,9 +528,6 @@
     #pd-bord-precio a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
     /* Guía de medidas dentro de la ficha */
     .pd-guia { margin-top: .2rem; }
-    .pd-guia ol { display: grid; gap: .6rem; padding-left: 1.2rem; }
-    .pd-guia li b { display: block; }
-    .pd-guia li span { color: var(--muted); font-size: .88rem; }
     .pd-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
     .pd-actions .btn-wa { grid-column: 1 / -1; font-size: 1rem; }
     .pd-actions [hidden] { display: none; }
