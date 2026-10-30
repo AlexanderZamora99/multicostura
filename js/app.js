@@ -683,7 +683,7 @@
     // Campos de medidas para "Me mido en casa"
     if (HOME) {
       NEGOCIO.medidas.forEach(([t]) => $("mgrid").insertAdjacentHTML("beforeend",
-        `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
+        `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}" placeholder="0 cm"></label>`));
       // Cómo tomar cada medida: solo texto, dentro de la guía del formulario
       $("guia-casa-lista").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
     }

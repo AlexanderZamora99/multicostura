@@ -152,6 +152,13 @@ test("casa mode keeps every measurement field", () => {
   assert.equal(inputs.length, 7);
 });
 
+test("casa mode: every measurement field shows a '0 cm' placeholder so the grid doesn't look empty", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const inputs = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"')).match(/<input[^>]*>/g) || [];
+  assert.equal(inputs.length, 7);
+  inputs.forEach(i => assert.match(i, /placeholder="0 cm"/, i));
+});
+
 test("casa mode: the seven measurement labels are bold and a visible link leads to the size chart", () => {
   const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
   const grid = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"'));
