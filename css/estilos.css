@@ -61,17 +61,50 @@
     .look { padding-top: 0; }
     .look-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; align-items: center; background: var(--bg-2); border-radius: calc(var(--radius) * 1.5); padding: clamp(1.2rem, 4vw, 3rem); }
     .look-foto { position: relative; aspect-ratio: 4 / 5; width: 100%; max-width: 480px; margin-inline: auto; overflow: hidden; border-radius: var(--radius); background: var(--card); }
-    .look-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .punto { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); display: grid; place-items: center; transition: transform .15s; }
+    .look-foto img.look-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: 0; transition: opacity .5s ease; }
+    .look-foto img.look-img.on { opacity: 1; }
+    .punto { position: absolute; z-index: 2; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); display: grid; place-items: center; transition: transform .2s; }
     .punto::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(36,22,29,.3); transition: background .15s, box-shadow .15s; }
+    .punto::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--mag); opacity: 0; animation: pulso 2s ease-out infinite; pointer-events: none; }
+    .punto[aria-pressed="true"]::before { animation: none; }
     .punto:hover { transform: scale(1.1); }
+    .punto[aria-pressed="true"] { transform: scale(1.18); }
     .punto[aria-pressed="true"]::after { background: var(--mag); box-shadow: 0 0 0 4px #fff; }
     .punto:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
+    @keyframes pulso { 0% { transform: scale(.7); opacity: .85; } 100% { transform: scale(1.5); opacity: 0; } }
     .look-info { display: grid; gap: 1rem; align-content: center; justify-items: start; }
     .look-info h2 { margin-bottom: 0; }
-    .look-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; display: grid; gap: .3rem; width: 100%; max-width: 520px; }
-    .look-item b { font-family: var(--font-titulos); color: var(--mag-2); }
-    .look-item p { color: var(--muted); }
+    .look-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; width: 100%; max-width: 520px; }
+    /* Todos los paneles comparten la misma celda: la tarjeta toma la altura del más alto y no salta al cambiar de punto */
+    .look-panes { display: grid; }
+    .look-pane { grid-area: 1 / 1; display: grid; gap: .5rem; align-content: start; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .3s ease, transform .3s ease, visibility 0s .3s; }
+    .look-pane.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+    .look-pane > b { font-family: var(--font-titulos); color: var(--mag-2); }
+    .look-pane > p { color: var(--muted); }
+    .look-sw, .look-ths { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .look-sw button, .look-th { width: 52px; padding: 0; border: 2px solid transparent; border-radius: 10px; background: var(--bg-2); text-decoration: none; color: var(--text); display: grid; gap: .15rem; text-align: center; overflow: hidden; transition: transform .15s, border-color .15s; }
+    .look-sw button:hover, .look-th:hover { transform: translateY(-3px); }
+    .look-sw button[aria-pressed="true"] { border-color: var(--mag); }
+    .look-sw img, .look-th img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; }
+    .look-sw span, .look-th span { font-size: .62rem; line-height: 1.15; padding: 0 .15rem .25rem; }
+    .look-sw button:focus-visible, .look-th:focus-visible, .look-hilos button:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
+    .look-nota { color: var(--muted); font-size: .75rem; }
+    .look-sub { font-size: .78rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: .2rem; }
+    .look-bord { gap: .5rem; }
+    .look-bord .field > span { margin-bottom: .25rem; font-size: .72rem; }
+    .look-bord input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: .55rem .75rem; font: inherit; font-size: 1rem; background: var(--card); color: var(--text); }
+    .look-bord input:focus { outline: 2px solid var(--mag); border-color: transparent; }
+    .look-hilos { display: flex; gap: .5rem; }
+    .look-hilos button { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); background: var(--c); box-shadow: 0 0 0 2px #fff; transition: transform .15s, box-shadow .15s; }
+    .look-hilos button[aria-pressed="true"] { transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--mag); }
+    .look-precio { font-weight: 700; color: var(--mag-2); }
+    .look-logo { font-size: .82rem; color: var(--muted); }
+    .look-logo a { color: var(--mag-2); font-weight: 600; }
+    /* Parche del bordado sobre el pecho de la foto: aparece al abrir el punto del bordado o al escribir */
+    .look-patch { position: absolute; z-index: 1; left: 64%; top: 40%; width: 30%; padding: .4rem .35rem .45rem; border-radius: 8px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 6px 16px rgba(0,0,0,.3); container-type: inline-size; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.7); transition: opacity .3s ease, transform .3s cubic-bezier(.3,1.4,.5,1); }
+    .look-patch::before { content: ""; position: absolute; inset: 4px; border: 1px solid var(--hilo); border-radius: 5px; opacity: .35; pointer-events: none; }
+    .look-foto.con-parche .look-patch { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    @media (prefers-reduced-motion: reduce) { .punto, .punto::before, .look-pane, .look-img, .look-patch, .look-sw button, .look-th { animation: none; transition: none; } }
     @media (min-width: 900px) { .look-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); } .look-foto { margin: 0; max-width: none; } }
 
     /* Hero */

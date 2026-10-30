@@ -84,9 +84,12 @@
       if (mas) mas.onclick = e => { el.querySelector(".swatches").classList.add("all"); mas.remove(); if (!e.detail) el.querySelector(".sw.extra").focus(); };
     }
     // En el inicio lleva al diseñador con el modelo elegido; desde el catálogo vuelve al inicio con el modelo ya preseleccionado
-    function disenar(m, color) {
+    // ext (solo en el inicio): { name, role, hilo } con el bordado que la persona ya escribió, para no pedírselo otra vez
+    function disenar(m, color, ext) {
       if (!HOME) { location.href = `index.html?modelo=${m.id}&color=${encodeURIComponent(color)}#personaliza`; return; }
-      $("s-model").value = m.id; design.color = color; renderDesign(); $("personaliza").scrollIntoView();
+      $("s-model").value = m.id; design.color = color;
+      if (ext) { $("s-name").value = ext.name; $("s-role").value = ext.role; if (NEGOCIO.hilos[ext.hilo]) design.hilo = ext.hilo; }
+      renderDesign(); $("personaliza").scrollIntoView();
     }
     // Pinta las tarjetas de `lista` en `box`; op.forma (id de NEGOCIO.tipos) muestra el precio de esa modalidad
     function renderModels(box, lista, op = {}) {
@@ -247,21 +250,110 @@
     if (HOME) $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<strong>${c.t}</strong><small>${c.d}</small></div>`).join("");
 
     // ---------- Descubre el look completo ----------
-    // Puntos sobre la foto: cada uno es un botón; el activo muestra su nombre y descripción. El botón lleva al diseñador con el modelo elegido.
+    // Puntos sobre la foto: cada uno es un botón que abre su panel (todos los paneles ocupan el mismo espacio, así la tarjeta no salta).
+    // "colores" cambia la foto con un fundido; "productos" muestra miniaturas que llevan al catálogo; "bordado" dibuja el parche en vivo.
+    // El botón lleva al diseñador con el modelo, el color y el bordado escritos. Un recorrido automático muestra los puntos hasta que la persona toca algo.
     (function renderLook() {
       const L = NEGOCIO.look, m = NEGOCIO.modelos.find(x => x.id === L.modelo);
       if (!HOME || !m) return;
-      const poner = i => {
-        const p = L.puntos[i];
-        $("look-foto").querySelectorAll(".punto").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
-        $("look-item").innerHTML = `<b>${p.t}</b><p>${typeof p.d === "function" ? p.d(NEGOCIO) : p.d}</p>`;
+      const S = { i: 0, color: m.colores.includes(L.color) ? L.color : m.colores[0], hilo: "Blanco", name: "", role: "" };
+      const prod = id => NEGOCIO.modelos.find(x => x.id === id);
+      const fotoColor = (x, c) => (x.fotos || {})[c] || x.foto;
+      const href = x => `catalogo.html?cat=${encodeURIComponent(x.cat[0])}`;
+      const miniatura = (x, foto, alt, nombre) => `<a class="look-th" href="${href(x)}"><img src="${foto}" alt="${alt}" loading="lazy"><span>${nombre}</span></a>`;
+      const bordado = () => (S.name ? NEGOCIO.bordado.nombre : 0) + (S.role ? NEGOCIO.bordado.profesion : 0);
+      const panel = p => {
+        const texto = typeof p.d === "function" ? p.d(NEGOCIO) : p.d;
+        let extra = "";
+        if (p.tipo === "colores") {
+          extra = `<div class="look-sw" role="group" aria-label="Colores del ${m.nombre}">` + p.colores.map(c =>
+            `<button type="button" data-color="${c}" aria-pressed="${c === S.color}" aria-label="${c}"><img src="${fotoColor(m, c)}" alt="" loading="lazy"><span>${c}</span></button>`).join("") + `</div>
+            <small class="look-nota">Los colores pueden variar un poco de la foto.</small>`;
+        } else if (p.tipo === "productos") {
+          const x = prod(p.producto);
+          extra = `<div class="look-ths">` + x.colores.map(c => miniatura(x, fotoColor(x, c), `${x.nombre} en ${c.toLowerCase()}`, c)).join("") + `</div>
+            <p class="look-sub">Completa tu look</p>
+            <div class="look-ths">` + p.completa.map(([id, rotulo]) => { const a = prod(id); return miniatura(a, a.foto, a.nombre, rotulo); }).join("") + `</div>`;
+        } else if (p.tipo === "bordado") {
+          extra = `<div class="look-bord two">
+              <label class="field"><span>Nombre</span><input id="look-name" maxlength="22" autocomplete="off" placeholder="Ej: Dra. Camila Ruiz"></label>
+              <label class="field"><span>Profesión</span><input id="look-role" maxlength="26" autocomplete="off" placeholder="Ej: Odontóloga"></label>
+            </div>
+            <div class="look-hilos" role="group" aria-label="Color del hilo">` + Object.entries(NEGOCIO.hilos).map(([h, hex]) =>
+              `<button type="button" data-hilo="${h}" aria-pressed="${h === S.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("") + `</div>
+            <p class="look-precio" id="look-precio"></p>
+            <p class="look-logo">¿Eres clínica o empresa? Bordamos el logo de todo tu equipo. <a href="#empresas">Pide la propuesta para tu empresa</a></p>`;
+        }
+        return `<div class="look-pane"><b>${p.t}</b><p>${texto}</p>${extra}</div>`;
       };
-      $("look-foto").innerHTML = `<img src="${L.foto}" alt="${L.alt}" loading="lazy">` +
+      $("look-foto").innerHTML = `<img class="look-img on" src="${L.foto}" alt="${L.alt}" loading="lazy"><img class="look-img" alt="">
+        <div class="bordado look-patch" id="look-patch" aria-hidden="true"><small>Tu bordado</small><span class="b-n"></span><span class="b-r"></span></div>` +
         L.puntos.map(p => `<button type="button" class="punto" style="left:${p.x}%;top:${p.y}%" aria-pressed="false" aria-label="${p.t}"></button>`).join("");
-      $("look-foto").querySelectorAll(".punto").forEach((b, i) => (b.onclick = () => poner(i)));
-      poner(0);
-      $("look-cta").textContent = `Diseñar el ${m.nombre}`;
-      $("look-cta").onclick = () => disenar(m, m.colores.includes(L.color) ? L.color : m.colores[0]);
+      $("look-item").innerHTML = `<span class="sr-only" id="look-live"></span><div class="look-panes">${L.puntos.map(panel).join("")}</div>`;
+      const dots = [...$("look-foto").querySelectorAll(".punto")], panes = [...$("look-item").querySelectorAll(".look-pane")];
+      const capas = [...$("look-foto").querySelectorAll(".look-img")];
+      let vis = 0;
+
+      // Foto del color elegido: se carga en la capa de atrás y se funde con la de adelante
+      const verFoto = c => {
+        const src = fotoColor(m, c), act = capas[vis], sig = capas[1 - vis];
+        if (act.getAttribute("src") === src) return;
+        const listo = () => { sig.classList.add("on"); act.classList.remove("on"); vis = 1 - vis; };
+        sig.alt = `Uniforme ${m.nombre} en ${c.toLowerCase()}, puesto`;
+        if (sig.getAttribute("src") === src && sig.complete) listo(); else { sig.onload = listo; sig.src = src; }
+      };
+      const parche = () => {
+        const el = $("look-patch"), fill = C(S.color), tela = fill.startsWith("linear") ? "#1f1d22" : fill;
+        let hilo = NEGOCIO.hilos[S.hilo];
+        if (hilo.toLowerCase() === tela.toLowerCase()) hilo = S.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
+        el.style.setProperty("--tela", tela);
+        el.style.setProperty("--hilo", hilo);
+        const n = S.name || "Tu nombre";
+        const bn = el.querySelector(".b-n"), br = el.querySelector(".b-r");
+        bn.textContent = n; bn.style.opacity = S.name ? 1 : .5; bn.style.setProperty("--len", Math.max(10, n.length));
+        br.textContent = S.role; br.style.setProperty("--len", Math.max(12, Math.ceil(S.role.length * 1.25)));
+        $("look-foto").classList.toggle("con-parche", L.puntos[S.i].tipo === "bordado" || !!(S.name || S.role));
+        const pr = $("look-precio");
+        if (pr) pr.textContent = bordado() ? `Tu bordado: ${pesos(bordado())}` : "Escribe tu nombre o tu profesión para ver el precio.";
+      };
+      const cta = () => {
+        $("look-cta").textContent = `Diseñar el ${m.nombre} en ${S.color.toLowerCase()}` + (S.name || S.role ? " con tu bordado" : "");
+      };
+      const poner = i => {
+        S.i = i;
+        const p = L.puntos[i];
+        dots.forEach((b, j) => b.setAttribute("aria-pressed", j === i));
+        panes.forEach((el, j) => el.classList.toggle("on", j === i));
+        $("look-live").textContent = `${p.t}. ${typeof p.d === "function" ? p.d(NEGOCIO) : p.d}`;
+        parche();
+      };
+      dots.forEach((b, i) => (b.onclick = () => poner(i)));
+      $("look-item").querySelectorAll("[data-color]").forEach(b => (b.onclick = () => {
+        S.color = b.dataset.color;
+        $("look-item").querySelectorAll("[data-color]").forEach(x => x.setAttribute("aria-pressed", x === b));
+        verFoto(S.color); parche(); cta();
+      }));
+      $("look-item").querySelectorAll("[data-hilo]").forEach(b => (b.onclick = () => {
+        S.hilo = b.dataset.hilo;
+        $("look-item").querySelectorAll("[data-hilo]").forEach(x => x.setAttribute("aria-pressed", x === b));
+        parche();
+      }));
+      [["look-name", "name"], ["look-role", "role"]].forEach(([id, k]) => $(id).addEventListener("input", () => { S[k] = $(id).value.trim(); parche(); cta(); }));
+      $("look-cta").onclick = () => disenar(m, S.color, S.name || S.role ? { name: S.name, role: S.role, hilo: S.hilo } : null);
+      poner(0); cta();
+
+      // Recorrido automático: pasa por los puntos mientras la sección se ve; se detiene para siempre al primer toque, tecla o foco
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)"), raiz = $("look");
+      let timer = null, parado = false, enVista = false, encima = false;
+      const play = () => {
+        clearInterval(timer);
+        if (!parado && enVista && !encima && !reduce.matches) timer = setInterval(() => poner((S.i + 1) % dots.length), 4500);
+      };
+      ["pointerdown", "focusin", "keydown"].forEach(ev => raiz.addEventListener(ev, () => { parado = true; play(); }));
+      raiz.addEventListener("mouseenter", () => { encima = true; play(); });
+      raiz.addEventListener("mouseleave", () => { encima = false; play(); });
+      reduce.addEventListener("change", play);
+      if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { enVista = e.isIntersecting; play(); }, { threshold: .4 }).observe(raiz);
     })();
 
     // ---------- Personalizador ----------

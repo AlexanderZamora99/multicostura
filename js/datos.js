@@ -72,13 +72,18 @@
         { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
         { ico: "card", t: "Pago 50% para empezar", d: "Con el 50% empezamos a confeccionar tu uniforme" },
       ],
-      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO
+      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO.
+      // tipo decide qué muestra el panel: "colores" (miniaturas del modelo que cambian la foto), "productos" (miniaturas que llevan al catálogo
+      // + `completa`: otros productos para cerrar el look) o "bordado" (parche en vivo sobre la foto). El logo de empresas NO tiene precio aquí.
       look: {
         modelo: "kaill", color: "Azul rey", foto: "img/kaill-azul-rey.webp", alt: "Uniforme Kaill en azul rey, puesto",
         puntos: [
-          { x: 52, y: 30, t: "Blusa Kaill", d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales." },
-          { x: 45, y: 88, t: "Pantalón Kaill", d: "Viene con la blusa, en el mismo color. Si lo quieres solo, pídelo por WhatsApp." },
-          { x: 62, y: 42, t: "Bordado opcional", d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras.` },
+          { x: 52, y: 30, t: "Blusa Kaill", tipo: "colores", colores: ["Azul rey", "Lila", "Verde jade", "Blanco", "Rosa", "Fucsia", "Rojo", "Negro"],
+            d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales. Toca un color para verla puesta." },
+          { x: 45, y: 88, t: "Pantalón Kaill", tipo: "productos", producto: "pantalon", completa: [["gorro", "Gorros"], ["medias", "Medias"]],
+            d: "Viene con la blusa, en el mismo color. Si lo quieres solo, mira los pantalones del catálogo o pídelo por WhatsApp." },
+          { x: 72, y: 31, t: "Bordado opcional", tipo: "bordado",
+            d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras. Escríbelo y míralo sobre la foto.` },
         ],
       },
       // Ids de los modelos que se destacan en el inicio (8, en este orden)
