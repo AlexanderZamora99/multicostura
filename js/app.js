@@ -931,9 +931,21 @@
         : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
+    // Dónde está el pecho en una foto: [x%, y%, ancho%] o null si no se ve (pantalones). Las fotos recoloreadas de
+    // img/disena/ comparten el encuadre de la base; sin dato, la posición por defecto.
+    function pechoDe(src) {
+      const mapa = NEGOCIO.pecho || {};
+      if (src in mapa) return mapa[src];
+      const base = /^(img\/disena\/[a-z]+)-[a-z-]+\.webp$/.exec(src || "");
+      if (base && `${base[1]}.webp` in mapa) return mapa[`${base[1]}.webp`];
+      return [64, 40, 34];
+    }
     // Parche del bordado sobre la foto grande y el precio que se suma
     function pintarBordado(bord) {
       const fill = C(pd.color), tela = fill.startsWith("linear") ? "#1f1d22" : fill, patch = $("pd-patch");
+      const pecho = pechoDe($("pd-img").getAttribute("src"));
+      $("pd-main").classList.toggle("sin-pecho", !pecho);
+      if (pecho) { patch.style.setProperty("--px", `${pecho[0]}%`); patch.style.setProperty("--py", `${pecho[1]}%`); patch.style.setProperty("--pw", `${pecho[2] || 34}%`); }
       let hilo = NEGOCIO.hilos[pd.hilo];
       if (hilo.toLowerCase() === tela.toLowerCase()) hilo = pd.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
       patch.style.setProperty("--tela", tela);

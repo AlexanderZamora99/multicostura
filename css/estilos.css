@@ -513,9 +513,10 @@
     .pd-total strong { font-family: var(--font-titulos); font-size: 1.5rem; }
     .pd-total small { grid-column: 1 / -1; color: #d9c4cf; font-size: .78rem; }
     /* Bordado en la ficha: parche sobre la foto grande (se esconde al ampliar), campos y color del hilo */
-    .pd-patch { display: none; position: absolute; right: 4%; bottom: 4%; width: 52%; padding: .55rem .5rem .6rem; border-radius: 10px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 8px 20px rgba(0,0,0,.3); container-type: inline-size; pointer-events: none; }
+    /* Sobre el pecho izquierdo de quien lo lleva (derecha de la foto); la posición sale de NEGOCIO.pecho, foto por foto */
+    .pd-patch { display: none; position: absolute; left: var(--px, 64%); top: var(--py, 40%); transform: translate(-50%, -50%); width: var(--pw, 34%); padding: .45rem .4rem .5rem; border-radius: 10px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 8px 20px rgba(0,0,0,.3); container-type: inline-size; pointer-events: none; }
     .pd-patch::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--hilo); border-radius: 6px; opacity: .35; pointer-events: none; }
-    .pd-main.con-bordado:not(.sin-foto):not(.zoom) .pd-patch { display: block; }
+    .pd-main.con-bordado:not(.sin-foto):not(.sin-pecho):not(.zoom) .pd-patch { display: block; }
     .pd-main.con-bordado:not(.sin-foto):not(.zoom) .pd-hint { opacity: 0; }
     .pd-bord { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
     .pd-bord label > span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .25rem; }

@@ -1,7 +1,7 @@
 // Catalog page and home recommendations: filters, URL state, drawer and cross-page actions.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { render } from "./render.mjs";
@@ -176,6 +176,8 @@ const dialogo = `
     out.t0 = num(g("pd-total").textContent); out.wa0 = wa(); out.patch0 = g("pd-main").classList.contains("con-bordado");
     teclear("pd-name", "Dra. Ana Paz");
     out.t1 = num(g("pd-total").textContent); out.patch1 = g("pd-main").classList.contains("con-bordado"); out.patchTxt = g("pd-patch").textContent;
+    { const r = g("pd-patch").getBoundingClientRect(), m = g("pd-main").getBoundingClientRect();
+      out.patchX = (r.left + r.width / 2 - m.left) / m.width; out.patchY = (r.top + r.height / 2 - m.top) / m.height; out.patchW = r.width / m.width; }
     g("pd-plus").click(); out.q = g("pd-q").textContent; out.t2 = num(g("pd-total").textContent);
     g("pd-minus").click();
     teclear("pd-role", "Pediatra"); out.t3 = num(g("pd-total").textContent);
@@ -206,6 +208,12 @@ test("product dialog: typing an embroidery name shows the patch on the photo and
   assert.equal(pd.patch4, false);
 });
 
+test("product dialog: the embroidery patch sits on the chest, not over the trousers", () => {
+  assert.ok(pd.patchY > 0.25 && pd.patchY < 0.5, `patch centre y = ${pd.patchY}`);
+  assert.ok(pd.patchX > 0.5 && pd.patchX < 0.8, `patch centre x = ${pd.patchX}`);
+  assert.ok(pd.patchW <= 0.4, `patch width = ${pd.patchW}`);
+});
+
 test("product dialog: the WhatsApp order includes the embroidery and thread, and not when empty", () => {
   assert.ok(pd.wa1.includes("Dra. Ana Paz") && pd.wa1.includes("Pediatra"), pd.wa1);
   assert.match(pd.wa1, /dorado/i);
@@ -233,4 +241,66 @@ test("home shares the same product dialog: in-place embroidery and measuring gui
   assert.match(dlg, /id="pd-guia"/);
   assert.match(dlg, /id="pd-bord-box"/);
   assert.doesNotMatch(dlg, /id="pd-pers"/);
+});
+
+// ---- Product dialog (#pd): embroidery patch follows the chest of each photo ----
+const pechoProbe = `
+  const wait = ms => new Promise(r => setTimeout(r, ms)), g = id => document.getElementById(id);
+  const teclear = (id, v) => { const el = g(id); el.value = v; el.dispatchEvent(new Event("input", { bubbles: true })); };
+  const estado = () => { const p = g("pd-patch"), cs = getComputedStyle(p); return { src: g("pd-img").getAttribute("src"), px: p.style.getPropertyValue("--px"), py: p.style.getPropertyValue("--py"), pw: p.style.getPropertyValue("--pw"), display: cs.display }; };
+  (async () => {
+    const out = {};
+    await wait(200);
+    document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(100);
+    teclear("pd-name", "Dra. Ana Paz");
+    out.kaill0 = estado();
+    g("pd-thumbs").querySelectorAll("button")[1].click(); await wait(50);
+    out.kaill1 = estado();
+    g("pd-thumbs").querySelectorAll("button")[0].click(); await wait(50);
+    out.kaillBack = estado();
+    [...g("pd-colors").querySelectorAll("button")].find(b => b.title === "Rosa").click(); await wait(50);
+    out.kaillRosa = estado();
+    g("pd-close").click(); await wait(50);
+    document.querySelector('.model[data-id="pantalon"] .pic').click(); await wait(100);
+    teclear("pd-name", "Dra. Ana Paz");
+    out.pantalon = estado(); out.pantalonCon = g("pd-main").classList.contains("con-bordado");
+    g("pd-thumbs").querySelectorAll("button")[1].click(); await wait(50);
+    out.pantalon1 = estado();
+    document.body.insertAdjacentHTML("beforeend", '<pre id="probe4">' + JSON.stringify(out) + '</pre>');
+  })();
+`;
+const pecho = JSON.parse((render({ page: "catalogo.html", inject: pechoProbe }).html.match(/<pre id="probe4">(\{[\s\S]*?\})<\/pre>/) || [, "{}"])[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+
+test("chest map: the patch position comes from NEGOCIO.pecho and follows thumbnails and colour changes", () => {
+  const [x, y] = N.pecho["img/disena/kaill.webp"], [x1, y1] = N.pecho["img/kaill-lila.webp"];
+  assert.equal(pecho.kaill0.px, `${x}%`); assert.equal(pecho.kaill0.py, `${y}%`);
+  assert.equal(pecho.kaill1.src, "img/kaill-lila.webp");
+  assert.equal(pecho.kaill1.px, `${x1}%`); assert.equal(pecho.kaill1.py, `${y1}%`);
+  assert.notEqual(pecho.kaill1.py, pecho.kaill0.py, "moves with the photo");
+  assert.equal(pecho.kaillBack.py, `${y}%`);
+  assert.match(pecho.kaillRosa.src, /img\/disena\/kaill-rosa\.webp/);
+  assert.equal(pecho.kaillRosa.py, `${y}%`, "a recoloured design photo keeps the base framing");
+});
+
+test("chest map: a photo without a chest (trousers) hides the patch but keeps the embroidery fields", () => {
+  assert.equal(pecho.pantalonCon, true, "name is still captured");
+  assert.equal(pecho.pantalon.display, "none");
+  assert.equal(pecho.pantalon1.display, "none");
+});
+
+test("chest map: every embroiderable gallery photo has an explicit entry", () => {
+  assert.ok(N.pecho && typeof N.pecho === "object");
+  const faltan = [];
+  for (const m of N.modelos.filter(x => !x.accesorio)) {
+    const srcs = new Set();
+    if (N.disena[m.id]) srcs.add(`img/disena/${m.id}.webp`);
+    Object.entries(m.fotos || {}).forEach(([c, f]) => { if (!(m.simulados || []).includes(c) && c !== N.disena[m.id]) srcs.add(f); });
+    if (!srcs.size) srcs.add(m.foto);
+    srcs.forEach(s => { if (/\.webp$/.test(s) && !(s in N.pecho)) faltan.push(s); });
+  }
+  assert.deepEqual(faltan, []);
+  for (const [s, v] of Object.entries(N.pecho)) {
+    assert.ok(v === null || (Array.isArray(v) && v.length >= 2 && v.slice(0, 2).every(n => n > 0 && n < 100)), s);
+    assert.ok(existsSync(join(ROOT, s)), `file ${s}`);
+  }
 });
