@@ -152,3 +152,16 @@ test("look dots pulse, the active one grows, and motion is disabled for reduced-
   assert.match(css, /\.punto\[aria-pressed="true"\][^{]*\{[^}]*scale/);
   assert.match(css, /prefers-reduced-motion: reduce\)[^}]*\{[^}]*\.punto/);
 });
+
+test("both pages credit the developers in the footer with a mailto, as a secondary line", () => {
+  for (const page of ["index.html", "catalogo.html"]) {
+    const { html } = render({ page });
+    const foot = html.slice(html.indexOf('<footer class="site"'), html.indexOf("</footer>"));
+    const dev = (foot.match(/<p class="foot-dev">[\s\S]*?<\/p>/) || [""])[0];
+    assert.ok(dev, `${page}: developer credit line`);
+    assert.match(dev, /Sitio web desarrollado por/);
+    assert.match(dev, /<a[^>]*href="mailto:aa\.tuluasoporte@gmail\.com[^"]*"[^>]*>aa\.tuluasoporte@gmail\.com<\/a>/);
+    assert.match(dev, /¿Quieres una página para tu negocio\?/);
+    assert.ok(foot.indexOf('class="foot-dev"') > foot.indexOf('class="wrap foot-bottom"'), `${page}: after the store's own contact and copyright`);
+  }
+});

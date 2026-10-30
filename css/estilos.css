@@ -420,6 +420,9 @@
     footer.site .socials svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
     footer.site .foot-map iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: 12px; background: #3a2a32; }
     footer.site .foot-map a { display: inline-flex; align-items: center; min-height: 30px; margin-top: .4rem; text-decoration: underline; text-underline-offset: 3px; }
+    footer.site .foot-dev { flex-basis: 100%; font-size: .74rem; opacity: .75; }
+    footer.site .foot-dev a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    footer.site .foot-dev a:hover { opacity: 1; color: #fff; }
     footer.site .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; margin-top: 2.5rem; padding: 1.3rem 0 100px; border-top: 1px solid rgba(255,255,255,.12); font-size: .8rem; color: #b9a3af; }
     @media (max-width: 1000px) {
       footer.site .foot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
