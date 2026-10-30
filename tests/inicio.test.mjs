@@ -165,3 +165,11 @@ test("both pages credit the developers in the footer with a mailto, as a seconda
     assert.ok(foot.indexOf('class="foot-dev"') > foot.indexOf('class="wrap foot-bottom"'), `${page}: after the store's own contact and copyright`);
   }
 });
+
+test("about us: the store address carries a map pin and the opening hours sit on two rows", () => {
+  const { html } = render();
+  const dir = html.slice(html.indexOf('class="visita-dir"'), html.indexOf('class="visita-btns"'));
+  assert.match(dir, /<svg[^>]*class="i-pin"[\s\S]*?<\/svg>\s*<b id="v-dir">Calle 24 T10-39, barrio Porvenir, Tuluá \(Valle\)<\/b>/);
+  const filas = [...dir.matchAll(/<span class="hor-fila">([^<]*)<\/span>/g)].map(m => m[1]);
+  assert.deepEqual(filas, ["Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m.", "Sábados de 8:00 a. m. a 1:00 p. m."]);
+});

@@ -465,6 +465,10 @@
     .visita-pts li::before { content: "✓"; margin-right: .5rem; color: var(--muted); font-weight: 700; }
     .visita-dir { display: grid; gap: .15rem; font-size: .9rem; }
     .visita-dir span { color: var(--muted); font-size: .84rem; }
+    .visita-dir .v-lugar { display: flex; align-items: flex-start; gap: .4rem; color: var(--text); font-size: .9rem; }
+    .i-pin { flex: none; width: 1.1rem; height: 1.1rem; margin-top: .1rem; fill: var(--mag); }
+    #v-hor { display: grid; gap: .1rem; padding-left: 1.5rem; }
+    .hor-fila { display: block; }
     .visita-btns { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .2rem; }
     .visita-btns .btn { flex: 1 1 auto; white-space: nowrap; padding-inline: 1.1rem; }
 

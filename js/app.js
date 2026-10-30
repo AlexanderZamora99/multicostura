@@ -828,7 +828,7 @@
     if (HOME) {
       $("v-mapa").href = $("f-map-link").href;
       $("v-dir").textContent = NEGOCIO.direccionTaller;
-      $("v-hor").textContent = NEGOCIO.horarioTexto;
+      $("v-hor").innerHTML = NEGOCIO.horarioFilas.map(f => `<span class="hor-fila">${f}</span>`).join("");
       $("v-wa").href = waLink("Hola Multicostura 💗 ¿qué uniformes tienen disponibles hoy en la tienda? Me gustaría pasar a verlos.");
     }
     $("f-ig").href = NEGOCIO.instagram;

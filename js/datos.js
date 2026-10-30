@@ -6,7 +6,9 @@
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       facebook: "https://www.facebook.com/multicosturas2016",
       correo: "multicostura222@gmail.com", // de la página de Facebook
-      horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
+      // Una fila por grupo de días; horarioTexto las une para el pie, la FAQ y el chat
+      horarioFilas: ["Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m.", "Sábados de 8:00 a. m. a 1:00 p. m."],
+      get horarioTexto() { return this.horarioFilas.join(" "); },
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
       // Pin del mapa (4°05'32.5"N 76°12'22.5"W, confirmado por la dueña)
       mapa: "4.092361,-76.206250",
