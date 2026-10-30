@@ -3,6 +3,28 @@
     const $ = id => document.getElementById(id);
     const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
     const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
+    // Medidas: los mismos campos y la misma lista de cómo tomarlas en la agenda ("Me mido en casa") y en la ficha del producto
+    const medidasCampos = () => NEGOCIO.medidas.map(([t]) =>
+      `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}" placeholder="0 cm"></label>`).join("");
+    const medidasLista = () => NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
+    // Tabla de medidas hecha con HTML (tablas, consejos, foto de la modelo y botón de WhatsApp): una sola función para la sección y la agenda
+    const tablaMedidasHtml = () => {
+      const T = NEGOCIO.tablaMedidas, tabla = (cls, titulo, filas) =>
+        `<div class="tm-scroll"><table class="tm-tabla ${cls}"><caption>${titulo}</caption><tr><th scope="col">Medida</th>${T.tallas.map(t => `<th scope="col">${t}</th>`).join("")}</tr>` +
+        filas.map(([n, v]) => `<tr><th scope="row">${n}</th>${v.map(x => `<td>${x}</td>`).join("")}</tr>`).join("") + `</table></div>`;
+      return `<div class="tm">
+        <div class="tm-main">
+          <h3>Tabla de medidas</h3>
+          <p class="tm-sub"><b>¿Cómo saber tu talla?</b> Toma tus medidas con la cinta métrica y compáralas con estas referencias.</p>
+          <ul class="tm-tips">${T.consejos.map(([i, t]) => `<li><span aria-hidden="true">${i}</span>${t}</li>`).join("")}</ul>
+          ${tabla("tm-blusa", "Blusa (cm)", T.blusa)}${tabla("tm-pantalon", "Pantalón (cm)", T.pantalon)}
+          <p class="tm-nota">Nuestro fuerte es confeccionar <b>a tu medida</b>. Las tallas S a XL son una referencia y aplican a los uniformes listos de la tienda.</p>
+          <div class="tm-ayuda"><p>¿Dudas con tus medidas o necesitas una talla especial?</p><a class="btn btn-wa tm-wa" data-wa="medidas" target="_blank" rel="noopener" href="${waLink("Hola Multicostura 💗 tengo dudas sobre cómo tomar mis medidas / necesito una talla especial.")}">Escríbenos por WhatsApp</a></div>
+        </div>
+        <img class="tm-modelo" src="img/tabla-medidas-modelo.webp" loading="lazy" width="545" height="1062" alt="Modelo con el uniforme rosa mostrando dónde medir: busto, cintura, cadera y largo de pantalón.">
+      </div>`;
+    };
+    document.querySelectorAll("[data-tabla-medidas]").forEach(el => (el.innerHTML = tablaMedidasHtml()));
     const openWa = t => window.open(waLink(t), "_blank", "noopener");
     const C = n => NEGOCIO.colores[n] || NEGOCIO.coloresExtra[n];
     const pad = n => String(n).padStart(2, "0");
@@ -84,9 +106,12 @@
       if (mas) mas.onclick = e => { el.querySelector(".swatches").classList.add("all"); mas.remove(); if (!e.detail) el.querySelector(".sw.extra").focus(); };
     }
     // En el inicio lleva al diseñador con el modelo elegido; desde el catálogo vuelve al inicio con el modelo ya preseleccionado
-    function disenar(m, color) {
+    // ext (solo en el inicio): { name, role, hilo } con el bordado que la persona ya escribió, para no pedírselo otra vez
+    function disenar(m, color, ext) {
       if (!HOME) { location.href = `index.html?modelo=${m.id}&color=${encodeURIComponent(color)}#personaliza`; return; }
-      $("s-model").value = m.id; design.color = color; renderDesign(); $("personaliza").scrollIntoView();
+      $("s-model").value = m.id; design.color = color;
+      if (ext) { $("s-name").value = ext.name; $("s-role").value = ext.role; if (NEGOCIO.hilos[ext.hilo]) design.hilo = ext.hilo; }
+      renderDesign(); $("personaliza").scrollIntoView();
     }
     // Pinta las tarjetas de `lista` en `box`; op.forma (id de NEGOCIO.tipos) muestra el precio de esa modalidad
     function renderModels(box, lista, op = {}) {
@@ -247,21 +272,110 @@
     if (HOME) $("trust").innerHTML = NEGOCIO.confianza.map(c => `<div class="trust-item">${ICONO[c.ico]}<strong>${c.t}</strong><small>${c.d}</small></div>`).join("");
 
     // ---------- Descubre el look completo ----------
-    // Puntos sobre la foto: cada uno es un botón; el activo muestra su nombre y descripción. El botón lleva al diseñador con el modelo elegido.
+    // Puntos sobre la foto: cada uno es un botón que abre su panel (todos los paneles ocupan el mismo espacio, así la tarjeta no salta).
+    // "colores" cambia la foto con un fundido; "productos" muestra miniaturas que llevan al catálogo; "bordado" dibuja el parche en vivo.
+    // El botón lleva al diseñador con el modelo, el color y el bordado escritos. Un recorrido automático muestra los puntos hasta que la persona toca algo.
     (function renderLook() {
       const L = NEGOCIO.look, m = NEGOCIO.modelos.find(x => x.id === L.modelo);
       if (!HOME || !m) return;
-      const poner = i => {
-        const p = L.puntos[i];
-        $("look-foto").querySelectorAll(".punto").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
-        $("look-item").innerHTML = `<b>${p.t}</b><p>${typeof p.d === "function" ? p.d(NEGOCIO) : p.d}</p>`;
+      const S = { i: 0, color: m.colores.includes(L.color) ? L.color : m.colores[0], hilo: "Blanco", name: "", role: "" };
+      const prod = id => NEGOCIO.modelos.find(x => x.id === id);
+      const fotoColor = (x, c) => (x.fotos || {})[c] || x.foto;
+      const href = x => `catalogo.html?cat=${encodeURIComponent(x.cat[0])}`;
+      const miniatura = (x, foto, alt, nombre) => `<a class="look-th" href="${href(x)}"><img src="${foto}" alt="${alt}" loading="lazy"><span>${nombre}</span></a>`;
+      const bordado = () => (S.name ? NEGOCIO.bordado.nombre : 0) + (S.role ? NEGOCIO.bordado.profesion : 0);
+      const panel = p => {
+        const texto = typeof p.d === "function" ? p.d(NEGOCIO) : p.d;
+        let extra = "";
+        if (p.tipo === "colores") {
+          extra = `<div class="look-sw" role="group" aria-label="Colores del ${m.nombre}">` + p.colores.map(c =>
+            `<button type="button" data-color="${c}" aria-pressed="${c === S.color}" aria-label="${c}"><img src="${fotoColor(m, c)}" alt="" loading="lazy"><span>${c}</span></button>`).join("") + `</div>
+            <small class="look-nota">Los colores pueden variar un poco de la foto.</small>`;
+        } else if (p.tipo === "productos") {
+          const x = prod(p.producto);
+          extra = `<div class="look-ths">` + x.colores.map(c => miniatura(x, fotoColor(x, c), `${x.nombre} en ${c.toLowerCase()}`, c)).join("") + `</div>
+            <p class="look-sub">Completa tu look</p>
+            <div class="look-ths">` + p.completa.map(([id, rotulo]) => { const a = prod(id); return miniatura(a, a.foto, a.nombre, rotulo); }).join("") + `</div>`;
+        } else if (p.tipo === "bordado") {
+          extra = `<div class="look-bord two">
+              <label class="field"><span>Nombre</span><input id="look-name" maxlength="22" autocomplete="off" placeholder="Ej: Dra. Camila Ruiz"></label>
+              <label class="field"><span>Profesión</span><input id="look-role" maxlength="26" autocomplete="off" placeholder="Ej: Odontóloga"></label>
+            </div>
+            <div class="look-hilos" role="group" aria-label="Color del hilo">` + Object.entries(NEGOCIO.hilos).map(([h, hex]) =>
+              `<button type="button" data-hilo="${h}" aria-pressed="${h === S.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("") + `</div>
+            <p class="look-precio" id="look-precio"></p>
+            <p class="look-logo">¿Eres clínica o empresa? Bordamos el logo de todo tu equipo. <a href="#empresas">Pide la propuesta para tu empresa</a></p>`;
+        }
+        return `<div class="look-pane"><b>${p.t}</b><p>${texto}</p>${extra}</div>`;
       };
-      $("look-foto").innerHTML = `<img src="${L.foto}" alt="${L.alt}" loading="lazy">` +
+      $("look-foto").innerHTML = `<img class="look-img on" src="${L.foto}" alt="${L.alt}" loading="lazy"><img class="look-img" alt="">
+        <div class="bordado look-patch" id="look-patch" aria-hidden="true"><small>Tu bordado</small><span class="b-n"></span><span class="b-r"></span></div>` +
         L.puntos.map(p => `<button type="button" class="punto" style="left:${p.x}%;top:${p.y}%" aria-pressed="false" aria-label="${p.t}"></button>`).join("");
-      $("look-foto").querySelectorAll(".punto").forEach((b, i) => (b.onclick = () => poner(i)));
-      poner(0);
-      $("look-cta").textContent = `Diseñar el ${m.nombre}`;
-      $("look-cta").onclick = () => disenar(m, m.colores.includes(L.color) ? L.color : m.colores[0]);
+      $("look-item").innerHTML = `<span class="sr-only" id="look-live"></span><div class="look-panes">${L.puntos.map(panel).join("")}</div>`;
+      const dots = [...$("look-foto").querySelectorAll(".punto")], panes = [...$("look-item").querySelectorAll(".look-pane")];
+      const capas = [...$("look-foto").querySelectorAll(".look-img")];
+      let vis = 0;
+
+      // Foto del color elegido: se carga en la capa de atrás y se funde con la de adelante
+      const verFoto = c => {
+        const src = fotoColor(m, c), act = capas[vis], sig = capas[1 - vis];
+        if (act.getAttribute("src") === src) return;
+        const listo = () => { sig.classList.add("on"); act.classList.remove("on"); vis = 1 - vis; };
+        sig.alt = `Uniforme ${m.nombre} en ${c.toLowerCase()}, puesto`;
+        if (sig.getAttribute("src") === src && sig.complete) listo(); else { sig.onload = listo; sig.src = src; }
+      };
+      const parche = () => {
+        const el = $("look-patch"), fill = C(S.color), tela = fill.startsWith("linear") ? "#1f1d22" : fill;
+        let hilo = NEGOCIO.hilos[S.hilo];
+        if (hilo.toLowerCase() === tela.toLowerCase()) hilo = S.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
+        el.style.setProperty("--tela", tela);
+        el.style.setProperty("--hilo", hilo);
+        const n = S.name || "Tu nombre";
+        const bn = el.querySelector(".b-n"), br = el.querySelector(".b-r");
+        bn.textContent = n; bn.style.opacity = S.name ? 1 : .5; bn.style.setProperty("--len", Math.max(10, n.length));
+        br.textContent = S.role; br.style.setProperty("--len", Math.max(12, Math.ceil(S.role.length * 1.25)));
+        $("look-foto").classList.toggle("con-parche", L.puntos[S.i].tipo === "bordado" || !!(S.name || S.role));
+        const pr = $("look-precio");
+        if (pr) pr.textContent = bordado() ? `Tu bordado: ${pesos(bordado())}` : "Escribe tu nombre o tu profesión para ver el precio.";
+      };
+      const cta = () => {
+        $("look-cta").textContent = `Diseñar el ${m.nombre} en ${S.color.toLowerCase()}` + (S.name || S.role ? " con tu bordado" : "");
+      };
+      const poner = i => {
+        S.i = i;
+        const p = L.puntos[i];
+        dots.forEach((b, j) => b.setAttribute("aria-pressed", j === i));
+        panes.forEach((el, j) => el.classList.toggle("on", j === i));
+        $("look-live").textContent = `${p.t}. ${typeof p.d === "function" ? p.d(NEGOCIO) : p.d}`;
+        parche();
+      };
+      dots.forEach((b, i) => (b.onclick = () => poner(i)));
+      $("look-item").querySelectorAll("[data-color]").forEach(b => (b.onclick = () => {
+        S.color = b.dataset.color;
+        $("look-item").querySelectorAll("[data-color]").forEach(x => x.setAttribute("aria-pressed", x === b));
+        verFoto(S.color); parche(); cta();
+      }));
+      $("look-item").querySelectorAll("[data-hilo]").forEach(b => (b.onclick = () => {
+        S.hilo = b.dataset.hilo;
+        $("look-item").querySelectorAll("[data-hilo]").forEach(x => x.setAttribute("aria-pressed", x === b));
+        parche();
+      }));
+      [["look-name", "name"], ["look-role", "role"]].forEach(([id, k]) => $(id).addEventListener("input", () => { S[k] = $(id).value.trim(); parche(); cta(); }));
+      $("look-cta").onclick = () => disenar(m, S.color, S.name || S.role ? { name: S.name, role: S.role, hilo: S.hilo } : null);
+      poner(0); cta();
+
+      // Recorrido automático: pasa por los puntos mientras la sección se ve; se detiene para siempre al primer toque, tecla o foco
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)"), raiz = $("look");
+      let timer = null, parado = false, enVista = false, encima = false;
+      const play = () => {
+        clearInterval(timer);
+        if (!parado && enVista && !encima && !reduce.matches) timer = setInterval(() => poner((S.i + 1) % dots.length), 4500);
+      };
+      ["pointerdown", "focusin", "keydown"].forEach(ev => raiz.addEventListener(ev, () => { parado = true; play(); }));
+      raiz.addEventListener("mouseenter", () => { encima = true; play(); });
+      raiz.addEventListener("mouseleave", () => { encima = false; play(); });
+      reduce.addEventListener("change", play);
+      if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { enVista = e.isIntersecting; play(); }, { threshold: .4 }).observe(raiz);
     })();
 
     // ---------- Personalizador ----------
@@ -586,8 +700,11 @@
     }
 
     // Campos de medidas para "Me mido en casa"
-    if (HOME) NEGOCIO.medidas.forEach(([t], i) => $("mgrid").insertAdjacentHTML("beforeend",
-      `<label>${t} (cm)<input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
+    if (HOME) {
+      $("mgrid").innerHTML = medidasCampos();
+      // Cómo tomar cada medida: solo texto, dentro de la guía del formulario
+      $("guia-casa-lista").innerHTML = medidasLista();
+    }
 
     async function loadBusy() {
       try { ag.busy = await fetchBusy(hoyIso(), ultimoDia()); }
@@ -654,9 +771,8 @@
     }
 
     if (HOME) {
-      // ---------- Proceso y guía de medidas ----------
+      // ---------- Proceso ----------
       $("process").innerHTML = NEGOCIO.proceso.map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join("");
-      $("measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
 
       // ---------- Empresas ----------
       const in3w = new Date(Date.now() + 21 * 86400000);
@@ -712,7 +828,7 @@
     if (HOME) {
       $("v-mapa").href = $("f-map-link").href;
       $("v-dir").textContent = NEGOCIO.direccionTaller;
-      $("v-hor").textContent = NEGOCIO.horarioTexto;
+      $("v-hor").innerHTML = NEGOCIO.horarioFilas.map(f => `<span class="hor-fila">${f}</span>`).join("");
       $("v-wa").href = waLink("Hola Multicostura 💗 ¿qué uniformes tienen disponibles hoy en la tienda? Me gustaría pasar a verlos.");
     }
     $("f-ig").href = NEGOCIO.instagram;
@@ -770,13 +886,13 @@
     }
     const fotoProducto = (m, c) => { const real = (m.fotos || {})[c]; return real && !(m.simulados || []).includes(c) && c !== NEGOCIO.disena[m.id] ? real : fotoDisena(m, c) || m.foto; };
     function abrirProducto(m, color, opener) {
-      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", medidas: null, qty: 1 });
+      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", medidas: null, qty: 1, name: "", role: "", hilo: "Blanco" });
       if (!m.colores.includes(pd.color)) pd.color = m.colores[0];
       $("pd-title").textContent = m.nombre;
       $("pd-cat").textContent = m.cat.join(" · ");
       const precios = NEGOCIO.tipos.map(t => precio(m, t));
       $("pd-price").innerHTML = sinPrecio(m) ? `Precio a consultar<small>Escríbenos y te contamos el valor y los diseños disponibles.</small>` : m.precioFijo ? pesos(m.precio)
-        : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}<small>${NEGOCIO.tipos.map(t => `${t.t}: ${pesos(precio(m, t))}`).join(" · ")}</small>`;
+        : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}`;
       $("pd-desc").textContent = m.desc;
       // características propias del producto (accesorios) o las de los uniformes
       $("pd-feats").innerHTML = (m.caracteristicas
@@ -784,8 +900,14 @@
       $("pd-thumbs").innerHTML = galeria(m).map(g => `<button type="button" data-src="${g.src}" data-color="${g.color}" aria-label="Ver foto en ${g.color.toLowerCase()}"><img src="${g.src}" alt="" loading="lazy"></button>`).join("");
       $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
       $("pd-tipo-box").hidden = !!m.precioFijo;
-      // accesorios (gorros): sin medidas, sin diseñador y sin descuento por cantidad de uniformes
-      $("pd-medidas").parentElement.hidden = $("pd-pers").hidden = !!m.accesorio;
+      // accesorios (gorros): sin medidas, sin bordado y sin descuento por cantidad de uniformes
+      $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio; // sin paso de bordado; en el paso 3 queda la cantidad
+      $("pd-name").value = $("pd-role").value = "";
+      $("pd-guia").open = false;
+      $("pd-casa").querySelectorAll("input").forEach(i => (i.value = ""));
+      abrirPaso(1);
+      $("pd-hilos").innerHTML = Object.entries(NEGOCIO.hilos).map(([h, hex]) => `<button type="button" data-hilo="${h}" aria-pressed="${h === pd.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("");
+      $("pd-hilos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.hilo = b.dataset.hilo; $("pd-hilos").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintarTotal(); }));
       $("pd-otro").hidden = !m.accesorio;
       if (m.accesorio) $("pd-otro-wa").href = waOtroDiseno(m);
       pintarProducto();
@@ -808,25 +930,99 @@
       $("pd-color-name").textContent = c + (ref || (m.simulados || []).includes(c) && !srcElegida ? " · color de referencia" : "");
       $("pd-colors").innerHTML = m.colores.map(x => `<button type="button" data-color="${x}" style="--c:${C(x)}" title="${x}" aria-label="Color ${x}" aria-pressed="${x === c}"></button>`).join("");
       $("pd-colors").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(); }));
-      // modalidad, cómo tomar las medidas (no se trabaja por tallas) y cantidad
+      // modalidad, cómo tomar las medidas (lo principal es a tu medida; las tallas S a XL son solo para lo que hay listo en tienda) y cantidad
       $("pd-tipos").innerHTML = NEGOCIO.tipos.map(t => `<button type="button" data-t="${t.id}" aria-pressed="${t.id === pd.tipo}">${t.t} · ${pesos(precio(m, t))}<small>${NEGOCIO.tiempos[t.id]}</small></button>`).join("");
       $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
       $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
       $("pd-medidas").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.medidas = b.dataset.v; pintarProducto(srcElegida); }));
+      pintarTotal();
+    }
+    // Cantidad, bordado, total y mensaje de WhatsApp: se repinta al escribir sin tocar el resto de la ficha (ni el foco)
+    function pintarTotal() {
+      const m = pd.m, c = pd.color;
       $("pd-q").textContent = pd.qty;
-      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = m.accesorio ? 0 : discount(pd.qty);
+      // El bordado se cobra por uniforme y entra en el descuento por cantidad, igual que en el diseñador
+      const bord = m.accesorio ? 0 : (pd.name ? NEGOCIO.bordado.nombre : 0) + (pd.role ? NEGOCIO.bordado.profesion : 0);
+      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t) + bord, pct = m.accesorio ? 0 : discount(pd.qty);
       const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
+      pintarBordado(bord);
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
-      $("pd-total").parentElement.hidden = sinPrecio(m);
+      $("pd-total").parentElement.hidden = $("pd-nota").hidden = sinPrecio(m);
+      // Cuánto ahorra con el descuento por cantidad, o qué le falta para el siguiente
+      const bruto = unit * pd.qty, ahorro = bruto - Math.round(bruto * (1 - pct));
+      const sig = NEGOCIO.descuentos.find(([min, p]) => min > pd.qty && p > 0);
+      $("pd-ahorro").textContent = m.accesorio ? "" : ahorro > 0 ? `Ahorras ${pesos(ahorro)} (${Math.round(pct * 100)}%)` : sig ? `Lleva ${sig[0] - pd.qty} más y ahorras ${Math.round(sig[1] * 100)}%` : "";
+      $("pd-casa-box").hidden = m.accesorio || pd.medidas !== "casa";
+      pintarResumenes();
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
+      const medidasHechas = pd.medidas === "casa" && !m.accesorio ? casaMedidas() : [];
+      const medTxt = medidasHechas.length ? `\n\nMis medidas:\n${medidasHechas.map(x => `• ${x}`).join("\n")}` : "";
+      const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
-        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\n• Para empezar: abono del 50% (${pesos(Math.round(total / 2))}); el precio final se confirma al tomar las medidas\nMe gustaría confirmar el color en la tienda.${medTxt}`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
-    $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarProducto(); };
-    $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarProducto(); };
+    // Dónde está el pecho en una foto: [x%, y%, ancho%] o null si no se ve (pantalones). Las fotos recoloreadas de
+    // img/disena/ comparten el encuadre de la base; sin dato, la posición por defecto.
+    function pechoDe(src) {
+      const mapa = NEGOCIO.pecho || {};
+      if (src in mapa) return mapa[src];
+      const base = /^(img\/disena\/[a-z]+)-[a-z-]+\.webp$/.exec(src || "");
+      if (base && `${base[1]}.webp` in mapa) return mapa[`${base[1]}.webp`];
+      return [64, 40, 34];
+    }
+    // Pasos plegables de la ficha: se abre uno a la vez y los cerrados resumen lo elegido
+    const pasosVisibles = () => [...document.querySelectorAll("#pd .pd-paso:not([hidden])")];
+    function abrirPaso(n) {
+      pasosVisibles().forEach(p => {
+        const abre = p.querySelector(".pd-paso-btn").id === `pd-pb-${n}`;
+        p.querySelector(".pd-paso-btn").setAttribute("aria-expanded", abre);
+        p.querySelector(".pd-paso-body").hidden = !abre;
+        p.classList.toggle("abierto", abre);
+      });
+    }
+    document.querySelectorAll("#pd .pd-paso-btn").forEach(b => (b.onclick = () => abrirPaso(b.id.slice(-1))));
+    document.querySelectorAll("#pd .pd-sig").forEach(b => (b.onclick = () => {
+      const ps = pasosVisibles(), i = ps.findIndex(p => p.querySelector(".pd-sig") === b), sig = ps[i + 1];
+      if (sig) { abrirPaso(sig.querySelector(".pd-paso-btn").id.slice(-1)); sig.querySelector(".pd-paso-btn").focus(); }
+    }));
+    // Medidas escritas en la ficha ("Me mido en casa"): solo las llenas
+    const casaMedidas = () => [...$("pd-casa").querySelectorAll("input")].filter(i => i.value.trim()).map(i => `${i.dataset.m}: ${i.value.trim()} cm`);
+    $("pd-casa").innerHTML = medidasCampos();
+    $("pd-guia-lista").innerHTML = medidasLista();
+    $("pd-casa").addEventListener("input", pintarTotal); // los campos no se reconstruyen: el foco se queda
+    function pintarResumenes() {
+      const m = pd.m, t = NEGOCIO.tipos.find(x => x.id === pd.tipo);
+      const med = (NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t;
+      const bord = [pd.name, pd.role].filter(Boolean).join(" · ");
+      const unidades = m.accesorio ? (pd.qty === 1 ? "1 unidad" : `${pd.qty} unidades`) : (pd.qty === 1 ? "1 uniforme" : `${pd.qty} uniformes`);
+      $("pd-res-1").textContent = [pd.color, m.precioFijo ? "" : t && t.t].filter(Boolean).join(" · ");
+      $("pd-res-2").textContent = bord ? `${bord} · hilo ${pd.hilo.toLowerCase()}` : "Sin bordado";
+      const hechas = casaMedidas().length;
+      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", pd.medidas === "casa" && !m.accesorio ? `${hechas}/${NEGOCIO.medidas.length} medidas` : "", unidades].filter(Boolean).join(" · ");
+    }
+    // Parche del bordado sobre la foto grande y el precio que se suma
+    function pintarBordado(bord) {
+      const fill = C(pd.color), tela = fill.startsWith("linear") ? "#1f1d22" : fill, patch = $("pd-patch");
+      const pecho = pechoDe($("pd-img").getAttribute("src"));
+      $("pd-main").classList.toggle("sin-pecho", !pecho);
+      if (pecho) { patch.style.setProperty("--px", `${pecho[0]}%`); patch.style.setProperty("--py", `${pecho[1]}%`); patch.style.setProperty("--pw", `${pecho[2] || 34}%`); }
+      let hilo = NEGOCIO.hilos[pd.hilo];
+      if (hilo.toLowerCase() === tela.toLowerCase()) hilo = pd.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
+      patch.style.setProperty("--tela", tela);
+      patch.style.setProperty("--hilo", hilo);
+      const n = pd.name || "Tu nombre", bn = patch.querySelector(".b-n"), br = patch.querySelector(".b-r");
+      bn.textContent = n; bn.style.opacity = pd.name ? 1 : .5; bn.style.setProperty("--len", Math.max(10, n.length));
+      br.textContent = pd.role; br.style.setProperty("--len", Math.max(12, Math.ceil(pd.role.length * 1.25)));
+      $("pd-main").classList.toggle("con-bordado", !!(pd.name || pd.role));
+      $("pd-bord-precio").innerHTML = bord ? `<b>Bordado: +${pesos(bord)} por uniforme.</b> Lo ves sobre la foto y va en tu pedido.`
+        : `Nombre +${pesos(NEGOCIO.bordado.nombre)}, profesión +${pesos(NEGOCIO.bordado.profesion)} por uniforme. Escríbelos y míralos sobre la foto. ¿Logo de empresa? <a href="index.html#empresas">Pide la propuesta</a>.`;
+    }
+    [["pd-name", "name"], ["pd-role", "role"]].forEach(([id, k]) => $(id).addEventListener("input", () => { pd[k] = $(id).value.trim(); pintarTotal(); }));
+    $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarTotal(); };
+    $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarTotal(); };
     // Zoom: con el mouse se amplía al pasar por encima y sigue el cursor; con el dedo o el teclado, tocar alterna
     const pdMain = $("pd-main"), finoPuntero = matchMedia("(hover: hover) and (pointer: fine)");
     const mover = (x, y) => { const r = pdMain.getBoundingClientRect(); $("pd-img").style.transformOrigin = `${((x - r.left) / r.width) * 100}% ${((y - r.top) / r.height) * 100}%`; };
@@ -840,12 +1036,8 @@
     $("pd-close").onclick = () => $("pd").close();
     $("pd").addEventListener("click", e => { if (e.target === $("pd")) $("pd").close(); });
     $("pd").addEventListener("close", () => { document.documentElement.classList.remove("pd-abierta"); pd.opener?.focus(); });
-    $("pd-pers").onclick = () => {
-      if (!HOME) { disenar(pd.m, pd.color); return; }
-      $("s-model").value = pd.m.id; design.color = pd.color; design.tipo = pd.tipo; design.qty = pd.qty;
-      renderDesign(); $("pd").close(); $("personaliza").scrollIntoView();
-    };
     $("pd-agenda").onclick = () => $("pd").close();
+    $("pd-guia").querySelector(".guia-link a").addEventListener("click", () => { if ($("pd-guia").querySelector(".guia-link a").getAttribute("href").startsWith("#")) $("pd").close(); });
 
     // ---------- Preguntas frecuentes ----------
     const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);

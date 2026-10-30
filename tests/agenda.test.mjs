@@ -1,7 +1,9 @@
 // Monthly calendar agenda: month grid, day states, slots, duration and busy hours.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { render } from "./render.mjs";
+const N = new Function(`${readFileSync(new URL("../js/datos.js", import.meta.url), "utf8")}; return NEGOCIO;`)();
 
 // Fixed "today" through window.HOY_TEST: Wednesday 2026-11-25 at 09:00. The booking window is 14 days, up to Tuesday 2026-12-08.
 // Demo bookings seeded in localStorage: 26 Nov 09:00 (60 min) and 27 Nov fully booked (08:00-12:00 and 14:00-18:00).
@@ -26,7 +28,7 @@ test("month grid shows the month in Spanish with Monday-first headers and one bu
   const cal = region(R(TALLER), "days");
   assert.match(cal, /Noviembre 2026/);
   assert.match(cal, /<table[^>]*role="grid"/);
-  const heads = [...cal.matchAll(/<th[^>]*>(?:<abbr[^>]*>)?([A-Z])(?:<\/abbr>)?<\/th>/g)].map(m => m[1]);
+  const heads = [...cal.slice(0, cal.indexOf("</table>")).matchAll(/<th[^>]*>(?:<abbr[^>]*>)?([A-Z])(?:<\/abbr>)?<\/th>/g)].map(m => m[1]);
   assert.deepEqual(heads, ["L", "M", "X", "J", "V", "S", "D"]);
   assert.equal((cal.match(/<button[^>]*data-fecha="/g) || []).length, 30, "November has 30 days");
 });
@@ -121,4 +123,50 @@ test("casa mode hides the calendar and the catalog page does not throw", () => {
   assert.match(h.match(/<div[^>]*id="st-day"[^>]*>/)[0], /hidden/);
   const cat = render({ page: "catalogo.html" });
   assert.doesNotMatch(cat.stderr, /Uncaught|TypeError|ReferenceError/);
+});
+
+test("casa mode has its own collapsible measuring guide with the size chart, above the measurement fields", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const box = h.slice(h.indexOf('id="self-measures"'), h.indexOf('id="f-notes"'));
+  const det = (box.match(/<details[\s\S]*?<\/details>/) || [""])[0];
+  assert.ok(det, "details inside #self-measures");
+  assert.doesNotMatch(det.match(/<details[^>]*>/)[0], /\sopen/, "collapsed by default");
+  assert.match(det, /<summary[^>]*>\s*¿Cómo medirme en casa\?\s*<\/summary>/);
+  assert.match(det, /<img[^>]*src="img\/tabla-medidas-modelo\.webp"[^>]*loading="lazy"/);
+  const lista = (det.match(/<ol[\s\S]*?<\/ol>/) || [""])[0];
+  const items = (lista.match(/<li>[\s\S]*?<\/li>/g) || []).map(x => x.replace(/<[^>]+>/g, "|").replace(/\|+/g, "|"));
+  assert.equal(items.length, N.medidas.length, "one instruction per measurement field");
+  N.medidas.forEach(([t, d], i) => {
+    assert.ok((lista.match(/<li>[\s\S]*?<\/li>/g) || [])[i].includes(`<strong>${t}</strong>`), t);
+    assert.ok(items[i].includes(d), d);
+  });
+  assert.match(det, /<ol[\s>]/);
+  assert.doesNotMatch(det, /<svg|stroke-dasharray/);
+  assert.ok(box.indexOf("<details") < box.indexOf('id="mgrid"'), "guide comes before the inputs");
+  assert.doesNotMatch(box, /guía más abajo/);
+  assert.match(box, /Todo en centímetros/);
+});
+
+test("casa mode keeps every measurement field", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const inputs = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"')).match(/<input[^>]*data-m="[^"]+"/g) || [];
+  assert.equal(inputs.length, 7);
+});
+
+test("casa mode: every measurement field shows a '0 cm' placeholder so the grid doesn't look empty", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const inputs = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"')).match(/<input[^>]*>/g) || [];
+  assert.equal(inputs.length, 7);
+  inputs.forEach(i => assert.match(i, /placeholder="0 cm"/, i));
+});
+
+test("casa mode: the seven measurement labels are bold and a visible link leads to the size chart", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const grid = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"'));
+  const labels = grid.match(/<label>[\s\S]*?<\/label>/g) || [];
+  assert.equal(labels.length, 7);
+  N.medidas.forEach(([t], i) => assert.match(labels[i], new RegExp(`<label><strong>${t} \\(cm\\)</strong><input`)));
+  const box = h.slice(h.indexOf('id="self-measures"'), h.indexOf('id="f-notes"'));
+  assert.match(box, /<a[^>]*href="#guia-tallas"[^>]*>[^<]*¿No sabes cómo medirte\? Ver tabla de medidas/);
+  assert.match(h, /id="guia-tallas"/, "the target exists");
 });

@@ -6,7 +6,9 @@
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       facebook: "https://www.facebook.com/multicosturas2016",
       correo: "multicostura222@gmail.com", // de la página de Facebook
-      horarioTexto: "Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m. Sábados de 8:00 a. m. a 1:00 p. m.",
+      // Una fila por grupo de días; horarioTexto las une para el pie, la FAQ y el chat
+      horarioFilas: ["Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m.", "Sábados de 8:00 a. m. a 1:00 p. m."],
+      get horarioTexto() { return this.horarioFilas.join(" "); },
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
       // Pin del mapa (4°05'32.5"N 76°12'22.5"W, confirmado por la dueña)
       mapa: "4.092361,-76.206250",
@@ -72,13 +74,18 @@
         { ico: "ruler", t: "A tu medida", d: "En el taller, a domicilio o desde tu casa" },
         { ico: "card", t: "Pago 50% para empezar", d: "Con el 50% empezamos a confeccionar tu uniforme" },
       ],
-      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO
+      // "Descubre el look completo": puntos sobre la foto (x, y en %). d puede ser una función para armar precios desde NEGOCIO.
+      // tipo decide qué muestra el panel: "colores" (miniaturas del modelo que cambian la foto), "productos" (miniaturas que llevan al catálogo
+      // + `completa`: otros productos para cerrar el look) o "bordado" (parche en vivo sobre la foto). El logo de empresas NO tiene precio aquí.
       look: {
         modelo: "kaill", color: "Azul rey", foto: "img/kaill-azul-rey.webp", alt: "Uniforme Kaill en azul rey, puesto",
         puntos: [
-          { x: 52, y: 30, t: "Blusa Kaill", d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales." },
-          { x: 45, y: 88, t: "Pantalón Kaill", d: "Viene con la blusa, en el mismo color. Si lo quieres solo, pídelo por WhatsApp." },
-          { x: 62, y: 42, t: "Bordado opcional", d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras.` },
+          { x: 52, y: 30, t: "Blusa Kaill", tipo: "colores", colores: ["Azul rey", "Lila", "Verde jade", "Blanco", "Rosa", "Fucsia", "Rojo", "Negro"],
+            d: "Antifluido elástico, detalle en el escote y cuello postizo. Bolsillos funcionales. Toca un color para verla puesta." },
+          { x: 45, y: 88, t: "Pantalón Kaill", tipo: "productos", producto: "pantalon", completa: [["gorro", "Gorros"], ["medias", "Medias"]],
+            d: "Viene con la blusa, en el mismo color. Si lo quieres solo, mira los pantalones del catálogo o pídelo por WhatsApp." },
+          { x: 72, y: 31, t: "Bordado opcional", tipo: "bordado",
+            d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras. Escríbelo y míralo sobre la foto.` },
         ],
       },
       // Ids de los modelos que se destacan en el inicio (8, en este orden)
@@ -198,7 +205,7 @@
           fotos: { "Perrito rosa": "img/medias-perrito-rosa.webp", "Garabatos": "img/medias-garabatos.webp", "Muñequita roja": "img/medias-munequita-roja.webp", "Gatita rosa": "img/medias-gatita-rosa.webp",
             "Heroínas": "img/medias-heroinas.webp", "Monstruo azul": "img/medias-monstruo-azul.webp", "Amarillitos": "img/medias-amarillitos.webp" } },
       ],
-      // Tiempos de entrega por modalidad (confirmar con la dueña). No se trabaja por tallas: siempre se toman las medidas
+      // Tiempos de entrega por modalidad (confirmar con la dueña). El modelo principal es a tu medida: siempre se toman las medidas (los uniformes listos de la tienda sí vienen en tallas S a XL)
       tiempos: { tienda: "entrega inmediata", pedido: "3 a 5 días hábiles", medida: "5 a 8 días hábiles" },
       // ---- Preguntas frecuentes (sección #faq y chatbot) ----
       // claves: palabras que activan la respuesta en el chat (sin tildes, en minúscula). Si "a" es función, recibe NEGOCIO.
@@ -206,7 +213,7 @@
         { id: "pago", q: "¿Cómo se paga?", a: "Con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar"] },
         { id: "tiempos", q: "¿En cuánto tiempo me lo entregan?", a: n => `Precio tienda: ${n.tiempos.tienda}. Bajo pedido: ${n.tiempos.pedido}. Por medida: ${n.tiempos.medida}.`, claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "dias", "entrega", "entregan", "listo", "rapido"] },
         { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
-        { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No. No trabajamos por tallas: te tomamos las medidas en el taller, a domicilio o te guiamos para que te midas en casa, y el uniforme queda a tu cuerpo.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
+        { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No es necesario 💗 lo nuestro es confeccionar a tu medida: te medimos en el taller, a domicilio o te guiamos para que te midas en casa, y queda a tu cuerpo. Los uniformes listos de la tienda sí vienen en tallas S a XL: si quieres una talla puntual, pásate por la tienda y mira cuáles hay disponibles.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
         { id: "medidas", q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Te explicamos cada una en la guía de medidas.", claves: ["medida", "medidas", "medir", "medirme", "metro", "cinta"] },
         { id: "envios", q: "¿Hacen envíos?", a: n => `Sí, enviamos a toda Colombia. ${n.envio}`, claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete", "mandan"] },
         { id: "domicilio", q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio con un recargo de ${pesos(n.recargoDomicilio)}. También puedes venir al taller o medirte en casa.`, claves: ["domicilio", "visita", "vienen", "recargo", "consultorio", "casa"] },
@@ -233,6 +240,13 @@
         ["Ancho de hombros", "De la punta de un hombro a la otra, por la espalda."],
         ["Estatura", "Descalza, contra la pared."],
       ],
+      // Tabla de medidas de referencia (cm) de los uniformes listos en tienda; el modelo principal se confecciona a tu medida
+      tablaMedidas: {
+        tallas: ["S", "M", "L", "XL"],
+        blusa: [["Busto", [96, 100, 108, 112]], ["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de blusa", [68, 69, 70, 72]]],
+        pantalon: [["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de pantalón", [102, 104, 106, 106]], ["Largo entrepierna", [80, 81.5, 83, 84.5]], ["Ancho de bota", [22, 23, 24, 25]]],
+        consejos: [["📏", "Usa una cinta métrica flexible"], ["🧍", "Mantén una postura natural"], ["👚", "Mide sobre ropa interior o piel"], ["✅", "Si estás entre tallas, elige la más grande"]],
+      },
       bonos: [100000, 150000, 200000, 300000],
       clientas: [
         { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
@@ -242,6 +256,63 @@
         // video = ruta sin extensión: video/<nombre>.webm y .mp4, con portada video/<nombre>-poster.webp
         { video: "video/clienta-psicologia", texto: "Psicología" }, // reel de Instagram DejlX_9xpLO (colaboración con la clienta)
       ],
+      // Embroidery patch on the product photo (#pd): centre of the patch as [x%, y%, width%?] of the 4:5 box
+      // (object-fit: cover, top-aligned); the wearer's left chest is the right side of the photo.
+      // null = no chest visible (trousers): the patch is hidden. Missing src = [64, 40, 34].
+      // img/disena/<id>-<color>.webp (recoloured) share the framing of img/disena/<id>.webp.
+      pecho: {
+        "img/disena/kaill.webp": [62,40],
+        "img/kaill-lila.webp": [62,46],
+        "img/kaill-verde-jade.webp": [66,42],
+        "img/kaill.webp": [66,78],
+        "img/disena/alondra.webp": [58,34,26],
+        "img/alondra-morado.webp": [64,46],
+        "img/alondra-negro.webp": [68,48],
+        "img/alondra-blanco.webp": [70,72],
+        "img/disena/clasico.webp": [45,48],
+        "img/clasico.webp": [62,52],
+        "img/clasico-rosa.webp": [55,42],
+        "img/clasico-beige.webp": [62,46],
+        "img/clasico-negro.webp": [58,52],
+        "img/clasico-blanco-v.webp": [62,55],
+        "img/clasico-morado.webp": [64,56],
+        "img/disena/durango.webp": [66,56],
+        "img/durango-verde-menta.webp": [52,42],
+        "img/durango-verde-oliva.webp": [64,56],
+        "img/durango-rojo.webp": [64,56],
+        "img/durango-blanco-v.webp": [68,58],
+        "img/durango-lila.webp": [56,50],
+        "img/durango-negro.webp": [62,58],
+        "img/disena/neru.webp": [55,42],
+        "img/neru.webp": [58,32,26],
+        "img/glam.webp": [68,55],
+        "img/glam-rojo.webp": [60,48],
+        "img/disena/mariee.webp": [60,50],
+        "img/mariee-rosa.webp": [57,30,26],
+        "img/mariee-azul-cielo.webp": [62,58],
+        "img/mariee-vinotinto.webp": [56,45],
+        "img/mariee.webp": [64,52],
+        "img/mariee-cafe.webp": [56,31,26],
+        "img/mariee-lavanda.webp": [40,38,26],
+        "img/mariee-coral.webp": [54,36],
+        "img/mariee-beige.webp": [56,48],
+        "img/disena/luna.webp": [50,46],
+        "img/luna.webp": [58,60],
+        "img/disena/violet.webp": [56,48],
+        "img/disena/paris.webp": [62,52],
+        "img/paris-rosa.webp": [62,54],
+        "img/paris-negro.webp": [58,56],
+        "img/paris-amarillo.webp": [62,58],
+        "img/disena/lisboa.webp": [62,48],
+        "img/clasico-blanco.webp": [55,78],
+        "img/bata.webp": [62,50],
+        "img/bata-palo-rosa.webp": [62,45],
+        "img/pantalon.webp": null,
+        "img/pantalon-lila.webp": null,
+        "img/pantalon-lavanda.webp": null,
+        "img/pantalon-palo-rosa.webp": null,
+        "img/pantalon-blanco.webp": null,
+      },
       // Diseña tu uniforme: color de la foto base de cada modelo (img/disena/<id>.webp, a resolución original).
       // Los demás colores son esa misma foto recoloreada (img/disena/<id>-<color>.webp).
       disena: { kaill: "Azul rey", alondra: "Azul rey", clasico: "Azul cielo", durango: "Petróleo", neru: "Fucsia", mariee: "Petróleo", luna: "Petróleo", violet: "Rosa", paris: "Lavanda", lisboa: "Rojo" },
