@@ -29,8 +29,8 @@ test("the old step list and pink diagram are gone from the whole home page and t
   const cat = render({ page: "catalogo.html", inject: `document.querySelector('.model .pic').click();` }).html;
   for (const [nombre, h] of [["home", html], ["catalog", cat]]) {
     assert.doesNotMatch(h, /<li><b>Busto o pecho<\/b>/, nombre);
-    // the per-measurement list is allowed only inside the agenda's #guia-casa
-    const fuera = h.replace(/<details[^>]*id="guia-casa"[\s\S]*?<\/details>/, "");
+    // the per-measurement list is allowed only inside the agenda's #guia-casa and the dialog's #pd-guia
+    const fuera = h.replace(/<details[^>]*id="guia-casa"[\s\S]*?<\/details>/, "").replace(/<details[^>]*id="pd-guia"[\s\S]*?<\/details>/, "");
     assert.doesNotMatch(fuera, /<ol[\s>][\s\S]*?Busto o pecho/, nombre);
     assert.doesNotMatch(h, /id="pd-measures"|id="measures"/, nombre);
     assert.doesNotMatch(h, /stroke-dasharray="5 4"/, nombre);
@@ -49,11 +49,11 @@ test("size chart values are available as text for screen readers", () => {
 // The "Escríbenos por WhatsApp" button drawn in the chart image is a real link overlay everywhere the image appears.
 const N = new Function(`${readFileSync(join(ROOT, "js/datos.js"), "utf8")}; return NEGOCIO;`)();
 const grupos = h => h.match(/<div class="tabla-wrap">[\s\S]*?<\/div>/g) || [];
-test("size chart WhatsApp overlay: present in #guia-tallas, #guia-casa and #pd-guia on both pages", () => {
+test("size chart WhatsApp overlay: present wherever the chart image appears (#guia-tallas and #guia-casa; none in the dialog)", () => {
   const cat = render({ page: "catalogo.html" }).html;
   const cuenta = (h, n) => (h.match(/<img[^>]*tabla-medidas/g) || []).length === n;
-  assert.ok(cuenta(html, 3) && cuenta(cat, 1), "image appears in 3 places on home and 1 on the catalog");
-  for (const [nombre, h, n] of [["home", html, 3], ["catalog", cat, 1]]) {
+  assert.ok(cuenta(html, 2) && cuenta(cat, 0), "image appears in 2 places on home and none on the catalog");
+  for (const [nombre, h, n] of [["home", html, 2], ["catalog", cat, 0]]) {
     const g = grupos(h);
     assert.equal(g.length, n, `${nombre}: one wrapper per image`);
     for (const w of g) {

@@ -3,6 +3,10 @@
     const $ = id => document.getElementById(id);
     const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
     const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
+    // Medidas: los mismos campos y la misma lista de cómo tomarlas en la agenda ("Me mido en casa") y en la ficha del producto
+    const medidasCampos = () => NEGOCIO.medidas.map(([t]) =>
+      `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}" placeholder="0 cm"></label>`).join("");
+    const medidasLista = () => NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
     // El botón "Escríbenos por WhatsApp" dibujado en la tabla de medidas es un enlace real encima de la imagen
     const waMedidas = waLink("Hola Multicostura 💗 tengo dudas sobre cómo tomar mis medidas / necesito una talla especial.");
     document.querySelectorAll(".tabla-wa").forEach(a => (a.href = waMedidas));
@@ -682,10 +686,9 @@
 
     // Campos de medidas para "Me mido en casa"
     if (HOME) {
-      NEGOCIO.medidas.forEach(([t]) => $("mgrid").insertAdjacentHTML("beforeend",
-        `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}" placeholder="0 cm"></label>`));
+      $("mgrid").innerHTML = medidasCampos();
       // Cómo tomar cada medida: solo texto, dentro de la guía del formulario
-      $("guia-casa-lista").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
+      $("guia-casa-lista").innerHTML = medidasLista();
     }
 
     async function loadBusy() {
@@ -886,6 +889,7 @@
       $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio; // sin paso de bordado; en el paso 3 queda la cantidad
       $("pd-name").value = $("pd-role").value = "";
       $("pd-guia").open = false;
+      $("pd-casa").querySelectorAll("input").forEach(i => (i.value = ""));
       abrirPaso(1);
       $("pd-hilos").innerHTML = Object.entries(NEGOCIO.hilos).map(([h, hex]) => `<button type="button" data-hilo="${h}" aria-pressed="${h === pd.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("");
       $("pd-hilos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.hilo = b.dataset.hilo; $("pd-hilos").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintarTotal(); }));
@@ -935,11 +939,14 @@
       const bruto = unit * pd.qty, ahorro = bruto - Math.round(bruto * (1 - pct));
       const sig = NEGOCIO.descuentos.find(([min, p]) => min > pd.qty && p > 0);
       $("pd-ahorro").textContent = m.accesorio ? "" : ahorro > 0 ? `Ahorras ${pesos(ahorro)} (${Math.round(pct * 100)}%)` : sig ? `Lleva ${sig[0] - pd.qty} más y ahorras ${Math.round(sig[1] * 100)}%` : "";
+      $("pd-casa").hidden = m.accesorio || pd.medidas !== "casa";
       pintarResumenes();
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
+      const medidasHechas = pd.medidas === "casa" && !m.accesorio ? casaMedidas() : [];
+      const medTxt = medidasHechas.length ? `\n\nMis medidas:\n${medidasHechas.map(x => `• ${x}`).join("\n")}` : "";
       const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
-        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.${medTxt}`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
     // Dónde está el pecho en una foto: [x%, y%, ancho%] o null si no se ve (pantalones). Las fotos recoloreadas de
@@ -966,6 +973,11 @@
       const ps = pasosVisibles(), i = ps.findIndex(p => p.querySelector(".pd-sig") === b), sig = ps[i + 1];
       if (sig) { abrirPaso(sig.querySelector(".pd-paso-btn").id.slice(-1)); sig.querySelector(".pd-paso-btn").focus(); }
     }));
+    // Medidas escritas en la ficha ("Me mido en casa"): solo las llenas
+    const casaMedidas = () => [...$("pd-casa").querySelectorAll("input")].filter(i => i.value.trim()).map(i => `${i.dataset.m}: ${i.value.trim()} cm`);
+    $("pd-casa").innerHTML = medidasCampos();
+    $("pd-guia-lista").innerHTML = medidasLista();
+    $("pd-casa").addEventListener("input", pintarTotal); // los campos no se reconstruyen: el foco se queda
     function pintarResumenes() {
       const m = pd.m, t = NEGOCIO.tipos.find(x => x.id === pd.tipo);
       const med = (NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t;
@@ -973,7 +985,8 @@
       const unidades = m.accesorio ? (pd.qty === 1 ? "1 unidad" : `${pd.qty} unidades`) : (pd.qty === 1 ? "1 uniforme" : `${pd.qty} uniformes`);
       $("pd-res-1").textContent = [pd.color, m.precioFijo ? "" : t && t.t].filter(Boolean).join(" · ");
       $("pd-res-2").textContent = bord ? `${bord} · hilo ${pd.hilo.toLowerCase()}` : "Sin bordado";
-      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", unidades].filter(Boolean).join(" · ");
+      const hechas = casaMedidas().length;
+      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", pd.medidas === "casa" && !m.accesorio ? `${hechas}/${NEGOCIO.medidas.length} medidas` : "", unidades].filter(Boolean).join(" · ");
     }
     // Parche del bordado sobre la foto grande y el precio que se suma
     function pintarBordado(bord) {

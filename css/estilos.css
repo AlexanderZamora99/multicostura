@@ -360,6 +360,11 @@
     .guia-pasos strong { color: var(--text); }
     .guia-link { margin: 0 0 .9rem; font-size: .92rem; }
     .guia-link a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .mgrid[hidden] { display: none; }
+    /* Medidas escritas en la ficha del producto (en la agenda las estiliza .agenda) */
+    #pd-casa label { display: grid; gap: .3rem; font-size: .85rem; color: var(--muted); }
+    #pd-casa input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: .6rem .75rem; font: inherit; font-size: 1rem; background: var(--card); color: var(--text); }
+    #pd-casa input:focus { outline: 2px solid var(--mag); border-color: transparent; }
     .mgrid label > strong { font-weight: 700; color: var(--text); }
     .guia-casa { margin: 0 0 .9rem; }
     /* Tabla de medidas: el botón de WhatsApp dibujado en la imagen (x 210-475, y 1135-1183 de 1265x1246) es un enlace encima */

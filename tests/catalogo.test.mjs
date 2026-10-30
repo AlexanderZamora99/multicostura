@@ -185,7 +185,9 @@ const dialogo = `
     out.wa1 = wa(); out.hilo = g("pd-patch").style.getPropertyValue("--hilo");
     teclear("pd-name", ""); teclear("pd-role", ""); out.t4 = num(g("pd-total").textContent); out.patch4 = g("pd-main").classList.contains("con-bordado"); out.wa4 = wa();
     const d = g("pd").querySelector("details#pd-guia");
-    out.guia = !!d; out.guiaSteps = d ? d.querySelectorAll("ol li").length : 0; out.guiaImg = d ? (d.querySelector("img") || {}).getAttribute && d.querySelector("img").getAttribute("src") : "";
+    out.guia = !!d; out.guiaSteps = d ? d.querySelectorAll("ol li").length : 0; out.guiaImg = d ? d.querySelectorAll("img").length : -1;
+    out.guiaLink = d ? [...d.querySelectorAll("a")].map(a => [a.getAttribute("href"), a.target, a.rel, a.textContent.trim()]) : [];
+    out.guiaStrong = d ? [...d.querySelectorAll("ol li strong")].map(x => x.textContent) : [];
     out.guiaParent = d ? !!d.closest(".pd-info") : false;
     g("pd-close").click(); await wait(50);
     document.querySelector('.model[data-id="gorro"] .pic').click(); await wait(100);
@@ -228,11 +230,13 @@ test("product dialog: embroidery is hidden for accessories and the old 'Personal
   assert.equal(pd.pers, false);
 });
 
-test("product dialog: measuring guide sits in the right column as an in-place <details> with only the size chart image", () => {
+test("product dialog: measuring guide sits in the right column as an in-place <details> as text plus a link to the size chart, without the image", () => {
   assert.equal(pd.guia, true);
   assert.equal(pd.guiaParent, true);
-  assert.equal(pd.guiaSteps, 0, "no numbered <ol> list");
-  assert.match(pd.guiaImg, /tabla-medidas\.jpg$/);
+  assert.equal(pd.guiaSteps, N.medidas.length, "one instruction per measurement");
+  assert.deepEqual(pd.guiaStrong, N.medidas.map(([t]) => t));
+  assert.equal(pd.guiaImg, 0, "no <img> inside #pd-guia");
+  assert.deepEqual(pd.guiaLink, [["img/tabla-medidas.jpg", "_blank", "noopener", "Ver tabla de medidas"]]);
 });
 
 test("home shares the same product dialog: in-place embroidery and measuring guide, no exit to the designer", () => {
@@ -327,4 +331,57 @@ test("product cards: hover and focus scale the photo and respect reduced motion;
   assert.match(css, /\.model \.pic\[role="button"\]:(hover|focus-visible)[^{]*img[^{]*\{[^}]*transform: scale\(/);
   assert.match(css, /prefers-reduced-motion: reduce\)[^{]*\{[^}]*\.model \.pic[^}]*transition: none/);
   assert.match(css, /\.pd-main \{[^}]*cursor: zoom-in/);
+});
+
+// ---- Product dialog: "Me mido en casa" shows the seven measurement fields in step 3 ----
+const casaProbe = `
+  const wait = ms => new Promise(r => setTimeout(r, ms)), g = id => document.getElementById(id);
+  const teclear = (el, v) => { el.value = v; el.dispatchEvent(new Event("input", { bubbles: true })); };
+  const wa = () => decodeURIComponent(g("pd-wa").getAttribute("href"));
+  const campos = () => [...document.querySelectorAll("#pd-casa input")];
+  const visibles = () => { const c = g("pd-casa"); return !c.hidden && c.getBoundingClientRect().height > 0; };
+  const modo = id => [...g("pd-medidas").querySelectorAll("button")].find(b => b.dataset.v === id).click();
+  (async () => {
+    const out = {};
+    await wait(200);
+    document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(100);
+    document.getElementById("pd-pb-3").click();
+    out.antes = visibles();
+    modo("taller"); out.taller = visibles();
+    modo("casa"); out.casa = visibles();
+    const cs = campos();
+    out.n = cs.length; out.ph = cs.map(c => c.placeholder); out.attrs = cs.map(c => [c.type, c.inputMode, c.min, c.max, c.step, c.dataset.m]);
+    out.labels = cs.map(c => c.parentElement.querySelector("strong").textContent);
+    out.res0 = g("pd-pb-3").textContent.replace(/\\s+/g, " ").trim();
+    const nodo = cs[0]; nodo.focus(); teclear(nodo, "92"); teclear(cs[4], "101.5");
+    out.mismoNodo = campos()[0] === nodo; out.foco = document.activeElement === nodo;
+    out.res2 = g("pd-pb-3").textContent.replace(/\\s+/g, " ").trim();
+    out.wa = wa();
+    modo("domicilio"); out.dom = visibles(); out.waDom = wa();
+    modo("casa"); out.valorConservado = campos()[0].value;
+    document.body.insertAdjacentHTML("beforeend", '<pre id="probe12">' + JSON.stringify(out) + '</pre>');
+  })();
+`;
+const casa = JSON.parse((render({ page: "catalogo.html", inject: casaProbe }).html.match(/<pre id="probe12">(\{[\s\S]*?\})<\/pre>/) || [, "{}"])[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+
+test("product dialog casa: the seven measurement fields appear only when 'Me mido en casa' is chosen", () => {
+  assert.equal(casa.antes, false); assert.equal(casa.taller, false); assert.equal(casa.dom, false);
+  assert.equal(casa.casa, true);
+  assert.equal(casa.n, N.medidas.length);
+  assert.deepEqual(casa.labels, N.medidas.map(([t]) => `${t} (cm)`));
+  assert.ok(casa.ph.every(p => p === "0 cm"));
+  assert.ok(casa.attrs.every(a => a[0] === "number" && a[1] === "decimal" && a[2] === "20" && a[3] === "250" && a[4] === "0.5"));
+  assert.deepEqual(casa.attrs.map(a => a[5]), N.medidas.map(([t]) => t));
+});
+
+test("product dialog casa: typed values go into the WhatsApp message, the summary counts them and typing keeps focus", () => {
+  assert.match(casa.res0, /Me mido en casa · 0\/7 medidas · 1 uniforme/);
+  assert.match(casa.res2, /Me mido en casa · 2\/7 medidas · 1 uniforme/);
+  assert.equal(casa.mismoNodo, true, "inputs are not rebuilt");
+  assert.equal(casa.foco, true);
+  assert.match(casa.wa, /Mis medidas:/);
+  assert.ok(casa.wa.includes(`${N.medidas[0][0]}: 92 cm`) && casa.wa.includes(`${N.medidas[4][0]}: 101.5 cm`), casa.wa);
+  assert.ok(!casa.wa.includes(`${N.medidas[1][0]}:`), "only filled fields");
+  assert.doesNotMatch(casa.waDom, /Mis medidas:/);
+  assert.equal(casa.valorConservado, "92");
 });
