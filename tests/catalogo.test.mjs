@@ -236,7 +236,7 @@ test("product dialog: measuring guide sits in the right column as an in-place <d
   assert.equal(pd.guiaSteps, N.medidas.length, "one instruction per measurement");
   assert.deepEqual(pd.guiaStrong, N.medidas.map(([t]) => t));
   assert.equal(pd.guiaImg, 0, "no <img> inside #pd-guia");
-  assert.deepEqual(pd.guiaLink, [["img/tabla-medidas.jpg", "_blank", "noopener", "Ver tabla de medidas"]]);
+  assert.deepEqual(pd.guiaLink, [["index.html#guia-tallas", "_blank", "noopener", "Ver tabla de medidas"]]);
 });
 
 test("home shares the same product dialog: in-place embroidery and measuring guide, no exit to the designer", () => {
@@ -394,7 +394,7 @@ test("product dialog: the measuring guide shows only for 'Me mido en casa' and s
   assert.equal(casa.guiaAntes, false); assert.equal(casa.guiaTaller, false); assert.equal(casa.guiaDom, false);
   assert.equal(casa.guiaCasa, true);
   assert.equal(casa.guiaArriba, true);
-  assert.match(casa.guiaLink, /tabla-medidas\.jpg$/);
+  assert.match(casa.guiaLink, /#guia-tallas$/);
 });
 
 test("product dialog: the WhatsApp order states the 50% deposit and that the final price is confirmed when measuring", () => {

@@ -7,9 +7,24 @@
     const medidasCampos = () => NEGOCIO.medidas.map(([t]) =>
       `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}" placeholder="0 cm"></label>`).join("");
     const medidasLista = () => NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
-    // El botón "Escríbenos por WhatsApp" dibujado en la tabla de medidas es un enlace real encima de la imagen
-    const waMedidas = waLink("Hola Multicostura 💗 tengo dudas sobre cómo tomar mis medidas / necesito una talla especial.");
-    document.querySelectorAll(".tabla-wa").forEach(a => (a.href = waMedidas));
+    // Tabla de medidas hecha con HTML (tablas, consejos, foto de la modelo y botón de WhatsApp): una sola función para la sección y la agenda
+    const tablaMedidasHtml = () => {
+      const T = NEGOCIO.tablaMedidas, tabla = (cls, titulo, filas) =>
+        `<div class="tm-scroll"><table class="tm-tabla ${cls}"><caption>${titulo}</caption><tr><th scope="col">Medida</th>${T.tallas.map(t => `<th scope="col">${t}</th>`).join("")}</tr>` +
+        filas.map(([n, v]) => `<tr><th scope="row">${n}</th>${v.map(x => `<td>${x}</td>`).join("")}</tr>`).join("") + `</table></div>`;
+      return `<div class="tm">
+        <div class="tm-main">
+          <h3>Tabla de medidas</h3>
+          <p class="tm-sub"><b>¿Cómo saber tu talla?</b> Toma tus medidas con la cinta métrica y compáralas con estas referencias.</p>
+          <ul class="tm-tips">${T.consejos.map(([i, t]) => `<li><span aria-hidden="true">${i}</span>${t}</li>`).join("")}</ul>
+          ${tabla("tm-blusa", "Blusa (cm)", T.blusa)}${tabla("tm-pantalon", "Pantalón (cm)", T.pantalon)}
+          <p class="tm-nota">Nuestro fuerte es confeccionar <b>a tu medida</b>. Las tallas S a XL son una referencia y aplican a los uniformes listos de la tienda.</p>
+          <div class="tm-ayuda"><p>¿Dudas con tus medidas o necesitas una talla especial?</p><a class="btn btn-wa tm-wa" data-wa="medidas" target="_blank" rel="noopener" href="${waLink("Hola Multicostura 💗 tengo dudas sobre cómo tomar mis medidas / necesito una talla especial.")}">Escríbenos por WhatsApp</a></div>
+        </div>
+        <img class="tm-modelo" src="img/tabla-medidas-modelo.webp" loading="lazy" width="545" height="1062" alt="Modelo con el uniforme rosa mostrando dónde medir: busto, cintura, cadera y largo de pantalón.">
+      </div>`;
+    };
+    document.querySelectorAll("[data-tabla-medidas]").forEach(el => (el.innerHTML = tablaMedidasHtml()));
     const openWa = t => window.open(waLink(t), "_blank", "noopener");
     const C = n => NEGOCIO.colores[n] || NEGOCIO.coloresExtra[n];
     const pad = n => String(n).padStart(2, "0");
@@ -1022,6 +1037,7 @@
     $("pd").addEventListener("click", e => { if (e.target === $("pd")) $("pd").close(); });
     $("pd").addEventListener("close", () => { document.documentElement.classList.remove("pd-abierta"); pd.opener?.focus(); });
     $("pd-agenda").onclick = () => $("pd").close();
+    $("pd-guia").querySelector(".guia-link a").addEventListener("click", () => { if ($("pd-guia").querySelector(".guia-link a").getAttribute("href").startsWith("#")) $("pd").close(); });
 
     // ---------- Preguntas frecuentes ----------
     const respuesta = f => (typeof f.a === "function" ? f.a(NEGOCIO) : f.a);

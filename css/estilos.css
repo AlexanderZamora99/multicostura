@@ -345,8 +345,6 @@
     .steps-row p { color: var(--muted); font-size: .9rem; }
 
     /* Guía de medidas: solo la imagen de la tabla de medidas */
-    .guia-img { margin: 2rem auto 0; max-width: 900px; }
-    .guia-img img { width: 100%; height: auto; border-radius: 12px; display: block; }
     /* Guía desplegable con la tabla de medidas (ficha del producto y formulario de la agenda) */
     .guia { margin-top: 2rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
     .guia summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 52px; padding: .8rem 1.1rem; font-weight: 600; }
@@ -367,12 +365,30 @@
     #pd-casa input:focus { outline: 2px solid var(--mag); border-color: transparent; }
     .mgrid label > strong { font-weight: 700; color: var(--text); }
     .guia-casa { margin: 0 0 .9rem; }
-    /* Tabla de medidas: el botón de WhatsApp dibujado en la imagen (x 210-475, y 1135-1183 de 1265x1246) es un enlace encima */
-    .tabla-wrap { position: relative; max-width: 900px; margin-inline: auto; }
-    .tabla-wrap > a:first-child, .tabla-wrap > a:first-child img { display: block; }
-    .tabla-wa { position: absolute; left: 16%; top: 90.3%; width: 22.5%; height: 5.4%; border-radius: 999px; transition: background .2s, box-shadow .2s; }
-    .tabla-wa:hover { background: rgba(255,255,255,.28); box-shadow: 0 0 0 2px rgba(214,36,127,.7); }
-    .tabla-wa:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
+    /* Tabla de medidas hecha con HTML: tablas, consejos, foto de la modelo y botón de WhatsApp */
+    .tm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 1.5rem; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.4rem; }
+    .tm h3 { font-family: var(--font-titulos); font-size: 1.6rem; line-height: 1.1; color: #12254a; }
+    .tm-main { display: grid; gap: 1rem; min-width: 0; }
+    .tm-sub { color: var(--muted); font-size: .95rem; }
+    .tm-sub b { color: var(--text); }
+    .tm-tips { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr)); gap: .5rem; padding: .7rem; border-radius: 14px; background: var(--bg-2); }
+    .tm-tips li { display: grid; justify-items: center; gap: .3rem; text-align: center; font-size: .8rem; line-height: 1.25; }
+    .tm-tips li span { width: 38px; height: 38px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 1.2rem; box-shadow: 0 2px 8px rgba(214,36,127,.18); }
+    .tm-scroll { overflow-x: auto; border-radius: 12px; }
+    .tm-tabla { width: 100%; border-collapse: collapse; font-size: .9rem; background: #fff; }
+    .tm-tabla caption { text-align: left; padding: .55rem .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; }
+    .tm-blusa caption { background: var(--mag-2); }
+    .tm-pantalon caption { background: #12254a; }
+    .tm-tabla th, .tm-tabla td { padding: .45rem .7rem; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+    .tm-tabla th[scope="row"] { text-align: left; font-weight: 600; }
+    .tm-tabla tr:first-of-type th { background: var(--bg-2); color: var(--mag-2); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+    .tm-pantalon tr:first-of-type th { background: #e8edf8; color: #12254a; }
+    .tm-nota { font-size: .85rem; color: var(--muted); }
+    .tm-ayuda { display: grid; gap: .5rem; justify-items: start; }
+    .tm-ayuda p { font-weight: 600; }
+    .tm-modelo { width: 100%; height: auto; border-radius: 14px; display: block; }
+    @media (max-width: 760px) { .tm { grid-template-columns: minmax(0, 1fr); padding: 1rem; } .tm-modelo { width: min(100%, 300px); margin-inline: auto; } .tm-tabla { font-size: .84rem; } .tm-tabla th, .tm-tabla td { padding: .4rem .45rem; } }
+    .guia-img { margin: 2rem 0 0; }
     .guia-body img { width: 100%; max-width: 900px; height: auto; margin-inline: auto; border-radius: 12px; }
 
     /* Empresas y bono */

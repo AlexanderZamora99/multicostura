@@ -28,7 +28,7 @@ test("month grid shows the month in Spanish with Monday-first headers and one bu
   const cal = region(R(TALLER), "days");
   assert.match(cal, /Noviembre 2026/);
   assert.match(cal, /<table[^>]*role="grid"/);
-  const heads = [...cal.matchAll(/<th[^>]*>(?:<abbr[^>]*>)?([A-Z])(?:<\/abbr>)?<\/th>/g)].map(m => m[1]);
+  const heads = [...cal.slice(0, cal.indexOf("</table>")).matchAll(/<th[^>]*>(?:<abbr[^>]*>)?([A-Z])(?:<\/abbr>)?<\/th>/g)].map(m => m[1]);
   assert.deepEqual(heads, ["L", "M", "X", "J", "V", "S", "D"]);
   assert.equal((cal.match(/<button[^>]*data-fecha="/g) || []).length, 30, "November has 30 days");
 });
@@ -132,11 +132,12 @@ test("casa mode has its own collapsible measuring guide with the size chart, abo
   assert.ok(det, "details inside #self-measures");
   assert.doesNotMatch(det.match(/<details[^>]*>/)[0], /\sopen/, "collapsed by default");
   assert.match(det, /<summary[^>]*>\s*¿Cómo medirme en casa\?\s*<\/summary>/);
-  assert.match(det, /<img[^>]*src="img\/tabla-medidas\.jpg"[^>]*loading="lazy"/);
-  const items = (det.match(/<li>[\s\S]*?<\/li>/g) || []).map(x => x.replace(/<[^>]+>/g, "|").replace(/\|+/g, "|"));
+  assert.match(det, /<img[^>]*src="img\/tabla-medidas-modelo\.webp"[^>]*loading="lazy"/);
+  const lista = (det.match(/<ol[\s\S]*?<\/ol>/) || [""])[0];
+  const items = (lista.match(/<li>[\s\S]*?<\/li>/g) || []).map(x => x.replace(/<[^>]+>/g, "|").replace(/\|+/g, "|"));
   assert.equal(items.length, N.medidas.length, "one instruction per measurement field");
   N.medidas.forEach(([t, d], i) => {
-    assert.ok((det.match(/<li>[\s\S]*?<\/li>/g) || [])[i].includes(`<strong>${t}</strong>`), t);
+    assert.ok((lista.match(/<li>[\s\S]*?<\/li>/g) || [])[i].includes(`<strong>${t}</strong>`), t);
     assert.ok(items[i].includes(d), d);
   });
   assert.match(det, /<ol[\s>]/);

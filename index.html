@@ -238,12 +238,7 @@
                 <summary>¿Cómo medirme en casa?</summary>
                 <div class="guia-body">
                   <ol class="guia-pasos" id="guia-casa-lista"></ol>
-                  <div class="tabla-wrap">
-                    <a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">
-                    <img src="img/tabla-medidas.jpg" loading="lazy" width="1265" height="1246" alt="Tabla de medidas Multicostura: medidas de blusa y pantalón en centímetros para las tallas S, M, L y XL, con la modelo mostrando dónde medir busto, cintura, cadera y largo de pantalón.">
-                  </a>
-                    <a class="tabla-wa" data-wa="medidas" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp sobre tus medidas"></a>
-                  </div>
+                  <div data-tabla-medidas></div>
                 </div>
               </details>
               <p class="guia-link"><a href="#guia-tallas">¿No sabes cómo medirte? Ver tabla de medidas</a></p>
@@ -273,33 +268,7 @@
       <span class="eyebrow">¿Estás en otra ciudad?</span>
       <h2>Cómo tomar tus medidas en casa</h2>
       <p class="lead">Usa un metro de costura, sin apretar, y pide ayuda a alguien. Envíanos las medidas en centímetros desde la agenda (opción "Me mido en casa").</p>
-      <figure class="guia-img" id="guia-tallas">
-        <div class="tabla-wrap">
-          <a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">
-            <img src="img/tabla-medidas.jpg" loading="lazy" width="1265" height="1246" alt="Tabla de medidas Multicostura: medidas de blusa y pantalón en centímetros para las tallas S, M, L y XL, con la modelo mostrando dónde medir busto, cintura, cadera y largo de pantalón.">
-          </a>
-          <a class="tabla-wa" data-wa="medidas" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp sobre tus medidas"></a>
-        </div>
-        <div class="sr-only">
-            <table>
-              <caption>Blusa, medidas en centímetros</caption>
-              <tr><th scope="col">Medida</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th><th scope="col">XL</th></tr>
-              <tr><th scope="row">Busto</th><td>96</td><td>100</td><td>108</td><td>112</td></tr>
-              <tr><th scope="row">Cintura</th><td>78</td><td>84</td><td>90</td><td>96</td></tr>
-              <tr><th scope="row">Cadera</th><td>104</td><td>108</td><td>114</td><td>120</td></tr>
-              <tr><th scope="row">Largo de blusa</th><td>68</td><td>69</td><td>70</td><td>72</td></tr>
-            </table>
-            <table>
-              <caption>Pantalón, medidas en centímetros</caption>
-              <tr><th scope="col">Medida</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th><th scope="col">XL</th></tr>
-              <tr><th scope="row">Cintura</th><td>78</td><td>84</td><td>90</td><td>96</td></tr>
-              <tr><th scope="row">Cadera</th><td>104</td><td>108</td><td>114</td><td>120</td></tr>
-              <tr><th scope="row">Largo de pantalón</th><td>102</td><td>104</td><td>106</td><td>106</td></tr>
-              <tr><th scope="row">Largo entrepierna</th><td>80</td><td>81.5</td><td>83</td><td>84.5</td></tr>
-              <tr><th scope="row">Ancho de bota</th><td>22</td><td>23</td><td>24</td><td>25</td></tr>
-            </table>
-          </div>
-      </figure>
+      <div class="guia-img" id="guia-tallas" data-tabla-medidas></div>
     </div>
   </section>
 
@@ -465,7 +434,7 @@
                 <div class="guia-body">
                   <p>Usa un metro de costura, sin apretar, y pide ayuda a alguien. Anótalas en centímetros.</p>
                   <ol class="guia-pasos" id="pd-guia-lista"></ol>
-                  <p class="guia-link"><a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">Ver tabla de medidas</a></p>
+                  <p class="guia-link"><a href="#guia-tallas">Ver tabla de medidas</a></p>
                 </div>
               </details>
               <div class="mgrid" id="pd-casa"></div>

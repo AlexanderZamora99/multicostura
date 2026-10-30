@@ -238,6 +238,13 @@
         ["Ancho de hombros", "De la punta de un hombro a la otra, por la espalda."],
         ["Estatura", "Descalza, contra la pared."],
       ],
+      // Tabla de medidas de referencia (cm) de los uniformes listos en tienda; el modelo principal se confecciona a tu medida
+      tablaMedidas: {
+        tallas: ["S", "M", "L", "XL"],
+        blusa: [["Busto", [96, 100, 108, 112]], ["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de blusa", [68, 69, 70, 72]]],
+        pantalon: [["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de pantalón", [102, 104, 106, 106]], ["Largo entrepierna", [80, 81.5, 83, 84.5]], ["Ancho de bota", [22, 23, 24, 25]]],
+        consejos: [["📏", "Usa una cinta métrica flexible"], ["🧍", "Mantén una postura natural"], ["👚", "Mide sobre ropa interior o piel"], ["✅", "Si estás entre tallas, elige la más grande"]],
+      },
       bonos: [100000, 150000, 200000, 300000],
       clientas: [
         { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
