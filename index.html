@@ -408,53 +408,76 @@
     <button type="button" class="pd-close" id="pd-close" aria-label="Cerrar ficha del producto">×</button>
     <div class="pd-body">
       <div class="pd-gal">
-        <div class="pd-main" id="pd-main" tabindex="0" role="img" aria-label="">
-          <img id="pd-img" alt="">
-          <svg class="pd-sil" id="pd-sil" viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub"/></svg>
-          <span class="pd-hint" aria-hidden="true">🔍 Pasa el cursor o toca para ampliar</span>
-          <div class="bordado pd-patch" id="pd-patch" aria-hidden="true"><small>Tu bordado</small><span class="b-n"></span><span class="b-r"></span></div>
+        <div class="pd-media">
+          <div class="pd-main" id="pd-main" tabindex="0" role="img" aria-label="">
+            <img id="pd-img" alt="">
+            <svg class="pd-sil" id="pd-sil" viewBox="0 0 200 300" aria-hidden="true"><use href="#scrub"/></svg>
+            <span class="pd-hint" aria-hidden="true">🔍 Pasa el cursor o toca para ampliar</span>
+            <div class="bordado pd-patch" id="pd-patch" aria-hidden="true"><small>Tu bordado</small><span class="b-n"></span><span class="b-r"></span></div>
+          </div>
+          <div class="pd-thumbs" id="pd-thumbs" role="group" aria-label="Fotos del producto"></div>
         </div>
-        <div class="pd-thumbs" id="pd-thumbs" role="group" aria-label="Fotos del producto"></div>
+        <div class="pd-extra">
+          <p class="pd-desc" id="pd-desc"></p>
+          <ul class="pd-feats" id="pd-feats"></ul>
+          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
+        </div>
       </div>
       <div class="pd-info">
-        <p class="eyebrow" id="pd-cat"></p>
-        <h2 id="pd-title"></h2>
-        <p class="pd-price" id="pd-price"></p>
-        <p class="pd-desc" id="pd-desc"></p>
-        <ul class="pd-feats" id="pd-feats"></ul>
-        <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
-          <p class="pd-aviso" role="note"><b>Los colores pueden variar un poco.</b> Lo que ves depende de la pantalla y algunos colores son de referencia. Cuando vengas a la tienda a tomarte las medidas podrás ver y tocar las telas en su color real.</p>
-          <p class="pd-nota-diseno" id="pd-otro" hidden>¿Quieres otro diseño? Tenemos muchos más estampados. <a id="pd-otro-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te mostramos los disponibles.</p>
+        <div class="pd-head">
+          <p class="eyebrow" id="pd-cat"></p>
+          <h2 id="pd-title"></h2>
+          <p class="pd-price" id="pd-price"></p>
         </div>
-        <div class="pd-field" id="pd-bord-box"><span class="pd-lbl" id="pd-bord-lbl">Bordado (opcional)</span>
-          <div class="pd-bord">
-            <label><span>Nombre</span><input id="pd-name" maxlength="22" autocomplete="off" placeholder="Ej: Dra. Camila Ruiz"></label>
-            <label><span>Profesión</span><input id="pd-role" maxlength="26" autocomplete="off" placeholder="Ej: Odontóloga"></label>
-          </div>
-          <div class="pd-hilos" id="pd-hilos" role="group" aria-label="Color del hilo"></div>
-          <p class="pd-aviso" id="pd-bord-precio" role="note"></p>
-        </div>
-        <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
-        <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div>
-          <details class="guia pd-guia" id="pd-guia">
-            <summary>Cómo tomar tus medidas</summary>
-            <div class="guia-body">
-              <p>Usa un metro de costura, sin apretar, y pide ayuda a alguien. Anótalas en centímetros.</p>
-              <a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">
-                <img src="img/tabla-medidas.jpg" loading="lazy" width="1265" height="1246" alt="Tabla de medidas Multicostura: medidas de blusa y pantalón en centímetros para las tallas S, M, L y XL, con la modelo mostrando dónde medir busto, cintura, cadera y largo de pantalón.">
-              </a>
+        <div class="pd-pasos">
+        <div class="pd-paso" id="pd-paso-1">
+          <h3><button type="button" class="pd-paso-btn" id="pd-pb-1" aria-expanded="true" aria-controls="pd-pp-1"><span class="pd-paso-t">Color y modalidad<small id="pd-res-1"></small></span></button></h3>
+          <div class="pd-paso-body" id="pd-pp-1" role="region" aria-labelledby="pd-pb-1">
+            <div class="pd-field"><span class="pd-lbl">Color: <b id="pd-color-name"></b></span><div class="pd-colors" id="pd-colors" role="group" aria-label="Colores"></div>
+              <p class="pd-nota-diseno" id="pd-otro" hidden>¿Quieres otro diseño? Tenemos muchos más estampados. <a id="pd-otro-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te mostramos los disponibles.</p>
             </div>
-          </details>
+            <div class="pd-field" id="pd-tipo-box"><span class="pd-lbl">Modalidad</span><div class="pd-opts" id="pd-tipos" role="group" aria-label="Modalidad"></div></div>
+            <button type="button" class="btn btn-ghost pd-sig" data-sig="1">Siguiente</button>
+          </div>
         </div>
-        <div class="pd-field"><span class="pd-lbl">Cantidad</span>
-          <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
+        <div class="pd-paso" id="pd-bord-box">
+          <h3><button type="button" class="pd-paso-btn" id="pd-pb-2" aria-expanded="false" aria-controls="pd-pp-2"><span class="pd-paso-t">Bordado (opcional)<small id="pd-res-2"></small></span></button></h3>
+          <div class="pd-paso-body" id="pd-pp-2" role="region" aria-labelledby="pd-pb-2" hidden>
+            <div class="pd-bord">
+              <label><span>Nombre</span><input id="pd-name" maxlength="22" autocomplete="off" placeholder="Ej: Dra. Camila Ruiz"></label>
+              <label><span>Profesión</span><input id="pd-role" maxlength="26" autocomplete="off" placeholder="Ej: Odontóloga"></label>
+            </div>
+            <div class="pd-hilos" id="pd-hilos" role="group" aria-label="Color del hilo"></div>
+            <p class="pd-aviso" id="pd-bord-precio" role="note"></p>
+            <button type="button" class="btn btn-ghost pd-sig" data-sig="2">Siguiente</button>
+          </div>
         </div>
-        <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small>El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</small></div>
-        <div class="pd-actions">
-          <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Encargar por WhatsApp</a>
-          <a class="btn btn-ghost" id="pd-agenda" href="#agenda">Agendar mis medidas</a>
+        <div class="pd-paso" id="pd-paso-3">
+          <h3><button type="button" class="pd-paso-btn" id="pd-pb-3" aria-expanded="false" aria-controls="pd-pp-3"><span class="pd-paso-t">Medidas y cantidad<small id="pd-res-3"></small></span></button></h3>
+          <div class="pd-paso-body" id="pd-pp-3" role="region" aria-labelledby="pd-pb-3" hidden>
+            <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div>
+            <details class="guia pd-guia" id="pd-guia">
+              <summary>Cómo tomar tus medidas</summary>
+              <div class="guia-body">
+                <p>Usa un metro de costura, sin apretar, y pide ayuda a alguien. Anótalas en centímetros.</p>
+                <a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">
+                  <img src="img/tabla-medidas.jpg" loading="lazy" width="1265" height="1246" alt="Tabla de medidas Multicostura: medidas de blusa y pantalón en centímetros para las tallas S, M, L y XL, con la modelo mostrando dónde medir busto, cintura, cadera y largo de pantalón.">
+                </a>
+              </div>
+            </details>
+            </div>
+            <div class="pd-field"><span class="pd-lbl">Cantidad</span>
+              <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
+            </div>
+            <a class="btn btn-ghost" id="pd-agenda" href="#agenda">Agendar mis medidas</a>
+          </div>
+        </div>
         </div>
       </div>
+    </div>
+    <div class="pd-foot">
+      <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small>El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</small></div>
+      <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Pedir por WhatsApp</a>
     </div>
   </dialog>
 

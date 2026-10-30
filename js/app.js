@@ -867,7 +867,7 @@
       $("pd-cat").textContent = m.cat.join(" · ");
       const precios = NEGOCIO.tipos.map(t => precio(m, t));
       $("pd-price").innerHTML = sinPrecio(m) ? `Precio a consultar<small>Escríbenos y te contamos el valor y los diseños disponibles.</small>` : m.precioFijo ? pesos(m.precio)
-        : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}<small>${NEGOCIO.tipos.map(t => `${t.t}: ${pesos(precio(m, t))}`).join(" · ")}</small>`;
+        : `${pesos(Math.min(...precios))} – ${pesos(Math.max(...precios))}`;
       $("pd-desc").textContent = m.desc;
       // características propias del producto (accesorios) o las de los uniformes
       $("pd-feats").innerHTML = (m.caracteristicas
@@ -876,9 +876,10 @@
       $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
       $("pd-tipo-box").hidden = !!m.precioFijo;
       // accesorios (gorros): sin medidas, sin bordado y sin descuento por cantidad de uniformes
-      $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio;
+      $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio; // sin paso de bordado; en el paso 3 queda la cantidad
       $("pd-name").value = $("pd-role").value = "";
       $("pd-guia").open = false;
+      abrirPaso(1);
       $("pd-hilos").innerHTML = Object.entries(NEGOCIO.hilos).map(([h, hex]) => `<button type="button" data-hilo="${h}" aria-pressed="${h === pd.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("");
       $("pd-hilos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.hilo = b.dataset.hilo; $("pd-hilos").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintarTotal(); }));
       $("pd-otro").hidden = !m.accesorio;
@@ -923,6 +924,7 @@
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
       $("pd-total").parentElement.hidden = sinPrecio(m);
+      pintarResumenes();
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
       const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
@@ -937,6 +939,30 @@
       const base = /^(img\/disena\/[a-z]+)-[a-z-]+\.webp$/.exec(src || "");
       if (base && `${base[1]}.webp` in mapa) return mapa[`${base[1]}.webp`];
       return [64, 40, 34];
+    }
+    // Pasos plegables de la ficha: se abre uno a la vez y los cerrados resumen lo elegido
+    const pasosVisibles = () => [...document.querySelectorAll("#pd .pd-paso:not([hidden])")];
+    function abrirPaso(n) {
+      pasosVisibles().forEach(p => {
+        const abre = p.querySelector(".pd-paso-btn").id === `pd-pb-${n}`;
+        p.querySelector(".pd-paso-btn").setAttribute("aria-expanded", abre);
+        p.querySelector(".pd-paso-body").hidden = !abre;
+        p.classList.toggle("abierto", abre);
+      });
+    }
+    document.querySelectorAll("#pd .pd-paso-btn").forEach(b => (b.onclick = () => abrirPaso(b.id.slice(-1))));
+    document.querySelectorAll("#pd .pd-sig").forEach(b => (b.onclick = () => {
+      const ps = pasosVisibles(), i = ps.findIndex(p => p.querySelector(".pd-sig") === b), sig = ps[i + 1];
+      if (sig) { abrirPaso(sig.querySelector(".pd-paso-btn").id.slice(-1)); sig.querySelector(".pd-paso-btn").focus(); }
+    }));
+    function pintarResumenes() {
+      const m = pd.m, t = NEGOCIO.tipos.find(x => x.id === pd.tipo);
+      const med = (NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t;
+      const bord = [pd.name, pd.role].filter(Boolean).join(" · ");
+      const unidades = m.accesorio ? (pd.qty === 1 ? "1 unidad" : `${pd.qty} unidades`) : (pd.qty === 1 ? "1 uniforme" : `${pd.qty} uniformes`);
+      $("pd-res-1").textContent = [pd.color, m.precioFijo ? "" : t && t.t].filter(Boolean).join(" · ");
+      $("pd-res-2").textContent = bord ? `${bord} · hilo ${pd.hilo.toLowerCase()}` : "Sin bordado";
+      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", unidades].filter(Boolean).join(" · ");
     }
     // Parche del bordado sobre la foto grande y el precio que se suma
     function pintarBordado(bord) {
