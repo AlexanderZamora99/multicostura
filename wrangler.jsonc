@@ -1,0 +1,12 @@
+{
+  "name": "multicostura",
+  "compatibility_date": "2026-10-23",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "."
+  },
+  "workers_dev": true,
+  "preview_urls": true
+}
