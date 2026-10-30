@@ -77,3 +77,13 @@ test("size chart WhatsApp overlay sits on the drawn button (percentages of the i
   assert.match(css, /\.tabla-wa:focus-visible/);
   assert.match(css, /\.tabla-wrap \{[^}]*position: relative/);
 });
+
+test("sizes copy: made-to-measure first, standard sizes S-XL exist for ready-made store uniforms", () => {
+  const src = ["js/datos.js", "js/app.js", "index.html", "catalogo.html"].map(f => readFileSync(join(ROOT, f), "utf8")).join("\n");
+  assert.doesNotMatch(src, /no trabajamos por tallas|no se trabaja por tallas|No hace falta saber tu talla porque no hay/i);
+  const f = N.faq.find(x => x.id === "tallas"), a = typeof f.a === "function" ? f.a(N) : f.a;
+  assert.doesNotMatch(a, /^No\. No trabajamos/);
+  assert.match(a, /a tu medida|tus medidas/i);
+  assert.match(a, /S a XL/);
+  assert.match(a, /tienda/i);
+});

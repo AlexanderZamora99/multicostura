@@ -203,7 +203,7 @@
           fotos: { "Perrito rosa": "img/medias-perrito-rosa.webp", "Garabatos": "img/medias-garabatos.webp", "Muñequita roja": "img/medias-munequita-roja.webp", "Gatita rosa": "img/medias-gatita-rosa.webp",
             "Heroínas": "img/medias-heroinas.webp", "Monstruo azul": "img/medias-monstruo-azul.webp", "Amarillitos": "img/medias-amarillitos.webp" } },
       ],
-      // Tiempos de entrega por modalidad (confirmar con la dueña). No se trabaja por tallas: siempre se toman las medidas
+      // Tiempos de entrega por modalidad (confirmar con la dueña). El modelo principal es a tu medida: siempre se toman las medidas (los uniformes listos de la tienda sí vienen en tallas S a XL)
       tiempos: { tienda: "entrega inmediata", pedido: "3 a 5 días hábiles", medida: "5 a 8 días hábiles" },
       // ---- Preguntas frecuentes (sección #faq y chatbot) ----
       // claves: palabras que activan la respuesta en el chat (sin tildes, en minúscula). Si "a" es función, recibe NEGOCIO.
@@ -211,7 +211,7 @@
         { id: "pago", q: "¿Cómo se paga?", a: "Con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar"] },
         { id: "tiempos", q: "¿En cuánto tiempo me lo entregan?", a: n => `Precio tienda: ${n.tiempos.tienda}. Bajo pedido: ${n.tiempos.pedido}. Por medida: ${n.tiempos.medida}.`, claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "dias", "entrega", "entregan", "listo", "rapido"] },
         { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
-        { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No. No trabajamos por tallas: te tomamos las medidas en el taller, a domicilio o te guiamos para que te midas en casa, y el uniforme queda a tu cuerpo.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
+        { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No es necesario 💗 lo nuestro es confeccionar a tu medida: te medimos en el taller, a domicilio o te guiamos para que te midas en casa, y queda a tu cuerpo. Los uniformes listos de la tienda sí vienen en tallas S a XL: si quieres una talla puntual, pásate por la tienda y mira cuáles hay disponibles.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
         { id: "medidas", q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Te explicamos cada una en la guía de medidas.", claves: ["medida", "medidas", "medir", "medirme", "metro", "cinta"] },
         { id: "envios", q: "¿Hacen envíos?", a: n => `Sí, enviamos a toda Colombia. ${n.envio}`, claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete", "mandan"] },
         { id: "domicilio", q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio con un recargo de ${pesos(n.recargoDomicilio)}. También puedes venir al taller o medirte en casa.`, claves: ["domicilio", "visita", "vienen", "recargo", "consultorio", "casa"] },

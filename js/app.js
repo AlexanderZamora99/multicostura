@@ -911,7 +911,7 @@
       $("pd-color-name").textContent = c + (ref || (m.simulados || []).includes(c) && !srcElegida ? " · color de referencia" : "");
       $("pd-colors").innerHTML = m.colores.map(x => `<button type="button" data-color="${x}" style="--c:${C(x)}" title="${x}" aria-label="Color ${x}" aria-pressed="${x === c}"></button>`).join("");
       $("pd-colors").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(); }));
-      // modalidad, cómo tomar las medidas (no se trabaja por tallas) y cantidad
+      // modalidad, cómo tomar las medidas (lo principal es a tu medida; las tallas S a XL son solo para lo que hay listo en tienda) y cantidad
       $("pd-tipos").innerHTML = NEGOCIO.tipos.map(t => `<button type="button" data-t="${t.id}" aria-pressed="${t.id === pd.tipo}">${t.t} · ${pesos(precio(m, t))}<small>${NEGOCIO.tiempos[t.id]}</small></button>`).join("");
       $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
       $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
