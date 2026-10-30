@@ -2,6 +2,8 @@
 
     const $ = id => document.getElementById(id);
     const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
+    const precioBordado = (...textos) => textos.some(Boolean) ? NEGOCIO.bordado.porUniforme : 0;
+    const ciudadTaller = ciudad => String(ciudad).normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase() === NEGOCIO.ciudad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
     // Medidas: los mismos campos y la misma lista de cómo tomarlas en la agenda ("Me mido en casa") y en la ficha del producto
     const medidasCampos = () => NEGOCIO.medidas.map(([t]) =>
@@ -283,7 +285,7 @@
       const fotoColor = (x, c) => (x.fotos || {})[c] || x.foto;
       const href = x => `catalogo.html?cat=${encodeURIComponent(x.cat[0])}`;
       const miniatura = (x, foto, alt, nombre) => `<a class="look-th" href="${href(x)}"><img src="${foto}" alt="${alt}" loading="lazy"><span>${nombre}</span></a>`;
-      const bordado = () => (S.name ? NEGOCIO.bordado.nombre : 0) + (S.role ? NEGOCIO.bordado.profesion : 0);
+      const bordado = () => precioBordado(S.name, S.role);
       const panel = p => {
         const texto = typeof p.d === "function" ? p.d(NEGOCIO) : p.d;
         let extra = "";
@@ -399,6 +401,7 @@
       });
     }
     const discount = q => NEGOCIO.descuentos.reduce((d, [min, pct]) => (q >= min ? pct : d), 0);
+    const discountThreshold = min => `Más de ${min - 1}`;
     // Foto del diseñador: modelos de NEGOCIO.disena usan una sola foto base (img/disena/<id>.webp) recoloreada en cada
     // color; el blanco usa la foto blanca real. Los demás (Glam, bata, pantalón, línea blanca) usan su foto real por color.
     const slugColor = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, "-");
@@ -418,7 +421,7 @@
     function designInfo() {
       const m = model(), t = tipo();
       const name = $("s-name").value.trim(), role = $("s-role").value.trim();
-      const bord = (name ? NEGOCIO.bordado.nombre : 0) + (role ? NEGOCIO.bordado.profesion : 0);
+      const bord = precioBordado(name, role);
       const base = precio(m, t);
       const unit = base + bord;
       const pct = discount(design.qty);
@@ -475,13 +478,13 @@
         <div class="total"><span>Total estimado</span><span>${pesos(d.total)}</span></div>
         <small>El precio final se confirma al tomar tus medidas. ${NEGOCIO.envio}</small>`;
       $("tiers").innerHTML = NEGOCIO.descuentos.filter(([, p]) => p).map(([min, p]) =>
-        `<span class="${d.pct === p ? "on" : ""}">${min}+ uniformes: −${p * 100}%</span>`).join("");
+        `<span class="${d.pct === p ? "on" : ""}">${discountThreshold(min)} uniformes: −${p * 100}%</span>`).join("");
       renderSummary();
     }
     if (HOME) {
       ["s-name", "s-role"].forEach(id => $(id).addEventListener("input", renderDesign));
       $("q-minus").onclick = () => { design.qty = Math.max(1, design.qty - 1); renderDesign(); renderAgenda(); };
-      $("q-plus").onclick = () => { design.qty = Math.min(30, design.qty + 1); renderDesign(); renderAgenda(); };
+      $("q-plus").onclick = () => { design.qty = Math.min(99, design.qty + 1); renderDesign(); renderAgenda(); };
       $("s-ask").onclick = () => {
         const d = designInfo();
         openWa(`Hola Multicostura 💗 tengo una pregunta sobre este diseño:\n• ${d.texto}\n• Total estimado: ${pesos(d.total)}`);
@@ -571,7 +574,7 @@
         const b = document.createElement("button");
         b.type = "button";
         b.className = "mode" + (ag.modo === mo.id ? " on" : "");
-        const extra = mo.id === "domicilio" ? ` <b style="color:var(--mag-2)">+${pesos(NEGOCIO.recargoDomicilio)}</b>` : "";
+        const extra = mo.id === "domicilio" ? ` <b style="color:var(--mag-2)">+${pesos(NEGOCIO.recargoDomicilio)} por persona</b>` : "";
         b.innerHTML = `<span class="ico">${mo.ico}</span><b>${mo.t}${extra}</b><small>${mo.d}</small>`;
         b.onclick = () => {
           ag.modo = mo.id; ag.hora = null;
@@ -670,10 +673,11 @@
       if (!ag.modo) return;
       const d = designInfo();
       const mo = NEGOCIO.modalidades.find(x => x.id === ag.modo);
-      const rows = [`<span>${mo.ico} <strong>${mo.t}</strong>${ag.modo === "domicilio" ? ` · recargo ${pesos(NEGOCIO.recargoDomicilio)}` : ""}</span>`];
+      const recargo = ag.modo === "domicilio" ? NEGOCIO.recargoDomicilio * design.qty : 0;
+      const rows = [`<span>${mo.ico} <strong>${mo.t}</strong>${recargo ? ` · ${pesos(NEGOCIO.recargoDomicilio)} por persona × ${design.qty} = ${pesos(recargo)}` : ""}</span>`];
       if (presencial() && ag.hora) rows.push(`<span>📅 <strong>${largo(ag.fecha)}</strong> a las <strong>${hora12(ag.hora)}</strong> · ${citaMin()} min</span>`);
       rows.push(`<span>💗 Tu diseño: ${d.texto}</span>`);
-      rows.push(`<span>💰 Estimado: <strong>${pesos(d.total)}</strong></span>`);
+      rows.push(`<span>💰 Estimado: <strong>${pesos(d.total + recargo)}</strong></span>`);
       $("summary").innerHTML = rows.join("");
     }
 
@@ -730,7 +734,8 @@
           fecha: ag.fecha, hora: ag.hora, dur: citaMin(), margen: margen(),
           modalidad: ag.modo === "domicilio" ? "Domicilio" : "Taller",
           nombre, telefono: tel, direccion: ag.modo === "domicilio" ? $("f-addr").value.trim() : "",
-          diseno: d.texto, cantidad: design.qty, total: d.total, notas,
+          diseno: d.texto, cantidad: design.qty, total: d.total + (ag.modo === "domicilio" ? NEGOCIO.recargoDomicilio * design.qty : 0), notas,
+          recargoDomicilio: ag.modo === "domicilio" ? NEGOCIO.recargoDomicilio * design.qty : 0,
         };
         const btn = $("f-submit"), err = $("f-error");
         btn.disabled = true; btn.textContent = "Agendando…"; err.classList.add("hidden");
@@ -749,7 +754,9 @@
             `Hola Multicostura 💗 agendé mi toma de medidas en la página:\n` +
             `• ${cita.modalidad}: ${largo(cita.fecha)} a las ${hora12(cita.hora)}\n` +
             (cita.direccion ? `• Dirección: ${cita.direccion}\n` : "") +
-            `• Diseño: ${d.texto}\n• Total estimado: ${pesos(d.total)}` +
+            `• Diseño: ${d.texto}\n` +
+            (cita.recargoDomicilio ? `• Recargo a domicilio: ${pesos(NEGOCIO.recargoDomicilio)} por persona × ${design.qty} = ${pesos(cita.recargoDomicilio)}\n` : "") +
+            `• Total estimado: ${pesos(cita.total)}` +
             (notas ? `\n• Notas: ${notas}` : "") + `\nSoy ${nombre}.`);
           $("flow").classList.add("hidden");
           $("done").classList.remove("hidden");
@@ -777,12 +784,24 @@
       // ---------- Empresas ----------
       const in3w = new Date(Date.now() + 21 * 86400000);
       $("b-date").value = isoDate(in3w);
+      const renderBizFee = () => {
+        const ciudad = $("b-city").value.trim();
+        $("b-fee").textContent = ciudadTaller(ciudad)
+          ? `Visita empresarial: tarifa fija de ${pesos(NEGOCIO.recargoDomicilioEmpresa)}, sin importar la cantidad de personas.`
+          : `En Tuluá, la visita empresarial cuesta ${pesos(NEGOCIO.recargoDomicilioEmpresa)} fijos, sin importar la cantidad de personas. Para otras ciudades, el costo de visita se confirma por WhatsApp.`;
+      };
+      $("b-city").addEventListener("input", renderBizFee);
+      renderBizFee();
       $("biz").addEventListener("submit", e => {
         e.preventDefault();
         const fecha = fromIso($("b-date").value).toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
+        const ciudad = $("b-city").value.trim();
+        const recargo = ciudadTaller(ciudad) ? NEGOCIO.recargoDomicilioEmpresa : null;
         openWa(`Hola Multicostura 💗 quiero cotizar uniformes para mi equipo y agendar visita para tomar medidas:\n` +
           `• Empresa: ${$("b-company").value.trim()}\n• Personas: ${$("b-qty").value}\n` +
-          `• Ciudad: ${$("b-city").value.trim()}\n• Para el: ${fecha}\n• Logo bordado: ${$("b-logo").checked ? "sí" : "no"}`);
+          `• Ciudad: ${ciudad}\n• Para el: ${fecha}\n• Logo bordado: ${$("b-logo").checked ? "sí" : "no"}\n` +
+          (recargo === null ? "• Costo de visita: por confirmar según la ciudad" :
+            `• Visita empresarial: tarifa fija de ${pesos(recargo)}, independiente de la cantidad de personas`));
       });
 
       // ---------- Bono ----------
@@ -840,11 +859,9 @@
     $("f-mail").textContent = NEGOCIO.correo;
     $("f-horario").textContent = NEGOCIO.horarioTexto;
     $("f-copy").textContent = `© ${new Date().getFullYear()} Multicostura Uniformes. Todos los derechos reservados.`;
-    // Número visible: 573217830050 -> 321 783 0050 (WhatsApp) y enlace para llamar
+    // Número visible: 573217830050 -> 321 783 0050 (WhatsApp)
     const numeroLocal = NEGOCIO.whatsapp.replace(/^57/, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3");
     $("f-wa").textContent = `WhatsApp ${numeroLocal}`;
-    $("f-tel").href = `tel:+${NEGOCIO.whatsapp}`;
-    $("f-tel").textContent = `Llamar ${numeroLocal}`;
 
     if (HOME) {
       // ?modelo=<id>&color=<color>: llegada desde el catálogo con el modelo ya elegido
@@ -933,7 +950,7 @@
       // modalidad, cómo tomar las medidas (lo principal es a tu medida; las tallas S a XL son solo para lo que hay listo en tienda) y cantidad
       $("pd-tipos").innerHTML = NEGOCIO.tipos.map(t => `<button type="button" data-t="${t.id}" aria-pressed="${t.id === pd.tipo}">${t.t} · ${pesos(precio(m, t))}<small>${NEGOCIO.tiempos[t.id]}</small></button>`).join("");
       $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
-      $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
+      $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)} por persona` : x.d}</small></button>`).join("");
       $("pd-medidas").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.medidas = b.dataset.v; pintarProducto(srcElegida); }));
       pintarTotal();
     }
@@ -942,12 +959,12 @@
       const m = pd.m, c = pd.color;
       $("pd-q").textContent = pd.qty;
       // El bordado se cobra por uniforme y entra en el descuento por cantidad, igual que en el diseñador
-      const bord = m.accesorio ? 0 : (pd.name ? NEGOCIO.bordado.nombre : 0) + (pd.role ? NEGOCIO.bordado.profesion : 0);
+      const bord = m.accesorio ? 0 : precioBordado(pd.name, pd.role);
       const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t) + bord, pct = m.accesorio ? 0 : discount(pd.qty);
-      const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
+      const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio * pd.qty : 0;
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
       pintarBordado(bord);
-      $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
+      $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `${discountThreshold(NEGOCIO.descuentos.find(([, p]) => p)[0])} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
       $("pd-total").parentElement.hidden = $("pd-nota").hidden = sinPrecio(m);
       // Cuánto ahorra con el descuento por cantidad, o qué le falta para el siguiente
@@ -960,8 +977,9 @@
       const medidasHechas = pd.medidas === "casa" && !m.accesorio ? casaMedidas() : [];
       const medTxt = medidasHechas.length ? `\n\nMis medidas:\n${medidasHechas.map(x => `• ${x}`).join("\n")}` : "";
       const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
+      const recargoTxt = recargo ? `\n• Recargo a domicilio: ${pesos(NEGOCIO.recargoDomicilio)} por persona × ${pd.qty} = ${pesos(recargo)}` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
-        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\n• Para empezar: abono del 50% (${pesos(Math.round(total / 2))}); el precio final se confirma al tomar las medidas\nMe gustaría confirmar el color en la tienda.${medTxt}`);
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}${recargoTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\n• Para empezar: abono del 50% (${pesos(Math.round(total / 2))}); el precio final se confirma al tomar las medidas\nMe gustaría confirmar el color en la tienda.${medTxt}`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
     // Dónde está el pecho en una foto: [x%, y%, ancho%] o null si no se ve (pantalones). Las fotos recoloreadas de
@@ -1001,7 +1019,7 @@
       $("pd-res-1").textContent = [pd.color, m.precioFijo ? "" : t && t.t].filter(Boolean).join(" · ");
       $("pd-res-2").textContent = bord ? `${bord} · hilo ${pd.hilo.toLowerCase()}` : "Sin bordado";
       const hechas = casaMedidas().length;
-      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", pd.medidas === "casa" && !m.accesorio ? `${hechas}/${NEGOCIO.medidas.length} medidas` : "", unidades].filter(Boolean).join(" · ");
+      $("pd-res-3").textContent = [m.accesorio ? "" : med || "Medidas por definir", pd.medidas === "domicilio" && !m.accesorio ? `${pesos(NEGOCIO.recargoDomicilio)} por persona` : "", pd.medidas === "casa" && !m.accesorio ? `${hechas}/${NEGOCIO.medidas.length} medidas` : "", unidades].filter(Boolean).join(" · ");
     }
     // Parche del bordado sobre la foto grande y el precio que se suma
     function pintarBordado(bord) {
@@ -1018,7 +1036,7 @@
       br.textContent = pd.role; br.style.setProperty("--len", Math.max(12, Math.ceil(pd.role.length * 1.25)));
       $("pd-main").classList.toggle("con-bordado", !!(pd.name || pd.role));
       $("pd-bord-precio").innerHTML = bord ? `<b>Bordado: +${pesos(bord)} por uniforme.</b> Lo ves sobre la foto y va en tu pedido.`
-        : `Nombre +${pesos(NEGOCIO.bordado.nombre)}, profesión +${pesos(NEGOCIO.bordado.profesion)} por uniforme. Escríbelos y míralos sobre la foto. ¿Logo de empresa? <a href="index.html#empresas">Pide la propuesta</a>.`;
+        : `Nombre y profesión: ${pesos(NEGOCIO.bordado.porUniforme)} por uniforme. Escríbelos y míralos sobre la foto. ¿Logo de empresa? <a href="index.html#empresas">Pide la propuesta</a>.`;
     }
     [["pd-name", "name"], ["pd-role", "role"]].forEach(([id, k]) => $(id).addEventListener("input", () => { pd[k] = $(id).value.trim(); pintarTotal(); }));
     $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarTotal(); };
@@ -1150,10 +1168,10 @@
     }
     function pedirMedidas() {
       bot("Todos nuestros uniformes se hacen con tus medidas 📏 ¿Cómo te las tomamos?");
-      chips(NEGOCIO.modalidades.map(x => ({ t: `${x.t}${x.id === "domicilio" ? ` (+${pesos(NEGOCIO.recargoDomicilio)})` : ""}`, fn: () => { P.medidas = x; paso(pedirCantidad); } })));
+      chips(NEGOCIO.modalidades.map(x => ({ t: `${x.t}${x.id === "domicilio" ? ` (+${pesos(NEGOCIO.recargoDomicilio)} por persona)` : ""}`, fn: () => { P.medidas = x; paso(pedirCantidad); } })));
     }
     function pedirCantidad() {
-      const tramos = NEGOCIO.descuentos.filter(([, p]) => p).map(([n, p]) => `${n}+ = −${p * 100}%`).join(", ");
+      const tramos = NEGOCIO.descuentos.filter(([, p]) => p).map(([n, p]) => `${discountThreshold(n)} = −${p * 100}%`).join(", ");
       if (P.m.accesorio) P.t = NEGOCIO.tipos[0];
       pedirTexto(P.m.accesorio ? `¿Cuántas unidades quieres?` : `¿Cuántos uniformes necesitas? Hay descuento por cantidad: ${tramos}.`, txt => {
         const n = parseInt(txt, 10);
@@ -1162,7 +1180,7 @@
       }, [1, 2, 3, 6, 12].map(n => ({ t: String(n), fn: () => { P.qty = n; espera = null; paso(P.m.accesorio ? pedirEntrega : pedirBordado); } })));
     }
     function pedirBordado() {
-      bot(`¿Le bordamos tu nombre y profesión? Nombre +${pesos(NEGOCIO.bordado.nombre)}, profesión +${pesos(NEGOCIO.bordado.profesion)}.`);
+      bot(`¿Le bordamos tu nombre y profesión? El bordado cuesta ${pesos(NEGOCIO.bordado.porUniforme)} por uniforme.`);
       chips([
         { t: "✨ Sí, con bordado", fn: () => pedirTexto("¿Qué nombre bordamos? (ej: Dra. Camila Ruiz)", txt => {
           P.bordNombre = txt.slice(0, 22);
@@ -1194,9 +1212,9 @@
       });
     }
     function cuenta() {
-      const base = precio(P.m, P.t), bord = (P.bordNombre ? NEGOCIO.bordado.nombre : 0) + (P.bordRol ? NEGOCIO.bordado.profesion : 0);
+      const base = precio(P.m, P.t), bord = precioBordado(P.bordNombre, P.bordRol);
       const sub = (base + bord) * P.qty, pct = P.m.accesorio ? 0 : discount(P.qty), desc = Math.round(sub * pct);
-      const recargo = P.medidas && P.medidas.id === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
+      const recargo = P.medidas && P.medidas.id === "domicilio" ? NEGOCIO.recargoDomicilio * P.qty : 0;
       const total = sub - desc + recargo;
       return { base, bord, sub, pct, desc, recargo, total, abono: Math.round(total / 2) };
     }
@@ -1211,7 +1229,7 @@
           ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hilo.toLowerCase()})` : "Sin bordado"]]),
         ["Entrega", P.entrega], ["Nombre", P.nombre], ["Celular", P.cel],
       ];
-      const precioTxt = [`${pesos(k.base + k.bord)} c/u × ${P.qty}`, k.desc ? `descuento ${k.pct * 100}%: −${pesos(k.desc)}` : "", k.recargo ? `domicilio de medidas: +${pesos(k.recargo)}` : ""].filter(Boolean).join(" · ");
+      const precioTxt = [`${pesos(k.base + k.bord)} c/u × ${P.qty}`, k.desc ? `descuento ${k.pct * 100}%: −${pesos(k.desc)}` : "", k.recargo ? `domicilio de medidas: ${pesos(NEGOCIO.recargoDomicilio)} por persona × ${P.qty} = ${pesos(k.recargo)}` : ""].filter(Boolean).join(" · ");
       const totales = sinPrecio(P.m) ? `<span>Precio: <b>te lo confirmamos por WhatsApp</b></span>` : `<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span>`;
       bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}${totales}</div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
       const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n` + (sinPrecio(P.m) ? "¿Qué precio tienen y están disponibles?" : `• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`);
@@ -1228,8 +1246,11 @@
         pedirTexto("¿Cuántas personas son?", b => { P.personas = b;
           pedirTexto("¿En qué ciudad están?", c => { P.ciudad = c;
             pedirTexto("¿Con quién hablamos? (nombre y celular)", d => { espera = null;
-              const msg = `Hola Multicostura 💗 quiero cotizar uniformes para mi equipo:\n• Empresa: ${P.empresa}\n• Personas: ${P.personas}\n• Ciudad: ${P.ciudad}\n• Contacto: ${d}`;
-              bot(`Perfecto. Te llevamos la propuesta con precio por cantidad y logo bordado.<div class="resumen"><span>Empresa: <b>${esc(P.empresa)}</b></span><span>Personas: <b>${esc(P.personas)}</b></span><span>Ciudad: <b>${esc(P.ciudad)}</b></span><span>Contacto: <b>${esc(d)}</b></span></div>`);
+              const recargo = ciudadTaller(P.ciudad) ? NEGOCIO.recargoDomicilioEmpresa : null;
+              const visita = recargo === null ? "Costo de visita por confirmar según la ciudad" :
+                `Visita empresarial: tarifa fija de ${pesos(recargo)}, independiente de la cantidad de personas`;
+              const msg = `Hola Multicostura 💗 quiero cotizar uniformes para mi equipo:\n• Empresa: ${P.empresa}\n• Personas: ${P.personas}\n• Ciudad: ${P.ciudad}\n• ${visita}\n• Contacto: ${d}`;
+              bot(`Perfecto. Te llevamos la propuesta con precio por cantidad y logo bordado.<div class="resumen"><span>Empresa: <b>${esc(P.empresa)}</b></span><span>Personas: <b>${esc(P.personas)}</b></span><span>Ciudad: <b>${esc(P.ciudad)}</b></span><span>${esc(visita)}</span><span>Contacto: <b>${esc(d)}</b></span></div>`);
               chips([{ t: "✅ Enviar por WhatsApp", href: waLink(msg), cls: "principal" }, { t: "🏠 Volver al inicio", fn: inicio }]);
             }); }); }); });
     }

@@ -6,11 +6,11 @@ import { render } from "./render.mjs";
 const N = new Function(`${readFileSync(new URL("../js/datos.js", import.meta.url), "utf8")}; return NEGOCIO;`)();
 
 // Fixed "today" through window.HOY_TEST: Wednesday 2026-11-25 at 09:00. The booking window is 14 days, up to Tuesday 2026-12-08.
-// Demo bookings seeded in localStorage: 26 Nov 09:00 (60 min) and 27 Nov fully booked (08:00-12:00 and 14:00-18:00).
+// Demo bookings seeded in localStorage: 26 Nov 09:00 (60 min) and 27 Nov fully booked (09:00-12:00 and 14:30-18:30).
 const SEED = JSON.stringify([
   { fecha: "2026-11-26", hora: "09:00", dur: 60 },
-  { fecha: "2026-11-27", hora: "08:00", dur: 240 },
-  { fecha: "2026-11-27", hora: "14:00", dur: 240 },
+  { fecha: "2026-11-27", hora: "09:00", dur: 180 },
+  { fecha: "2026-11-27", hora: "14:30", dur: 240 },
 ]);
 const transform = h => h.replace('<script src="js/datos.js">',
   `<script>window.HOY_TEST="2026-11-25T09:00";localStorage.setItem("multicostura-demo-citas",${JSON.stringify(SEED)});</script><script src="js/datos.js">`);
@@ -69,8 +69,17 @@ test("choosing a day marks it pressed and lists start times inside horario, busy
   assert.equal(busy.length, 2, "9:00 and 9:30 overlap the 60-minute booking");
   busy.forEach(b => assert.match(b, /disabled/));
   const free = libres(h);
-  assert.ok(free.includes("8:00 a. m.") && free.includes("10:00 a. m.") && free.includes("5:30 p. m."));
-  assert.ok(!free.includes("9:00 a. m.") && !free.includes("12:00 p. m."), "no overlap, nothing past the lunch break");
+  assert.ok(free.includes("10:00 a. m.") && free.includes("11:30 a. m.") && free.includes("6:00 p. m."));
+  assert.ok(!free.includes("9:00 a. m.") && !free.includes("12:00 p. m.") && !free.includes("2:00 p. m."), "no overlap, nothing past the lunch break or before opening");
+});
+
+test("Saturday appointments run continuously from 10:00 a. m. to the last 4:30 p. m. start", () => {
+  const h = R(`${TALLER} ${DIA("2026-11-28")}`);
+  const free = libres(h);
+  assert.equal(free[0], "10:00 a. m.");
+  assert.equal(free[free.length - 1], "4:30 p. m.");
+  assert.ok(free.includes("12:00 p. m.") && free.includes("2:30 p. m."));
+  assert.ok(!free.includes("9:00 a. m.") && !free.includes("5:00 p. m."));
 });
 
 test("duration grows with the number of people", () => {
@@ -83,15 +92,15 @@ test("duration grows with the number of people", () => {
 test("longer appointments remove the start times that would overlap a busy hour", () => {
   const h = R(`document.getElementById("q-plus").click(); ${TALLER} ${DIA("2026-11-26")}`); // 50 min
   const free = libres(h);
-  assert.ok(free.includes("8:00 a. m."), "8:00-8:50 ends before the 9:00 booking");
-  assert.ok(!free.includes("8:30 a. m."), "8:30-9:20 overlaps it");
+  assert.ok(!free.includes("9:00 a. m."), "the 9:00 booking occupies this start time");
+  assert.ok(!free.includes("9:30 a. m."), "9:30-10:20 overlaps the booking");
   assert.ok(free.includes("10:00 a. m."));
 });
 
 test("the home travel margin is respected: a start that touches the busy hour with the buffer is not offered", () => {
   const h = R(`document.getElementById("q-plus").click(); ${DOMICILIO} ${DIA("2026-11-26")}`); // 50 min + 30 min buffer
   const free = libres(h);
-  assert.ok(!free.includes("8:00 a. m."), "8:00 + 50 + 30 runs past 9:00 (without the buffer it would fit)");
+  assert.ok(!free.includes("9:00 a. m."), "the 9:00 booking occupies this start time");
   assert.ok(free.includes("10:00 a. m."));
   assert.match(h.match(/id="dur"[^>]*>([^<]*)/)[1], /más el traslado/);
 });
@@ -99,7 +108,7 @@ test("the home travel margin is respected: a start that touches the busy hour wi
 test("times already past today are not offered (now 09:00 plus the minimum notice)", () => {
   const h = R(`${TALLER} ${DIA("2026-11-25")}`);
   const todos = slotBtns(h).map(b => b.replace(/<[^>]*>/g, ""));
-  assert.ok(!todos.includes("8:00 a. m.") && !todos.includes("10:30 a. m."), "before 11:00 is gone");
+  assert.ok(!todos.includes("9:00 a. m.") && !todos.includes("10:30 a. m."), "before 11:00 is gone");
   assert.ok(todos.includes("11:00 a. m."));
 });
 

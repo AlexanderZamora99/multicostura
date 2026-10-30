@@ -181,9 +181,14 @@ const dialogo = `
     g("pd-plus").click(); out.q = g("pd-q").textContent; out.t2 = num(g("pd-total").textContent);
     g("pd-minus").click();
     teclear("pd-role", "Pediatra"); out.t3 = num(g("pd-total").textContent);
+    teclear("pd-name", ""); out.roleOnly = num(g("pd-total").textContent);
     const dor = [...g("pd-hilos").querySelectorAll("button")].find(b => b.dataset.hilo === "Dorado"); dor.click(); out.hiloPressed = dor.getAttribute("aria-pressed");
     out.wa1 = wa(); out.hilo = g("pd-patch").style.getPropertyValue("--hilo");
     teclear("pd-name", ""); teclear("pd-role", ""); out.t4 = num(g("pd-total").textContent); out.patch4 = g("pd-main").classList.contains("con-bordado"); out.wa4 = wa();
+    const medida = id => [...g("pd-medidas").querySelectorAll("button")].find(b => b.dataset.v === id);
+    medida("domicilio").click(); out.domTarifa = medida("domicilio").querySelector("small").textContent;
+    g("pd-plus").click(); out.domTwo = num(g("pd-total").textContent); out.waDom = wa();
+    medida("taller").click(); out.tallerTwo = num(g("pd-total").textContent);
     const d = g("pd").querySelector("details#pd-guia");
     out.guia = !!d; out.guiaSteps = d ? d.querySelectorAll("ol li").length : 0; out.guiaImg = d ? d.querySelectorAll("img").length : -1;
     out.guiaLink = d ? [...d.querySelectorAll("a")].map(a => [a.getAttribute("href"), a.target, a.rel, a.textContent.trim()]) : [];
@@ -202,12 +207,19 @@ test("product dialog: typing an embroidery name shows the patch on the photo and
   assert.equal(pd.patch0, false);
   assert.equal(pd.patch1, true);
   assert.ok(pd.patchTxt.includes("Dra. Ana Paz"));
-  assert.equal(pd.t1 - pd.t0, N.bordado.nombre);
+  assert.equal(pd.t1 - pd.t0, N.bordado.porUniforme);
   assert.equal(pd.q, "2");
   assert.equal(pd.t2, 2 * pd.t1, "embroidery is charged per unit");
-  assert.equal(pd.t3 - pd.t0, N.bordado.nombre + N.bordado.profesion);
+  assert.equal(pd.t3 - pd.t0, N.bordado.porUniforme);
+  assert.equal(pd.roleOnly - pd.t0, N.bordado.porUniforme);
   assert.equal(pd.t4, pd.t0);
   assert.equal(pd.patch4, false);
+});
+
+test("product dialog domicile surcharge is $8,000 per person and scales with quantity", () => {
+  assert.match(pd.domTarifa, /\$8\.000 por persona/);
+  assert.equal(pd.domTwo - pd.tallerTwo, N.recargoDomicilio * 2);
+  assert.match(pd.waDom, /\$8\.000 por persona × 2 = \$16\.000/);
 });
 
 test("product dialog: the embroidery patch sits on the chest, not over the trousers", () => {

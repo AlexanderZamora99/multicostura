@@ -46,7 +46,7 @@ function setup() {
   bloqueos.getRange(1, 1, 1, COL_BLOQUEOS.length).setValues([COL_BLOQUEOS]).setFontWeight("bold").setBackground("#fcedf4");
   bloqueos.setFrozenRows(1);
   bloqueos.getRange("A:C").setNumberFormat("@");
-  bloqueos.getRange("A2").setNote("Formato: 2026-12-24  ·  Desde/Hasta: 08:00 y 18:00 (día completo: 00:00 a 23:59)");
+  bloqueos.getRange("A2").setNote("Formato: 2026-12-24  ·  Desde/Hasta: 09:00 y 18:30 (día completo: 00:00 a 23:59)");
 
   const hoja1 = ss.getSheetByName("Hoja 1") || ss.getSheetByName("Sheet1");
   if (hoja1 && ss.getSheets().length > 2) ss.deleteSheet(hoja1);

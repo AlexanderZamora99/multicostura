@@ -25,10 +25,11 @@ Dentro de `NEGOCIO` en `index.html`:
 - `direccionTaller`, `ciudad`.
 - `tipos`: modalidades y precios (precio tienda, bajo pedido, por medida).
 - `categorias`: filtros del catálogo.
-- `horario`: días y rangos. Ej.: `1: [["08:00","12:00"],["14:00","18:00"]]` = lunes de 8 a 12 y de 2 a 6.
+- `horario`: días y rangos. Ej.: `1: [["09:00","12:00"],["14:30","18:30"]]` = lunes de 9 a 12 y de 2:30 a 6:30.
 - `minutosPorPersona`, `minutosBase`: cuánto dura tomar medidas.
 - `margen.domicilio`: minutos de traslado después de una cita a domicilio.
-- `recargoDomicilio`.
+- `recargoDomicilio` (tarifa individual) y `recargoDomicilioEmpresa` (tarifa fija por visita empresarial, independiente de la cantidad de personas).
+- `descuentos`: tramos por cantidad mínima de uniformes y porcentaje aplicado.
 - `modelos`: nombre, precio tienda, categorías (`cat`), colores (vacío = todos) y foto. `precioFijo: true` = no cambia con la modalidad (batas, pantalones).
 - `bordado`, `descuentos`, `bonos`, `proceso`, `medidas`.
 

@@ -28,9 +28,12 @@ const probe = `
     g("pd-minus").click(); g("pd-plus").click(); g("pd-plus").click();
     [...g("pd-medidas").querySelectorAll("button")][0].click(); out.res3 = txt(2);
     out.ahorro3 = g("pd-ahorro").innerText.trim(); out.total3 = g("pd-total").textContent;
-    g("pd-plus").click(); g("pd-plus").click(); g("pd-plus").click(); out.ahorro6 = g("pd-ahorro").innerText.trim();
-    for (let i = 0; i < 6; i++) g("pd-plus").click(); out.ahorro12 = g("pd-ahorro").innerText.trim();
-    for (let i = 0; i < 9; i++) g("pd-minus").click();
+    for (let i = 0; i < 3; i++) g("pd-plus").click(); out.ahorro6 = g("pd-ahorro").innerText.trim();
+    g("pd-plus").click(); out.ahorro7 = g("pd-ahorro").innerText.trim(); out.total7 = g("pd-total").textContent;
+    for (let i = 0; i < 3; i++) g("pd-plus").click(); out.ahorro10 = g("pd-ahorro").innerText.trim();
+    g("pd-plus").click(); out.ahorro11 = g("pd-ahorro").innerText.trim();
+    for (let i = 0; i < 39; i++) g("pd-plus").click(); out.ahorro50 = g("pd-ahorro").innerText.trim();
+    g("pd-plus").click(); out.ahorro51 = g("pd-ahorro").innerText.trim();
     teclear("pd-name", ""); teclear("pd-role", ""); out.res2vacio = txt(1);
     btns()[0].click(); out.tras1 = abiertos();
     g("pd-close").click(); await wait(50);
@@ -85,14 +88,18 @@ const N = new Function(`${readFileSync(new URL("../js/datos.js", import.meta.url
 const num = t => Number(String(t).replace(/\D/g, ""));
 for (const [nombre, p] of [["desktop", desk], ["mobile", mob]]) {
   test(`product dialog footer (${nombre}): shows the saving or a nudge to the next discount tier`, () => {
-    const unit = N.tipos.find(t => t.id === "pedido").precio + N.bordado.nombre + N.bordado.profesion; // the probe typed name and profession
-    assert.match(p.ahorro0, /^Lleva 2 más y ahorras 5%$/);
-    const ahorro3 = Math.round(unit * 3 * N.descuentos[1][1]);
-    assert.match(p.ahorro3, /^Ahorras \$[\d.]+ \(5%\)$/);
-    assert.equal(num(p.ahorro3.match(/\$[\d.]+/)[0]), ahorro3);
-    assert.equal(num(p.total3), unit * 3 - ahorro3);
-    assert.match(p.ahorro6, /^Ahorras \$[\d.]+ \(10%\)$/);
-    assert.match(p.ahorro12, /^Ahorras \$[\d.]+ \(15%\)$/);
+    const unit = N.tipos.find(t => t.id === "pedido").precio + N.bordado.porUniforme; // the probe typed name and profession
+    assert.match(p.ahorro0, /^Lleva 6 más y ahorras 5%$/);
+    assert.match(p.ahorro3, /^Lleva 4 más y ahorras 5%$/);
+    assert.match(p.ahorro6, /^Lleva 1 más y ahorras 5%$/);
+    assert.match(p.ahorro7, /^Ahorras \$[\d.]+ \(5%\)$/);
+    const ahorro7 = Math.round(unit * 7 * 0.05);
+    assert.equal(num(p.ahorro7.match(/\$[\d.]+/)[0]), ahorro7);
+    assert.equal(num(p.total7), unit * 7 - ahorro7);
+    assert.match(p.ahorro10, /^Lleva 1 más y ahorras 10%$/);
+    assert.match(p.ahorro11, /^Ahorras \$[\d.]+ \(10%\)$/);
+    assert.match(p.ahorro50, /^Lleva 1 más y ahorras 15%$/);
+    assert.match(p.ahorro51, /^Ahorras \$[\d.]+ \(15%\)$/);
   });
   test(`product dialog footer (${nombre}): the final-price note is visible and the footer stays short`, () => {
     assert.match(p.nota, /50%/);
