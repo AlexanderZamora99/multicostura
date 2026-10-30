@@ -678,8 +678,12 @@
     }
 
     // Campos de medidas para "Me mido en casa"
-    if (HOME) NEGOCIO.medidas.forEach(([t], i) => $("mgrid").insertAdjacentHTML("beforeend",
-      `<label>${t} (cm)<input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
+    if (HOME) {
+      NEGOCIO.medidas.forEach(([t]) => $("mgrid").insertAdjacentHTML("beforeend",
+        `<label><strong>${t} (cm)</strong><input type="number" inputmode="decimal" min="20" max="250" step="0.5" data-m="${t}"></label>`));
+      // Cómo tomar cada medida: solo texto, dentro de la guía del formulario
+      $("guia-casa-lista").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><strong>${t}</strong> ${d}</li>`).join("");
+    }
 
     async function loadBusy() {
       try { ag.busy = await fetchBusy(hoyIso(), ultimoDia()); }

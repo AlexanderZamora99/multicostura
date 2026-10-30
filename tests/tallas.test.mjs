@@ -29,6 +29,9 @@ test("the old step list and pink diagram are gone from the whole home page and t
   const cat = render({ page: "catalogo.html", inject: `document.querySelector('.model .pic').click();` }).html;
   for (const [nombre, h] of [["home", html], ["catalog", cat]]) {
     assert.doesNotMatch(h, /<li><b>Busto o pecho<\/b>/, nombre);
+    // the per-measurement list is allowed only inside the agenda's #guia-casa
+    const fuera = h.replace(/<details[^>]*id="guia-casa"[\s\S]*?<\/details>/, "");
+    assert.doesNotMatch(fuera, /<ol[\s>][\s\S]*?Busto o pecho/, nombre);
     assert.doesNotMatch(h, /id="pd-measures"|id="measures"/, nombre);
     assert.doesNotMatch(h, /stroke-dasharray="5 4"/, nombre);
     assert.doesNotMatch(h, /fill:#f4b6d2/, nombre);

@@ -1,7 +1,9 @@
 // Monthly calendar agenda: month grid, day states, slots, duration and busy hours.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { render } from "./render.mjs";
+const N = new Function(`${readFileSync(new URL("../js/datos.js", import.meta.url), "utf8")}; return NEGOCIO;`)();
 
 // Fixed "today" through window.HOY_TEST: Wednesday 2026-11-25 at 09:00. The booking window is 14 days, up to Tuesday 2026-12-08.
 // Demo bookings seeded in localStorage: 26 Nov 09:00 (60 min) and 27 Nov fully booked (08:00-12:00 and 14:00-18:00).
@@ -131,7 +133,14 @@ test("casa mode has its own collapsible measuring guide with the size chart, abo
   assert.doesNotMatch(det.match(/<details[^>]*>/)[0], /\sopen/, "collapsed by default");
   assert.match(det, /<summary[^>]*>\s*¿Cómo medirme en casa\?\s*<\/summary>/);
   assert.match(det, /<img[^>]*src="img\/tabla-medidas\.jpg"[^>]*loading="lazy"/);
-  assert.match(det, /cinta métrica flexible/i);
+  const items = (det.match(/<li>[\s\S]*?<\/li>/g) || []).map(x => x.replace(/<[^>]+>/g, "|").replace(/\|+/g, "|"));
+  assert.equal(items.length, N.medidas.length, "one instruction per measurement field");
+  N.medidas.forEach(([t, d], i) => {
+    assert.ok((det.match(/<li>[\s\S]*?<\/li>/g) || [])[i].includes(`<strong>${t}</strong>`), t);
+    assert.ok(items[i].includes(d), d);
+  });
+  assert.match(det, /<ol[\s>]/);
+  assert.doesNotMatch(det, /<svg|stroke-dasharray/);
   assert.ok(box.indexOf("<details") < box.indexOf('id="mgrid"'), "guide comes before the inputs");
   assert.doesNotMatch(box, /guía más abajo/);
   assert.match(box, /Todo en centímetros/);
@@ -141,4 +150,15 @@ test("casa mode keeps every measurement field", () => {
   const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
   const inputs = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"')).match(/<input[^>]*data-m="[^"]+"/g) || [];
   assert.equal(inputs.length, 7);
+});
+
+test("casa mode: the seven measurement labels are bold and a visible link leads to the size chart", () => {
+  const h = R(`document.querySelectorAll("#modes .mode")[2].click();`);
+  const grid = h.slice(h.indexOf('id="mgrid"'), h.indexOf('id="f-notes"'));
+  const labels = grid.match(/<label>[\s\S]*?<\/label>/g) || [];
+  assert.equal(labels.length, 7);
+  N.medidas.forEach(([t], i) => assert.match(labels[i], new RegExp(`<label><strong>${t} \\(cm\\)</strong><input`)));
+  const box = h.slice(h.indexOf('id="self-measures"'), h.indexOf('id="f-notes"'));
+  assert.match(box, /<a[^>]*href="#guia-tallas"[^>]*>[^<]*¿No sabes cómo medirte\? Ver tabla de medidas/);
+  assert.match(h, /id="guia-tallas"/, "the target exists");
 });
