@@ -362,6 +362,12 @@
     .guia-link a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
     .mgrid label > strong { font-weight: 700; color: var(--text); }
     .guia-casa { margin: 0 0 .9rem; }
+    /* Tabla de medidas: el botón de WhatsApp dibujado en la imagen (x 210-475, y 1135-1183 de 1265x1246) es un enlace encima */
+    .tabla-wrap { position: relative; max-width: 900px; margin-inline: auto; }
+    .tabla-wrap > a:first-child, .tabla-wrap > a:first-child img { display: block; }
+    .tabla-wa { position: absolute; left: 16%; top: 90.3%; width: 22.5%; height: 5.4%; border-radius: 999px; transition: background .2s, box-shadow .2s; }
+    .tabla-wa:hover { background: rgba(255,255,255,.28); box-shadow: 0 0 0 2px rgba(214,36,127,.7); }
+    .tabla-wa:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
     .guia-body img { width: 100%; max-width: 900px; height: auto; margin-inline: auto; border-radius: 12px; }
 
     /* Empresas y bono */

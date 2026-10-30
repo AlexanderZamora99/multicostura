@@ -3,6 +3,9 @@
     const $ = id => document.getElementById(id);
     const pesos = n => "$" + Math.round(n).toLocaleString("es-CO");
     const waLink = t => `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(t)}`;
+    // El botón "Escríbenos por WhatsApp" dibujado en la tabla de medidas es un enlace real encima de la imagen
+    const waMedidas = waLink("Hola Multicostura 💗 tengo dudas sobre cómo tomar mis medidas / necesito una talla especial.");
+    document.querySelectorAll(".tabla-wa").forEach(a => (a.href = waMedidas));
     const openWa = t => window.open(waLink(t), "_blank", "noopener");
     const C = n => NEGOCIO.colores[n] || NEGOCIO.coloresExtra[n];
     const pad = n => String(n).padStart(2, "0");
