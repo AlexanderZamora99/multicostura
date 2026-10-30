@@ -457,10 +457,13 @@
     @media (max-width: 760px) { .nos-grid { grid-template-columns: minmax(0, 1fr); } .nos-video { justify-self: center; width: min(100%, 300px); } }
 
     /* Tarjeta: la foto y el nombre abren la ficha ampliada */
-    .model .pic[role="button"] { cursor: zoom-in; }
-    .model .pic[role="button"]::after { content: "Ver detalles"; position: absolute; left: 50%; bottom: .8rem; translate: -50% 0; z-index: 2; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--text); font-size: .8rem; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; }
-    .model .pic[role="button"]:hover::after, .model .pic[role="button"]:focus-visible::after { opacity: 1; }
-    @media (hover: none) { .model .pic[role="button"]::after { opacity: 1; } }
+    .model .pic[role="button"] { cursor: pointer; overflow: hidden; }
+    .model .pic[role="button"] img { transition: transform .35s ease; }
+    .model .pic[role="button"]:hover img, .model .pic[role="button"]:focus-visible img { transform: scale(1.06); }
+    .model .pic[role="button"]::after { content: "Ver detalle"; position: absolute; left: 50%; bottom: .8rem; translate: -50% 6px; z-index: 2; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--text); font-size: .8rem; font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,.18); opacity: 0; transition: opacity .2s, translate .2s; pointer-events: none; }
+    .model .pic[role="button"]:hover::after, .model .pic[role="button"]:focus-visible::after { opacity: 1; translate: -50% 0; }
+    @media (hover: none) { .model .pic[role="button"]::after { opacity: 1; translate: -50% 0; } }
+    @media (prefers-reduced-motion: reduce) { .model .pic[role="button"] img, .model .pic[role="button"]::after { transition: none; } .model .pic[role="button"]:hover img, .model .pic[role="button"]:focus-visible img { transform: none; } }
     .model .pic[role="button"]:focus-visible { outline: 3px solid var(--mag); outline-offset: 2px; }
     .pd-open { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: inherit; text-align: left; }
     .pd-open:hover { color: var(--mag-2); text-decoration: underline; text-underline-offset: 3px; }

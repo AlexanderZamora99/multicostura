@@ -304,3 +304,27 @@ test("chest map: every embroiderable gallery photo has an explicit entry", () =>
     assert.ok(existsSync(join(ROOT, s)), `file ${s}`);
   }
 });
+
+// ---- Product cards: the click opens the dialog, so the hover must say so (no magnifier cursor) ----
+const cardProbe = `
+  setTimeout(() => {
+    const pics = [...document.querySelectorAll('.model .pic[role="button"]')];
+    const out = pics.map(p => ({ cursor: getComputedStyle(p).cursor, chip: getComputedStyle(p, "::after").content }));
+    document.body.insertAdjacentHTML("beforeend", '<pre id="probe11">' + JSON.stringify(out) + '</pre>');
+  }, 300);
+`;
+const cardOut = JSON.parse((render({ page: "catalogo.html", inject: cardProbe }).html.match(/<pre id="probe11">(\[[\s\S]*?\])<\/pre>/) || [, "[]"])[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+
+test("product cards: pointer cursor and a 'Ver detalle' chip on every card, no magnifier", () => {
+  assert.ok(cardOut.length >= 10, "cards rendered");
+  assert.ok(cardOut.every(c => c.cursor === "pointer"), JSON.stringify(cardOut[0]));
+  assert.ok(cardOut.every(c => c.chip.includes("Ver detalle")), JSON.stringify(cardOut[0]));
+});
+
+test("product cards: hover and focus scale the photo and respect reduced motion; the dialog photo keeps its zoom cursor", () => {
+  const css = readFileSync(join(ROOT, "css/estilos.css"), "utf8");
+  assert.doesNotMatch(css, /\.model[^{]*\.pic[^{]*\{[^}]*zoom-in/);
+  assert.match(css, /\.model \.pic\[role="button"\]:(hover|focus-visible)[^{]*img[^{]*\{[^}]*transform: scale\(/);
+  assert.match(css, /prefers-reduced-motion: reduce\)[^{]*\{[^}]*\.model \.pic[^}]*transition: none/);
+  assert.match(css, /\.pd-main \{[^}]*cursor: zoom-in/);
+});
