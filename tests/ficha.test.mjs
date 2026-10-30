@@ -14,6 +14,7 @@ const probe = `
     const out = {};
     await wait(200);
     document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(150);
+    out.ahorro0 = g("pd-ahorro").innerText.trim(); out.nota = g("pd-nota").innerText.trim(); out.footH = g("pd-wa").closest(".pd-foot").getBoundingClientRect().height; out.total0 = g("pd-total").textContent;
     out.n = btns().length; out.ini = abiertos(); out.res1 = txt(0);
     out.controls = btns().every(b => { const p = document.getElementById(b.getAttribute("aria-controls")); return p && p.hidden === (b.getAttribute("aria-expanded") !== "true"); });
     const foot = g("pd-wa").closest(".pd-foot");
@@ -26,6 +27,10 @@ const probe = `
     btns()[2].click(); out.tras3 = abiertos(); out.res2 = txt(1);
     g("pd-minus").click(); g("pd-plus").click(); g("pd-plus").click();
     [...g("pd-medidas").querySelectorAll("button")][0].click(); out.res3 = txt(2);
+    out.ahorro3 = g("pd-ahorro").innerText.trim(); out.total3 = g("pd-total").textContent;
+    g("pd-plus").click(); g("pd-plus").click(); g("pd-plus").click(); out.ahorro6 = g("pd-ahorro").innerText.trim();
+    for (let i = 0; i < 6; i++) g("pd-plus").click(); out.ahorro12 = g("pd-ahorro").innerText.trim();
+    for (let i = 0; i < 9; i++) g("pd-minus").click();
     teclear("pd-name", ""); teclear("pd-role", ""); out.res2vacio = txt(1);
     btns()[0].click(); out.tras1 = abiertos();
     g("pd-close").click(); await wait(50);
@@ -72,5 +77,27 @@ for (const [nombre, p] of [["desktop", desk], ["mobile", mob]]) {
     assert.ok(p.aviso);
     assert.equal(p.gorroN, 2);
     assert.deepEqual(p.gorroIni, [true, false]);
+  });
+}
+
+import { readFileSync } from "node:fs";
+const N = new Function(`${readFileSync(new URL("../js/datos.js", import.meta.url), "utf8")}; return NEGOCIO;`)();
+const num = t => Number(String(t).replace(/\D/g, ""));
+for (const [nombre, p] of [["desktop", desk], ["mobile", mob]]) {
+  test(`product dialog footer (${nombre}): shows the saving or a nudge to the next discount tier`, () => {
+    const unit = N.tipos.find(t => t.id === "pedido").precio + N.bordado.nombre + N.bordado.profesion; // the probe typed name and profession
+    assert.match(p.ahorro0, /^Lleva 2 más y ahorras 5%$/);
+    const ahorro3 = Math.round(unit * 3 * N.descuentos[1][1]);
+    assert.match(p.ahorro3, /^Ahorras \$[\d.]+ \(5%\)$/);
+    assert.equal(num(p.ahorro3.match(/\$[\d.]+/)[0]), ahorro3);
+    assert.equal(num(p.total3), unit * 3 - ahorro3);
+    assert.match(p.ahorro6, /^Ahorras \$[\d.]+ \(10%\)$/);
+    assert.match(p.ahorro12, /^Ahorras \$[\d.]+ \(15%\)$/);
+  });
+  test(`product dialog footer (${nombre}): the final-price note is visible and the footer stays short`, () => {
+    assert.match(p.nota, /50% de abono/);
+    assert.match(p.nota, /medidas/);
+    if (nombre === "mobile") { assert.ok(p.nota.length <= 50, p.nota); assert.ok(p.footH <= 130, `footer height ${p.footH}`); }
+    else assert.ok(p.footH <= 140, `footer height ${p.footH}`);
   });
 }

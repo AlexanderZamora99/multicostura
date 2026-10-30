@@ -523,8 +523,13 @@
     .pd-total { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .1rem 1rem; padding: .6rem 1rem; border-radius: 14px; background: var(--text); color: #fff; }
     .pd-total strong { font-family: var(--font-titulos); font-size: 1.4rem; }
     .pd-total small { grid-column: 1 / -1; color: #d9c4cf; font-size: .72rem; line-height: 1.25; }
+    .pd-total .pd-ahorro { color: #ffd6ea; font-weight: 600; }
+    .pd-total .pd-ahorro:empty { display: none; }
+    .pd-nota { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); text-align: center; line-height: 1.2; }
+    .pd-nota[hidden] { display: none; }
+    .solo-movil { display: none; }
     /* Pie fijo: total y pedido siempre a la vista, sin tapar el contenido (el cuerpo hace scroll por debajo) */
-    .pd-foot { position: sticky; bottom: 0; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: .7rem; align-items: center; padding: .8rem 1.6rem; background: var(--card); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -12px rgba(36,22,29,.25); }
+    .pd-foot { position: sticky; bottom: 0; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: .45rem .7rem; align-items: center; padding: .8rem 1.6rem; background: var(--card); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -12px rgba(36,22,29,.25); }
     .pd-foot .btn-wa { font-size: 1rem; text-align: center; }
     /* Pasos plegables */
     .pd-pasos { display: grid; gap: .6rem; counter-reset: paso; }
@@ -573,9 +578,11 @@
       .pd-extra { order: 3; }
       /* Se limita el ancho (no el alto) para conservar el 4:5 que usa el mapa del pecho */
       .pd-main { width: min(100%, 480px, 38dvh); margin-inline: auto; }
-      .pd-foot { padding: .6rem 16px; grid-template-columns: auto minmax(0, 1fr); gap: .6rem; }
+      .pd-foot { padding: .5rem 16px; grid-template-columns: auto minmax(0, 1fr); gap: .3rem .6rem; }
       .pd-foot .pd-total { grid-template-columns: auto; gap: 0; padding: .45rem .8rem; }
-      .pd-foot .pd-total small { display: none; }
+      .pd-foot .pd-nota { text-align: left; }
+      .solo-pc { display: none; }
+      .solo-movil { display: inline; }
       .pd-foot .btn { padding-inline: .6rem; }
     }
     @media (prefers-reduced-motion: reduce) { .pd-main img { transition: none; } }

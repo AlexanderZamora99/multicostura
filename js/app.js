@@ -930,7 +930,11 @@
       pintarBordado(bord);
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
-      $("pd-total").parentElement.hidden = sinPrecio(m);
+      $("pd-total").parentElement.hidden = $("pd-nota").hidden = sinPrecio(m);
+      // Cuánto ahorra con el descuento por cantidad, o qué le falta para el siguiente
+      const bruto = unit * pd.qty, ahorro = bruto - Math.round(bruto * (1 - pct));
+      const sig = NEGOCIO.descuentos.find(([min, p]) => min > pd.qty && p > 0);
+      $("pd-ahorro").textContent = m.accesorio ? "" : ahorro > 0 ? `Ahorras ${pesos(ahorro)} (${Math.round(pct * 100)}%)` : sig ? `Lleva ${sig[0] - pd.qty} más y ahorras ${Math.round(sig[1] * 100)}%` : "";
       pintarResumenes();
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
       const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
