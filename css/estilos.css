@@ -512,6 +512,26 @@
     .pd-total { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .2rem 1rem; padding: 1rem 1.1rem; border-radius: 16px; background: var(--text); color: #fff; }
     .pd-total strong { font-family: var(--font-titulos); font-size: 1.5rem; }
     .pd-total small { grid-column: 1 / -1; color: #d9c4cf; font-size: .78rem; }
+    /* Bordado en la ficha: parche sobre la foto grande (se esconde al ampliar), campos y color del hilo */
+    .pd-patch { display: none; position: absolute; right: 4%; bottom: 4%; width: 52%; padding: .55rem .5rem .6rem; border-radius: 10px; background: var(--tela); color: var(--hilo); text-align: center; line-height: 1.2; box-shadow: 0 8px 20px rgba(0,0,0,.3); container-type: inline-size; pointer-events: none; }
+    .pd-patch::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--hilo); border-radius: 6px; opacity: .35; pointer-events: none; }
+    .pd-main.con-bordado:not(.sin-foto):not(.zoom) .pd-patch { display: block; }
+    .pd-main.con-bordado:not(.sin-foto):not(.zoom) .pd-hint { opacity: 0; }
+    .pd-bord { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .pd-bord label > span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .25rem; }
+    .pd-bord input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: .6rem .75rem; font: inherit; font-size: 1rem; background: var(--card); color: var(--text); }
+    .pd-bord input:focus { outline: 2px solid var(--mag); border-color: transparent; }
+    @media (max-width: 480px) { .pd-bord { grid-template-columns: minmax(0, 1fr); } }
+    .pd-hilos { display: flex; gap: .5rem; }
+    .pd-hilos button { width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); background: var(--c); box-shadow: 0 0 0 2px #fff; }
+    .pd-hilos button[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--mag); }
+    .pd-hilos button:focus-visible { outline: 3px solid var(--mag); outline-offset: 3px; }
+    #pd-bord-precio a { color: var(--mag-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    /* Guía de medidas dentro de la ficha */
+    .pd-guia { margin-top: .2rem; }
+    .pd-guia ol { display: grid; gap: .6rem; padding-left: 1.2rem; }
+    .pd-guia li b { display: block; }
+    .pd-guia li span { color: var(--muted); font-size: .88rem; }
     .pd-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
     .pd-actions .btn-wa { grid-column: 1 / -1; font-size: 1rem; }
     .pd-actions [hidden] { display: none; }

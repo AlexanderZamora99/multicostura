@@ -862,7 +862,7 @@
     }
     const fotoProducto = (m, c) => { const real = (m.fotos || {})[c]; return real && !(m.simulados || []).includes(c) && c !== NEGOCIO.disena[m.id] ? real : fotoDisena(m, c) || m.foto; };
     function abrirProducto(m, color, opener) {
-      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", medidas: null, qty: 1 });
+      Object.assign(pd, { m, opener, color: color || (NEGOCIO.disena[m.id]) || m.colores[0], tipo: m.precioFijo ? "tienda" : "pedido", medidas: null, qty: 1, name: "", role: "", hilo: "Blanco" });
       if (!m.colores.includes(pd.color)) pd.color = m.colores[0];
       $("pd-title").textContent = m.nombre;
       $("pd-cat").textContent = m.cat.join(" · ");
@@ -876,8 +876,13 @@
       $("pd-thumbs").innerHTML = galeria(m).map(g => `<button type="button" data-src="${g.src}" data-color="${g.color}" aria-label="Ver foto en ${g.color.toLowerCase()}"><img src="${g.src}" alt="" loading="lazy"></button>`).join("");
       $("pd-thumbs").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.color = b.dataset.color; pintarProducto(b.dataset.src); }));
       $("pd-tipo-box").hidden = !!m.precioFijo;
-      // accesorios (gorros): sin medidas, sin diseñador y sin descuento por cantidad de uniformes
-      $("pd-medidas").parentElement.hidden = $("pd-pers").hidden = !!m.accesorio;
+      // accesorios (gorros): sin medidas, sin bordado y sin descuento por cantidad de uniformes
+      $("pd-medidas").parentElement.hidden = $("pd-bord-box").hidden = !!m.accesorio;
+      $("pd-name").value = $("pd-role").value = "";
+      $("pd-guia").open = false;
+      $("pd-measures").innerHTML = NEGOCIO.medidas.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
+      $("pd-hilos").innerHTML = Object.entries(NEGOCIO.hilos).map(([h, hex]) => `<button type="button" data-hilo="${h}" aria-pressed="${h === pd.hilo}" aria-label="Hilo ${h.toLowerCase()}" title="${h}" style="--c:${hex}"></button>`).join("");
+      $("pd-hilos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.hilo = b.dataset.hilo; $("pd-hilos").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); pintarTotal(); }));
       $("pd-otro").hidden = !m.accesorio;
       if (m.accesorio) $("pd-otro-wa").href = waOtroDiseno(m);
       pintarProducto();
@@ -905,20 +910,44 @@
       $("pd-tipos").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.tipo = b.dataset.t; pintarProducto(srcElegida); }));
       $("pd-medidas").innerHTML = NEGOCIO.modalidades.map(x => `<button type="button" data-v="${x.id}" aria-pressed="${x.id === pd.medidas}">${x.t}<small>${x.id === "domicilio" ? `+${pesos(NEGOCIO.recargoDomicilio)}` : x.d}</small></button>`).join("");
       $("pd-medidas").querySelectorAll("button").forEach(b => (b.onclick = () => { pd.medidas = b.dataset.v; pintarProducto(srcElegida); }));
+      pintarTotal();
+    }
+    // Cantidad, bordado, total y mensaje de WhatsApp: se repinta al escribir sin tocar el resto de la ficha (ni el foco)
+    function pintarTotal() {
+      const m = pd.m, c = pd.color;
       $("pd-q").textContent = pd.qty;
-      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t), pct = m.accesorio ? 0 : discount(pd.qty);
+      // El bordado se cobra por uniforme y entra en el descuento por cantidad, igual que en el diseñador
+      const bord = m.accesorio ? 0 : (pd.name ? NEGOCIO.bordado.nombre : 0) + (pd.role ? NEGOCIO.bordado.profesion : 0);
+      const t = NEGOCIO.tipos.find(x => x.id === pd.tipo), unit = precio(m, t) + bord, pct = m.accesorio ? 0 : discount(pd.qty);
       const recargo = pd.medidas === "domicilio" ? NEGOCIO.recargoDomicilio : 0;
       const total = Math.round(unit * pd.qty * (1 - pct)) + recargo;
+      pintarBordado(bord);
       $("pd-desc-qty").textContent = m.accesorio ? "" : pct ? `Descuento por cantidad: −${pct * 100}%` : `Desde ${NEGOCIO.descuentos.find(([, p]) => p)[0]} uniformes hay descuento`;
       $("pd-total").textContent = pesos(total);
       $("pd-total").parentElement.hidden = sinPrecio(m);
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
+      const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
-        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
-    $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarProducto(); };
-    $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarProducto(); };
+    // Parche del bordado sobre la foto grande y el precio que se suma
+    function pintarBordado(bord) {
+      const fill = C(pd.color), tela = fill.startsWith("linear") ? "#1f1d22" : fill, patch = $("pd-patch");
+      let hilo = NEGOCIO.hilos[pd.hilo];
+      if (hilo.toLowerCase() === tela.toLowerCase()) hilo = pd.hilo === "Blanco" ? "#1f1d22" : "#ffffff";
+      patch.style.setProperty("--tela", tela);
+      patch.style.setProperty("--hilo", hilo);
+      const n = pd.name || "Tu nombre", bn = patch.querySelector(".b-n"), br = patch.querySelector(".b-r");
+      bn.textContent = n; bn.style.opacity = pd.name ? 1 : .5; bn.style.setProperty("--len", Math.max(10, n.length));
+      br.textContent = pd.role; br.style.setProperty("--len", Math.max(12, Math.ceil(pd.role.length * 1.25)));
+      $("pd-main").classList.toggle("con-bordado", !!(pd.name || pd.role));
+      $("pd-bord-precio").innerHTML = bord ? `<b>Bordado: +${pesos(bord)} por uniforme.</b> Lo ves sobre la foto y va en tu pedido.`
+        : `Nombre +${pesos(NEGOCIO.bordado.nombre)}, profesión +${pesos(NEGOCIO.bordado.profesion)} por uniforme. Escríbelos y míralos sobre la foto. ¿Logo de empresa? <a href="index.html#empresas">Pide la propuesta</a>.`;
+    }
+    [["pd-name", "name"], ["pd-role", "role"]].forEach(([id, k]) => $(id).addEventListener("input", () => { pd[k] = $(id).value.trim(); pintarTotal(); }));
+    $("pd-minus").onclick = () => { pd.qty = Math.max(1, pd.qty - 1); pintarTotal(); };
+    $("pd-plus").onclick = () => { pd.qty = Math.min(99, pd.qty + 1); pintarTotal(); };
     // Zoom: con el mouse se amplía al pasar por encima y sigue el cursor; con el dedo o el teclado, tocar alterna
     const pdMain = $("pd-main"), finoPuntero = matchMedia("(hover: hover) and (pointer: fine)");
     const mover = (x, y) => { const r = pdMain.getBoundingClientRect(); $("pd-img").style.transformOrigin = `${((x - r.left) / r.width) * 100}% ${((y - r.top) / r.height) * 100}%`; };
@@ -932,11 +961,6 @@
     $("pd-close").onclick = () => $("pd").close();
     $("pd").addEventListener("click", e => { if (e.target === $("pd")) $("pd").close(); });
     $("pd").addEventListener("close", () => { document.documentElement.classList.remove("pd-abierta"); pd.opener?.focus(); });
-    $("pd-pers").onclick = () => {
-      if (!HOME) { disenar(pd.m, pd.color); return; }
-      $("s-model").value = pd.m.id; design.color = pd.color; design.tipo = pd.tipo; design.qty = pd.qty;
-      renderDesign(); $("pd").close(); $("personaliza").scrollIntoView();
-    };
     $("pd-agenda").onclick = () => $("pd").close();
 
     // ---------- Preguntas frecuentes ----------

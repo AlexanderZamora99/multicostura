@@ -162,3 +162,75 @@ test("'Diseñar' on the catalog goes to the home designer with that model", () =
   const primero = N.modelos.filter(m => m.cat.includes("Conjuntos")).map(m => m.nombre).sort((a, b) => a.localeCompare(b, "es"))[0];
   assert.match(html, new RegExp(`id="pv-cap">${primero} · `));
 });
+
+// ---- Product dialog (#pd): in-place embroidery and measuring guide ----
+const dialogo = `
+  const wait = ms => new Promise(r => setTimeout(r, ms)), g = id => document.getElementById(id);
+  const num = s => Number(String(s).replace(/\\D/g, "")), wa = () => decodeURIComponent(g("pd-wa").getAttribute("href"));
+  const teclear = (id, v) => { const el = g(id); el.value = v; el.dispatchEvent(new Event("input", { bubbles: true })); };
+  (async () => {
+    const out = {};
+    await wait(200);
+    document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(100);
+    out.open = g("pd").open; out.pers = !!g("pd-pers");
+    out.t0 = num(g("pd-total").textContent); out.wa0 = wa(); out.patch0 = g("pd-main").classList.contains("con-bordado");
+    teclear("pd-name", "Dra. Ana Paz");
+    out.t1 = num(g("pd-total").textContent); out.patch1 = g("pd-main").classList.contains("con-bordado"); out.patchTxt = g("pd-patch").textContent;
+    g("pd-plus").click(); out.q = g("pd-q").textContent; out.t2 = num(g("pd-total").textContent);
+    g("pd-minus").click();
+    teclear("pd-role", "Pediatra"); out.t3 = num(g("pd-total").textContent);
+    const dor = [...g("pd-hilos").querySelectorAll("button")].find(b => b.dataset.hilo === "Dorado"); dor.click(); out.hiloPressed = dor.getAttribute("aria-pressed");
+    out.wa1 = wa(); out.hilo = g("pd-patch").style.getPropertyValue("--hilo");
+    teclear("pd-name", ""); teclear("pd-role", ""); out.t4 = num(g("pd-total").textContent); out.patch4 = g("pd-main").classList.contains("con-bordado"); out.wa4 = wa();
+    const d = g("pd").querySelector("details#pd-guia");
+    out.guia = !!d; out.guiaSteps = d ? d.querySelectorAll("ol li").length : 0; out.guiaImg = d ? (d.querySelector("img") || {}).getAttribute && d.querySelector("img").getAttribute("src") : "";
+    out.guiaParent = d ? !!d.closest(".pd-info") : false;
+    g("pd-close").click(); await wait(50);
+    document.querySelector('.model[data-id="gorro"] .pic').click(); await wait(100);
+    out.gorroBord = g("pd-bord-box").hidden;
+    document.body.insertAdjacentHTML("beforeend", '<pre id="probe3">' + JSON.stringify(out) + '</pre>');
+  })();
+`;
+const pd = JSON.parse((render({ page: "catalogo.html", inject: dialogo }).html.match(/<pre id="probe3">(\{[\s\S]*?\})<\/pre>/) || [, "{}"])[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+
+test("product dialog: typing an embroidery name shows the patch on the photo and adds its price", () => {
+  assert.equal(pd.open, true);
+  assert.equal(pd.patch0, false);
+  assert.equal(pd.patch1, true);
+  assert.ok(pd.patchTxt.includes("Dra. Ana Paz"));
+  assert.equal(pd.t1 - pd.t0, N.bordado.nombre);
+  assert.equal(pd.q, "2");
+  assert.equal(pd.t2, 2 * pd.t1, "embroidery is charged per unit");
+  assert.equal(pd.t3 - pd.t0, N.bordado.nombre + N.bordado.profesion);
+  assert.equal(pd.t4, pd.t0);
+  assert.equal(pd.patch4, false);
+});
+
+test("product dialog: the WhatsApp order includes the embroidery and thread, and not when empty", () => {
+  assert.ok(pd.wa1.includes("Dra. Ana Paz") && pd.wa1.includes("Pediatra"), pd.wa1);
+  assert.match(pd.wa1, /dorado/i);
+  assert.equal(pd.hiloPressed, "true");
+  assert.equal(pd.hilo.trim(), N.hilos.Dorado);
+  assert.doesNotMatch(pd.wa0, /bordado/i);
+  assert.doesNotMatch(pd.wa4, /bordado/i);
+});
+
+test("product dialog: embroidery is hidden for accessories and the old 'Personalizar y bordar' exit is gone", () => {
+  assert.equal(pd.gorroBord, true);
+  assert.equal(pd.pers, false);
+});
+
+test("product dialog: measuring guide sits in the right column as an in-place <details> with the steps and size chart", () => {
+  assert.equal(pd.guia, true);
+  assert.equal(pd.guiaParent, true);
+  assert.equal(pd.guiaSteps, N.medidas.length);
+  assert.match(pd.guiaImg, /tabla-medidas\.jpg$/);
+});
+
+test("home shares the same product dialog: in-place embroidery and measuring guide, no exit to the designer", () => {
+  const { html } = render();
+  const dlg = html.slice(html.indexOf('<dialog class="pd"'), html.indexOf("</dialog>"));
+  assert.match(dlg, /id="pd-guia"/);
+  assert.match(dlg, /id="pd-bord-box"/);
+  assert.doesNotMatch(dlg, /id="pd-pers"/);
+});
