@@ -533,7 +533,10 @@
     .pd-total small { grid-column: 1 / -1; color: #d9c4cf; font-size: .72rem; line-height: 1.25; }
     .pd-total .pd-ahorro { color: #ffd6ea; font-weight: 600; }
     .pd-total .pd-ahorro:empty { display: none; }
-    .pd-nota { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); text-align: center; line-height: 1.2; }
+    .pd-nota { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .45rem .8rem; border-radius: 10px; background: var(--bg-2); border: 1px solid rgba(214,36,127,.35); color: var(--text); font-size: .86rem; line-height: 1.3; }
+    .pd-nota strong { color: var(--mag-2); }
+    .pd-casa-box { display: grid; gap: .8rem; }
+    .pd-casa-box[hidden] { display: none; }
     .pd-nota[hidden] { display: none; }
     .solo-movil { display: none; }
     /* Pie fijo: total y pedido siempre a la vista, sin tapar el contenido (el cuerpo hace scroll por debajo) */
@@ -588,7 +591,7 @@
       .pd-main { width: min(100%, 480px, 38dvh); margin-inline: auto; }
       .pd-foot { padding: .5rem 16px; grid-template-columns: auto minmax(0, 1fr); gap: .3rem .6rem; }
       .pd-foot .pd-total { grid-template-columns: auto; gap: 0; padding: .45rem .8rem; }
-      .pd-foot .pd-nota { text-align: left; }
+      .pd-foot .pd-nota { justify-content: flex-start; padding: .35rem .6rem; font-size: .85rem; }
       .solo-pc { display: none; }
       .solo-movil { display: inline; }
       .pd-foot .btn { padding-inline: .6rem; }

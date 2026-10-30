@@ -939,14 +939,14 @@
       const bruto = unit * pd.qty, ahorro = bruto - Math.round(bruto * (1 - pct));
       const sig = NEGOCIO.descuentos.find(([min, p]) => min > pd.qty && p > 0);
       $("pd-ahorro").textContent = m.accesorio ? "" : ahorro > 0 ? `Ahorras ${pesos(ahorro)} (${Math.round(pct * 100)}%)` : sig ? `Lleva ${sig[0] - pd.qty} más y ahorras ${Math.round(sig[1] * 100)}%` : "";
-      $("pd-casa").hidden = m.accesorio || pd.medidas !== "casa";
+      $("pd-casa-box").hidden = m.accesorio || pd.medidas !== "casa";
       pintarResumenes();
       const eleccion = `Medidas: ${(NEGOCIO.modalidades.find(x => x.id === pd.medidas) || {}).t || "por definir"}`;
       const medidasHechas = pd.medidas === "casa" && !m.accesorio ? casaMedidas() : [];
       const medTxt = medidasHechas.length ? `\n\nMis medidas:\n${medidasHechas.map(x => `• ${x}`).join("\n")}` : "";
       const bordTxt = bord ? `\n• Bordado: ${[pd.name, pd.role].filter(Boolean).join(" / ")} (hilo ${pd.hilo.toLowerCase()}), +${pesos(bord)} por uniforme` : "";
       $("pd-wa").href = waLink(m.accesorio ? `Hola Multicostura 💗 quiero encargar:\n• ${m.nombre}\n• Estampado: ${c}\n• Cantidad: ${pd.qty}\n${sinPrecio(m) ? "¿Qué precio tienen y están disponibles?" : `• Total estimado: ${pesos(total)}\n¿Está disponible?`}`
-        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\nMe gustaría confirmar el color en la tienda.${medTxt}`);
+        : `Hola Multicostura 💗 quiero encargar este uniforme:\n• Modelo: ${m.nombre}\n• Color: ${c}\n• Modalidad: ${t.t} (${NEGOCIO.tiempos[t.id]})\n• ${eleccion}${bordTxt}\n• Cantidad: ${pd.qty}\n• Total estimado: ${pesos(total)}${pct ? ` (con ${pct * 100}% de descuento)` : ""}\n• Para empezar: abono del 50% (${pesos(Math.round(total / 2))}); el precio final se confirma al tomar las medidas\nMe gustaría confirmar el color en la tienda.${medTxt}`);
       $("pd-agenda").hidden = m.accesorio || !pd.medidas || pd.medidas === "casa";
     }
     // Dónde está el pecho en una foto: [x%, y%, ancho%] o null si no se ve (pantalones). Las fotos recoloreadas de

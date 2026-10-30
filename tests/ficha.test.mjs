@@ -14,7 +14,7 @@ const probe = `
     const out = {};
     await wait(200);
     document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(150);
-    out.ahorro0 = g("pd-ahorro").innerText.trim(); out.nota = g("pd-nota").innerText.trim(); out.footH = g("pd-wa").closest(".pd-foot").getBoundingClientRect().height; out.total0 = g("pd-total").textContent;
+    out.ahorro0 = g("pd-ahorro").innerText.trim(); out.nota = g("pd-nota").innerText.trim(); out.notaPx = parseFloat(getComputedStyle(g("pd-nota")).fontSize); out.notaFuerte = (g("pd-nota").querySelector("strong") || {}).innerText || ""; out.notaVisible = g("pd-nota").getBoundingClientRect().bottom <= innerHeight && g("pd-nota").getBoundingClientRect().height > 0; out.footH = g("pd-wa").closest(".pd-foot").getBoundingClientRect().height; out.total0 = g("pd-total").textContent;
     out.n = btns().length; out.ini = abiertos(); out.res1 = txt(0);
     out.controls = btns().every(b => { const p = document.getElementById(b.getAttribute("aria-controls")); return p && p.hidden === (b.getAttribute("aria-expanded") !== "true"); });
     const foot = g("pd-wa").closest(".pd-foot");
@@ -95,9 +95,14 @@ for (const [nombre, p] of [["desktop", desk], ["mobile", mob]]) {
     assert.match(p.ahorro12, /^Ahorras \$[\d.]+ \(15%\)$/);
   });
   test(`product dialog footer (${nombre}): the final-price note is visible and the footer stays short`, () => {
-    assert.match(p.nota, /50% de abono/);
+    assert.match(p.nota, /50%/);
+    assert.match(p.nota, /abono|separas/i);
+    assert.match(p.nota, /precio final/i);
     assert.match(p.nota, /medidas/);
-    if (nombre === "mobile") { assert.ok(p.nota.length <= 50, p.nota); assert.ok(p.footH <= 130, `footer height ${p.footH}`); }
-    else assert.ok(p.footH <= 140, `footer height ${p.footH}`);
+    assert.ok(p.notaPx >= 13, `font ${p.notaPx}px is readable`);
+    assert.match(p.notaFuerte, /50%/, "the key part is bold");
+    assert.ok(p.notaVisible, "callout inside the viewport on open");
+    if (nombre === "mobile") { assert.ok(p.nota.length <= 80, p.nota); assert.ok(p.footH <= 150, `footer height ${p.footH}`); }
+    else assert.ok(p.footH <= 150, `footer height ${p.footH}`);
   });
 }

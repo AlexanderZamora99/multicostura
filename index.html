@@ -458,15 +458,17 @@
           <h3><button type="button" class="pd-paso-btn" id="pd-pb-3" aria-expanded="false" aria-controls="pd-pp-3"><span class="pd-paso-t">Medidas y cantidad<small id="pd-res-3"></small></span></button></h3>
           <div class="pd-paso-body" id="pd-pp-3" role="region" aria-labelledby="pd-pb-3" hidden>
             <div class="pd-field"><span class="pd-lbl" id="pd-med-lbl">¿Cómo tomamos tus medidas?</span><div class="pd-opts" id="pd-medidas" role="group" aria-labelledby="pd-med-lbl"></div>
-            <div class="mgrid" id="pd-casa" hidden></div>
-            <details class="guia pd-guia" id="pd-guia">
-              <summary>Cómo tomar tus medidas</summary>
-              <div class="guia-body">
-                <p>Usa un metro de costura, sin apretar, y pide ayuda a alguien. Anótalas en centímetros.</p>
-                <ol class="guia-pasos" id="pd-guia-lista"></ol>
-                <p class="guia-link"><a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">Ver tabla de medidas</a></p>
-              </div>
-            </details>
+            <div class="pd-casa-box" id="pd-casa-box" hidden>
+              <details class="guia pd-guia" id="pd-guia">
+                <summary>¿Cómo tomo cada medida?</summary>
+                <div class="guia-body">
+                  <p>Usa un metro de costura, sin apretar, y pide ayuda a alguien. Anótalas en centímetros.</p>
+                  <ol class="guia-pasos" id="pd-guia-lista"></ol>
+                  <p class="guia-link"><a href="img/tabla-medidas.jpg" target="_blank" rel="noopener">Ver tabla de medidas</a></p>
+                </div>
+              </details>
+              <div class="mgrid" id="pd-casa"></div>
+            </div>
             </div>
             <div class="pd-field"><span class="pd-lbl">Cantidad</span>
               <div class="pd-qty"><button type="button" id="pd-minus" aria-label="Menos">−</button><output id="pd-q" aria-live="polite">1</output><button type="button" id="pd-plus" aria-label="Más">+</button><small id="pd-desc-qty"></small></div>
@@ -480,7 +482,7 @@
     <div class="pd-foot">
       <div class="pd-total"><span>Total estimado</span><strong id="pd-total"></strong><small class="pd-ahorro" id="pd-ahorro" aria-live="polite"></small></div>
       <a class="btn btn-wa" id="pd-wa" target="_blank" rel="noopener">Pedir por WhatsApp</a>
-      <p class="pd-nota" id="pd-nota"><span class="solo-pc">El precio final se confirma al tomar tus medidas. Con el 50% de abono empezamos.</span><span class="solo-movil">Precio final al tomar medidas · 50% de abono</span></p>
+      <p class="pd-nota" id="pd-nota" role="note"><span class="pd-nota-ico" aria-hidden="true">💗</span><span class="solo-pc"><strong>Separas con el 50%</strong> de abono y empezamos a confeccionar. El precio final se confirma al tomar tus medidas.</span><span class="solo-movil"><strong>Separas con el 50%</strong> · precio final al tomar medidas</span></p>
     </div>
   </dialog>
 

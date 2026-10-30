@@ -340,15 +340,19 @@ const casaProbe = `
   const wa = () => decodeURIComponent(g("pd-wa").getAttribute("href"));
   const campos = () => [...document.querySelectorAll("#pd-casa input")];
   const visibles = () => { const c = g("pd-casa"); return !c.hidden && c.getBoundingClientRect().height > 0; };
+  const guiaVisible = () => g("pd-guia").getBoundingClientRect().height > 0;
   const modo = id => [...g("pd-medidas").querySelectorAll("button")].find(b => b.dataset.v === id).click();
   (async () => {
     const out = {};
     await wait(200);
     document.querySelector('.model[data-id="kaill"] .pic').click(); await wait(100);
     document.getElementById("pd-pb-3").click();
-    out.antes = visibles();
-    modo("taller"); out.taller = visibles();
-    modo("casa"); out.casa = visibles();
+    out.antes = visibles(); out.guiaAntes = guiaVisible();
+    modo("taller"); out.taller = visibles(); out.guiaTaller = guiaVisible();
+    modo("casa"); out.casa = visibles(); out.guiaCasa = guiaVisible();
+    out.guiaArriba = !!(g("pd-guia").compareDocumentPosition(g("pd-casa")) & Node.DOCUMENT_POSITION_FOLLOWING);
+    out.guiaLink = g("pd-guia").querySelector("a").getAttribute("href");
+    out.wa50 = wa();
     const cs = campos();
     out.n = cs.length; out.ph = cs.map(c => c.placeholder); out.attrs = cs.map(c => [c.type, c.inputMode, c.min, c.max, c.step, c.dataset.m]);
     out.labels = cs.map(c => c.parentElement.querySelector("strong").textContent);
@@ -357,7 +361,7 @@ const casaProbe = `
     out.mismoNodo = campos()[0] === nodo; out.foco = document.activeElement === nodo;
     out.res2 = g("pd-pb-3").textContent.replace(/\\s+/g, " ").trim();
     out.wa = wa();
-    modo("domicilio"); out.dom = visibles(); out.waDom = wa();
+    modo("domicilio"); out.dom = visibles(); out.guiaDom = guiaVisible(); out.waDom = wa();
     modo("casa"); out.valorConservado = campos()[0].value;
     document.body.insertAdjacentHTML("beforeend", '<pre id="probe12">' + JSON.stringify(out) + '</pre>');
   })();
@@ -384,4 +388,17 @@ test("product dialog casa: typed values go into the WhatsApp message, the summar
   assert.ok(!casa.wa.includes(`${N.medidas[1][0]}:`), "only filled fields");
   assert.doesNotMatch(casa.waDom, /Mis medidas:/);
   assert.equal(casa.valorConservado, "92");
+});
+
+test("product dialog: the measuring guide shows only for 'Me mido en casa' and sits above the fields", () => {
+  assert.equal(casa.guiaAntes, false); assert.equal(casa.guiaTaller, false); assert.equal(casa.guiaDom, false);
+  assert.equal(casa.guiaCasa, true);
+  assert.equal(casa.guiaArriba, true);
+  assert.match(casa.guiaLink, /tabla-medidas\.jpg$/);
+});
+
+test("product dialog: the WhatsApp order states the 50% deposit and that the final price is confirmed when measuring", () => {
+  assert.match(casa.wa50, /abono/i);
+  assert.match(casa.wa50, /50%/);
+  assert.match(casa.wa50, /precio final/i);
 });
