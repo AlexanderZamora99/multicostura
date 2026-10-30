@@ -1,0 +1,17 @@
+# Repository files that must not be served as part of the site
+
+# Tooling and configuration
+.git
+.gitignore
+.assetsignore
+.wrangler
+node_modules
+wrangler.jsonc
+skills-lock.json
+
+# Internal docs, scripts and tests
+*.md
+*.gs
+tests/
+docs/
+odd/
