@@ -5,9 +5,9 @@
       instagram: "https://www.instagram.com/multicostura_uniformes/",
       tiktok: "https://www.tiktok.com/@uniformes_multicostura",
       facebook: "https://www.facebook.com/multicosturas2016",
-      correo: "multicostura222@gmail.com", // de la página de Facebook
+      correo: "multicostura22@gmail.com",
       // Una fila por grupo de días; horarioTexto las une para el pie, la FAQ y el chat
-      horarioFilas: ["Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m.", "Sábados de 8:00 a. m. a 1:00 p. m."],
+      horarioFilas: ["Lunes a viernes de 9:00 a. m. a 12:00 m. y de 2:30 a 6:30 p. m.", "Sábados de 10:00 a. m. a 5:00 p. m. en jornada continua."],
       get horarioTexto() { return this.horarioFilas.join(" "); },
       direccionTaller: "Calle 24 T10-39, barrio Porvenir, Tuluá (Valle)",
       // Pin del mapa (4°05'32.5"N 76°12'22.5"W, confirmado por la dueña)
@@ -20,12 +20,12 @@
       // Horario por día (0 = domingo). Varios rangos para dejar la hora de almuerzo libre.
       horario: {
         0: null,
-        1: [["08:00", "12:00"], ["14:00", "18:00"]],
-        2: [["08:00", "12:00"], ["14:00", "18:00"]],
-        3: [["08:00", "12:00"], ["14:00", "18:00"]],
-        4: [["08:00", "12:00"], ["14:00", "18:00"]],
-        5: [["08:00", "12:00"], ["14:00", "18:00"]],
-        6: [["08:00", "13:00"]],
+        1: [["09:00", "12:00"], ["14:30", "18:30"]],
+        2: [["09:00", "12:00"], ["14:30", "18:30"]],
+        3: [["09:00", "12:00"], ["14:30", "18:30"]],
+        4: [["09:00", "12:00"], ["14:30", "18:30"]],
+        5: [["09:00", "12:00"], ["14:30", "18:30"]],
+        6: [["10:00", "17:00"]],
       },
       paso: 30,              // cada cuántos minutos empieza un turno
       minutosPorPersona: 20, // tomar medidas a una persona
@@ -33,7 +33,8 @@
       margen: { taller: 0, domicilio: 30 }, // minutos extra después de la cita (traslado)
       anticipacion: 120,     // minutos mínimos para agendar hoy
       diasVisibles: 14,
-      recargoDomicilio: 8000,
+      recargoDomicilio: 8000, // por persona
+      recargoDomicilioEmpresa: 20000, // tarifa fija por visita empresarial, independiente de la cantidad de personas
       modalidades: [
         { id: "taller", ico: "🧵", t: "En el taller", d: "Vienes, te medimos y ves las telas en persona." },
         { id: "domicilio", ico: "🏠", t: "A domicilio", d: "Vamos a tu casa o consultorio en Tuluá." },
@@ -63,8 +64,8 @@
         "Gatita rosa": "linear-gradient(135deg, #f4a3c4 50%, #ffffff 50%)", "Heroínas": "linear-gradient(135deg, #ffffff 50%, #e05a8f 50%)", "Monstruo azul": "linear-gradient(135deg, #1f4fb5 50%, #f2c230 50%)", "Amarillitos": "linear-gradient(135deg, #f2d330 50%, #3a6fb5 50%)",
         "Negro y rosa": "linear-gradient(90deg, #1f1d22 50%, #f4b6d2 50%)", "Rojo y gris": "linear-gradient(90deg, #d22b3a 50%, #c9ccd2 50%)" },
       hilos: { "Blanco": "#ffffff", "Dorado": "#d4a64a", "Plateado": "#c9ccd2", "Negro": "#1f1d22", "Rosa": "#f2a7c6" },
-      bordado: { nombre: 12000, profesion: 6000 },
-      descuentos: [[1, 0], [3, 0.05], [6, 0.10], [12, 0.15]],
+      bordado: { porUniforme: 10000 },
+      descuentos: [[1, 0], [7, 0.05], [11, 0.10], [51, 0.15]],
       envio: "Para otras ciudades, el envío se cotiza según el destino.",
       categorias: ["Todos", "Conjuntos", "Línea blancos", "Batas y pantalones", "Gorros quirúrgicos", "Medias de compresión"],
       // Franja de confianza bajo la portada (ico = nombre en ICONO de app.js). Solo hechos del negocio, iguales a las preguntas frecuentes
@@ -85,7 +86,7 @@
           { x: 45, y: 88, t: "Pantalón Kaill", tipo: "productos", producto: "pantalon", completa: [["gorro", "Gorros"], ["medias", "Medias"]],
             d: "Viene con la blusa, en el mismo color. Si lo quieres solo, mira los pantalones del catálogo o pídelo por WhatsApp." },
           { x: 72, y: 31, t: "Bordado opcional", tipo: "bordado",
-            d: n => `Tu nombre por ${pesos(n.bordado.nombre)} y tu profesión por ${pesos(n.bordado.profesion)}, en el color de hilo que prefieras. Escríbelo y míralo sobre la foto.` },
+            d: n => `Tu nombre y profesión por ${pesos(n.bordado.porUniforme)} por uniforme, en el color de hilo que prefieras. Escríbelos y míralos sobre la foto.` },
         ],
       },
       // Ids de los modelos que se destacan en el inicio (8, en este orden)
@@ -181,7 +182,14 @@
             "Verde jade": "img/color/lisboa-verde-jade.webp", "Azul noche": "img/color/lisboa-azul-noche.webp", "Vinotinto": "img/color/lisboa-vinotinto.webp",
             "Rojo": "img/lisboa.webp", "Negro": "img/color/lisboa-negro.webp", "Café": "img/color/lisboa-cafe.webp" },
           simulados: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Fucsia", "Azul rey", "Verde jade", "Azul noche", "Vinotinto", "Negro", "Café"] },
-        { id: "jomper", nombre: "Jomper", precio: 165000, cat: ["Conjuntos"], desc: "Modelo enterizo tipo jumper.", foto: "img/jomper.jpg" },
+        { id: "esencia", nombre: "Esencia", precio: 169000, cat: ["Conjuntos"], desc: "Diseño moderno: blusa sin bolsillos y pantalón jogger con bolsillo de cremallera.", foto: "img/esencia.webp",
+          colores: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Fucsia", "Azul rey", "Verde jade", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café", "Gris"],
+          // Foto por color. Reales: gris y azul rey (pág. 19). simulados = recoloreadas desde la azul rey.
+          fotos: { "Rosa": "img/color/esencia-rosa.webp", "Lila": "img/color/esencia-lila.webp", "Azul cielo": "img/color/esencia-azul-cielo.webp",
+            "Verde menta": "img/color/esencia-verde-menta.webp", "Fucsia": "img/color/esencia-fucsia.webp", "Azul rey": "img/esencia-azul-rey.webp",
+            "Verde jade": "img/color/esencia-verde-jade.webp", "Azul noche": "img/color/esencia-azul-noche.webp", "Vinotinto": "img/color/esencia-vinotinto.webp",
+            "Rojo": "img/color/esencia-rojo.webp", "Negro": "img/color/esencia-negro.webp", "Café": "img/color/esencia-cafe.webp", "Gris": "img/esencia.webp" },
+          simulados: ["Rosa", "Lila", "Azul cielo", "Verde menta", "Fucsia", "Verde jade", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café"] },
         { id: "alondra-blanco", nombre: "Alondra blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Alondra en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/alondra-blanco.webp" }, // pág. 26
         { id: "clasico-blanco", nombre: "Clásico blanco", precio: 159000, cat: ["Línea blancos"], desc: "Corte recto, cuello en V y bolsillos funcionales. Ideal para jornadas laborales.", colores: ["Blanco"], foto: "img/clasico-blanco.webp" }, // pág. 17, logo del catálogo tapado
         { id: "durango-blanco", nombre: "Durango blanco", precio: 159000, cat: ["Línea blancos"], desc: "El Durango en antifluido licrado blanco.", colores: ["Blanco"], foto: "img/durango-blanco-v.webp" }, // pág. 13 (en la 24 hay texto y otra modelo detrás)
@@ -193,7 +201,7 @@
           colores: ["Gris", "Lila", "Lavanda", "Palo de rosa", "Blanco"],
           fotos: { "Gris": "img/pantalon.webp", "Lila": "img/pantalon-lila.webp", "Lavanda": "img/pantalon-lavanda.webp", "Palo de rosa": "img/pantalon-palo-rosa.webp", "Blanco": "img/pantalon-blanco.webp" } },
         // Gorros (fotos de la dueña, 6 estampados). precio: promoción de Instagram "3 gorros por $60.000" (confirmar con la dueña)
-        { id: "gorro", nombre: "Gorro quirúrgico", precio: 20000, precioFijo: true, accesorio: true, articulo: "un", cat: ["Gorros quirúrgicos"],
+        { id: "gorro", nombre: "Gorro quirúrgico", precio: 29900, precioFijo: true, accesorio: true, articulo: "un", cat: ["Gorros quirúrgicos"],
           caracteristicas: ["Tela antifluido", "Moña para recoger el cabello y toalla para el sudor", "Varios estampados: pregunta por los disponibles", "Envíos a toda Colombia"], desc: "Gorro quirúrgico antifluido y estampado, con moña para recoger el cabello y toalla para el sudor. Cómodo durante toda la jornada.", foto: "img/gorro-animados.webp",
           colores: ["Dibujos animados", "Ratoncita rosa", "Flamencos", "Estrellas", "Tropical", "Ratoncito negro"],
           fotos: { "Dibujos animados": "img/gorro-animados.webp", "Ratoncita rosa": "img/gorro-ratoncita-rosa.webp", "Flamencos": "img/gorro-flamencos.webp",
@@ -212,12 +220,12 @@
       faq: [
         { id: "pago", q: "¿Cómo se paga?", a: "Con el 50% de abono empezamos a confeccionar tu uniforme y el otro 50% lo pagas al recibirlo.", claves: ["pago", "pagar", "abono", "abonar", "anticipo", "nequi", "transferencia", "efectivo", "tarjeta", "consignar"] },
         { id: "tiempos", q: "¿En cuánto tiempo me lo entregan?", a: n => `Precio tienda: ${n.tiempos.tienda}. Bajo pedido: ${n.tiempos.pedido}. Por medida: ${n.tiempos.medida}.`, claves: ["tiempo", "demora", "demoran", "tarda", "tardan", "dias", "entrega", "entregan", "listo", "rapido"] },
-        { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Hay descuento desde ${n.descuentos.find(([, p]) => p)[0]} uniformes.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
+        { id: "precios", q: "¿Cuánto cuestan los uniformes?", a: n => `En tienda desde ${pesos(Math.min(...n.modelos.filter(m => !m.precioFijo).map(m => m.precio)))}. Bajo pedido ${pesos(n.tipos[1].precio)} y por medida ${pesos(n.tipos[2].precio)}. Descuentos por cantidad: ${n.descuentos.filter(([, p]) => p).map(([min, p]) => `más de ${min - 1}: ${p * 100}%`).join(", ")}.`, claves: ["precio", "precios", "cuesta", "cuestan", "cuanto", "valor", "vale", "costo", "descuento", "promocion"] },
         { id: "tallas", q: "¿Tengo que saber mi talla?", a: "No es necesario 💗 lo nuestro es confeccionar a tu medida: te medimos en el taller, a domicilio o te guiamos para que te midas en casa, y queda a tu cuerpo. Los uniformes listos de la tienda sí vienen en tallas S a XL: si quieres una talla puntual, pásate por la tienda y mira cuáles hay disponibles.", claves: ["talla", "tallas", "size", "xl", "grande", "pequena", "mediana"] },
         { id: "medidas", q: "¿Cómo tomo mis medidas?", a: "Usa un metro de costura, sin apretar: busto, cintura, cadera, largo de manga, largo de pantalón, hombros y estatura. Te explicamos cada una en la guía de medidas.", claves: ["medida", "medidas", "medir", "medirme", "metro", "cinta"] },
         { id: "envios", q: "¿Hacen envíos?", a: n => `Sí, enviamos a toda Colombia. ${n.envio}`, claves: ["envio", "envios", "enviar", "envian", "despacho", "ciudad", "colombia", "flete", "mandan"] },
-        { id: "domicilio", q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio con un recargo de ${pesos(n.recargoDomicilio)}. También puedes venir al taller o medirte en casa.`, claves: ["domicilio", "visita", "vienen", "recargo", "consultorio", "casa"] },
-        { id: "bordado", q: "¿Bordan el nombre y la profesión?", a: n => `Sí. El nombre bordado cuesta ${pesos(n.bordado.nombre)} y la profesión ${pesos(n.bordado.profesion)}, en hilo ${Object.keys(n.hilos).join(", ").toLowerCase()}.`, claves: ["bordado", "bordar", "borda", "nombre", "profesion", "logo", "hilo"] },
+        { id: "domicilio", q: "¿Toman medidas a domicilio?", a: n => `Sí, en ${n.ciudad} vamos a tu casa o consultorio. Para una persona, el recargo es de ${pesos(n.recargoDomicilio)}. Para empresas, la tarifa es fija de ${pesos(n.recargoDomicilioEmpresa)} por visita, sin importar cuántas personas se midan. También puedes venir al taller o medirte en casa.`, claves: ["domicilio", "visita", "vienen", "recargo", "consultorio", "casa"] },
+        { id: "bordado", q: "¿Bordan el nombre y la profesión?", a: n => `Sí. El bordado de nombre y profesión cuesta ${pesos(n.bordado.porUniforme)} por uniforme, en hilo ${Object.keys(n.hilos).join(", ").toLowerCase()}.`, claves: ["bordado", "bordar", "borda", "nombre", "profesion", "logo", "hilo"] },
         { id: "arreglos", q: "¿Hacen arreglos o devoluciones?", a: "Los arreglos (pinzas, ruedos, etc.) tienen un costo adicional. Si quieres modificar algún elemento, el uniforme se confecciona desde cero y el precio varía. No se hace devolución de dinero.", claves: ["arreglo", "arreglos", "ruedo", "pinza", "devolucion", "devolver", "cambio", "cambiar", "garantia"] },
         { id: "cuidado", q: "¿Cómo cuido mi uniforme?", a: "Lávalo con cuidado, no lo mezcles con otra ropa y evita el exceso de cloro. Así conserva el color y la tela por más tiempo.", claves: ["lavar", "lavado", "cuidar", "cuidado", "cloro", "planchar", "secar"] },
         { id: "empresas", q: "¿Hacen uniformes para empresas?", a: "Sí, somos fabricantes directos: clínicas, consultorios, spas, restaurantes y comercios. Vamos a tomar medidas a todo el equipo, bordamos el logo y damos precio por cantidad.", claves: ["empresa", "empresas", "clinica", "equipo", "dotacion", "personal", "restaurante", "spa", "mayor"] },
@@ -244,15 +252,14 @@
       tablaMedidas: {
         tallas: ["S", "M", "L", "XL"],
         blusa: [["Busto", [96, 100, 108, 112]], ["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de blusa", [68, 69, 70, 72]]],
-        pantalon: [["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de pantalón", [102, 104, 106, 106]], ["Largo entrepierna", [80, 81.5, 83, 84.5]], ["Ancho de bota", [22, 23, 24, 25]]],
+        pantalon: [["Cintura", [78, 84, 90, 96]], ["Cadera", [104, 108, 114, 120]], ["Largo de pantalón", [102, 104, 106, 108]], ["Largo entrepierna", [80, 81.5, 83, 84.5]], ["Ancho de bota", [22, 23, 24, 25]]],
         consejos: [["📏", "Usa una cinta métrica flexible"], ["🧍", "Mantén una postura natural"], ["👚", "Mide sobre ropa interior o piel"], ["✅", "Si estás entre tallas, elige la más grande"]],
       },
-      bonos: [100000, 150000, 200000, 300000],
+      bonos: [29000, 160000, 320000, 500000],
       clientas: [
-        { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
+        { foto: "img/clienta-odontologa.webp", texto: "Odontóloga" },
         { video: "video/clienta-enfermera", texto: "Enfermera jefe" }, // reel de Instagram DIwBEZzsQN9
         { video: "video/clienta-esteticista", texto: "Esteticista" }, // reel de Instagram Dd91kh3R-zz
-        { foto: "img/clienta-4.jpg", texto: "Médica general" },
         // video = ruta sin extensión: video/<nombre>.webm y .mp4, con portada video/<nombre>-poster.webp
         { video: "video/clienta-psicologia", texto: "Psicología" }, // reel de Instagram DejlX_9xpLO (colaboración con la clienta)
       ],

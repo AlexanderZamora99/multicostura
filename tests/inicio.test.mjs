@@ -1,7 +1,7 @@
 // Home extras: trust strip after the hero and the "complete the look" section with hotspots.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { render } from "./render.mjs";
@@ -41,6 +41,17 @@ test("trust strip is a light strip using the redesign palette, not a dark band",
   assert.ok(rule, ".trust rule exists");
   assert.doesNotMatch(rule, /var\(--ink\)|#000|#111/);
   assert.match(rule, /var\(--(bg|card)/);
+});
+
+test("client showcase renders the four redesign cards with available media", () => {
+  assert.deepEqual(N.clientas.map(c => c.texto), ["Odontóloga", "Enfermera jefe", "Esteticista", "Psicología"]);
+  assert.equal((section("clientas").match(/<figure(?:\s|>)/g) || []).length, N.clientas.length);
+  N.clientas.forEach(c => {
+    const assets = c.video
+      ? [`${c.video}-poster.webp`, `${c.video}.webm`, `${c.video}.mp4`]
+      : [c.foto];
+    assets.forEach(asset => assert.ok(existsSync(join(ROOT, asset)), `Missing client media: ${asset}`));
+  });
 });
 
 test("how-it-works steps sit right after the trust strip, before the models", () => {
@@ -134,7 +145,7 @@ test("choosing a colour swatch swaps the main look photo and updates the CTA", (
 test("typing in the embroidery pane updates the patch and shows the running price without inventing logo prices", () => {
   assert.match(v.patchBefore, /Tu nombre/);
   assert.ok(v.patch.includes("Dra. Ana Paz") && v.patch.includes("Pediatra"));
-  assert.ok(v.price.includes((N.bordado.nombre + N.bordado.profesion).toLocaleString("es-CO")), v.price);
+  assert.ok(v.price.includes(N.bordado.porUniforme.toLocaleString("es-CO")), v.price);
   assert.equal(v.hiloPressed, "true");
   assert.equal(v.patchHilo.trim(), N.hilos.Dorado);
   assert.doesNotMatch(v.panes[2].txt, /logo[^.]*\$\d/i);
@@ -166,10 +177,49 @@ test("both pages credit the developers in the footer with a mailto, as a seconda
   }
 });
 
+test("the store contact section does not offer phone calls", () => {
+  for (const page of ["index.html", "catalogo.html"]) {
+    const { html } = render({ page });
+    const foot = html.slice(html.indexOf('<footer class="site"'), html.indexOf("</footer>"));
+    assert.doesNotMatch(foot, /id="f-tel"|href="tel:/, `${page}: no phone-call contact`);
+    assert.match(foot, /id="f-wa"/, `${page}: WhatsApp contact remains`);
+  }
+});
+
 test("about us: the store address carries a map pin and the opening hours sit on two rows", () => {
   const { html } = render();
   const dir = html.slice(html.indexOf('class="visita-dir"'), html.indexOf('class="visita-btns"'));
   assert.match(dir, /<svg[^>]*class="i-pin"[\s\S]*?<\/svg>\s*<b id="v-dir">Calle 24 T10-39, barrio Porvenir, Tuluá \(Valle\)<\/b>/);
   const filas = [...dir.matchAll(/<span class="hor-fila">([^<]*)<\/span>/g)].map(m => m[1]);
-  assert.deepEqual(filas, ["Lunes a viernes de 8:00 a. m. a 12:00 m. y de 2:00 a 6:00 p. m.", "Sábados de 8:00 a. m. a 1:00 p. m."]);
+  assert.deepEqual(filas, ["Lunes a viernes de 9:00 a. m. a 12:00 m. y de 2:30 a 6:30 p. m.", "Sábados de 10:00 a. m. a 5:00 p. m. en jornada continua."]);
+});
+
+test("business visit fee in Tuluá is a flat $20,000 regardless of team size", () => {
+  const { html } = render({ inject: `
+    const city = document.getElementById("b-city"), qty = document.getElementById("b-qty");
+    city.value = "Tuluá"; city.dispatchEvent(new Event("input", { bubbles: true }));
+    qty.value = "3"; qty.dispatchEvent(new Event("input", { bubbles: true }));
+    document.body.insertAdjacentHTML("beforeend", '<pre id="biz-fee-probe">' + document.getElementById("b-fee").textContent + '</pre>');
+  ` });
+  assert.match(html, /Visita empresarial: tarifa fija de \$20\.000, sin importar la cantidad de personas/);
+});
+
+test("quantity discounts start strictly above 6, 10 and 50 uniforms", () => {
+  assert.deepEqual(N.descuentos, [[1, 0], [7, 0.05], [11, 0.10], [51, 0.15]]);
+  const rates = quantity => N.descuentos.reduce((rate, [min, pct]) => quantity >= min ? pct : rate, 0);
+  assert.deepEqual([6, 7, 10, 11, 50, 51].map(rates), [0, 0.05, 0.05, 0.10, 0.10, 0.15]);
+});
+
+test("the home designer exposes the 15% discount at 51 uniforms", () => {
+  const { html } = render({ inject: `
+    for (let i = 0; i < 50; i++) document.getElementById("q-plus").click();
+    document.body.insertAdjacentHTML("beforeend", '<pre id="discount-probe">' +
+      document.getElementById("q").textContent + '|' +
+      document.querySelector("#tiers span.on").textContent + '</pre>');
+  ` });
+  assert.match(html, /<pre id="discount-probe">51\|Más de 50 uniformes: −15%<\/pre>/);
+});
+
+test("gift voucher amounts use the updated price options", () => {
+  assert.deepEqual(N.bonos, [29000, 160000, 320000, 500000]);
 });
