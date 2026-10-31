@@ -19,6 +19,45 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
+  <!-- Datos estructurados (negocio local). Deben coincidir con NEGOCIO en js/datos.js; tests/seo.test.mjs lo verifica.
+       Pendiente con dominio propio: url, @id, image/logo. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "Multicostura Uniformes",
+    "description": "Taller y tienda de uniformes médicos en antifluido en Tuluá, Valle del Cauca. Modelos listos para entrega, bajo pedido o hechos a la medida, con envíos a toda Colombia.",
+    "telephone": "+57 321 783 0050",
+    "email": "multicostura22@gmail.com",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Calle 24 T10-39, barrio Porvenir",
+      "addressLocality": "Tuluá",
+      "addressRegion": "Valle del Cauca",
+      "addressCountry": "CO"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 4.092361,
+      "longitude": -76.20625
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "12:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "14:30", "closes": "18:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00" }
+    ],
+    "areaServed": [
+      { "@type": "City", "name": "Tuluá" },
+      { "@type": "Country", "name": "Colombia" }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/multicostura_uniformes/",
+      "https://www.tiktok.com/@uniformes_multicostura",
+      "https://www.facebook.com/multicosturas2016"
+    ]
+  }
+  </script>
 </head>
 <body>
 
