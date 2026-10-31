@@ -409,7 +409,7 @@
 
     /* Clientas */
     /* Clientas: tarjetas grandes y verticales (formato de video) para que se vean bien las clientas y sus uniformes */
-    .clients { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); margin-top: 2rem; }
+    .clients { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 260px)); justify-content: center; margin-top: 2rem; }
     @media (max-width: 560px) { .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; } }
     .clients figure { aspect-ratio: 9 / 16; border-radius: var(--radius); overflow: hidden; position: relative; background: linear-gradient(160deg, #fbd3e5, #f4b6d2); display: grid; place-items: center; font-size: 2.4rem; }
     .clients img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

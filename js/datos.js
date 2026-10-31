@@ -257,10 +257,9 @@
       },
       bonos: [29000, 160000, 320000, 500000],
       clientas: [
-        { foto: "img/clienta-1.jpg", texto: "Odontóloga" },
+        { foto: "img/clienta-odontologa.webp", texto: "Odontóloga" },
         { video: "video/clienta-enfermera", texto: "Enfermera jefe" }, // reel de Instagram DIwBEZzsQN9
         { video: "video/clienta-esteticista", texto: "Esteticista" }, // reel de Instagram Dd91kh3R-zz
-        { foto: "img/clienta-4.jpg", texto: "Médica general" },
         // video = ruta sin extensión: video/<nombre>.webm y .mp4, con portada video/<nombre>-poster.webp
         { video: "video/clienta-psicologia", texto: "Psicología" }, // reel de Instagram DejlX_9xpLO (colaboración con la clienta)
       ],

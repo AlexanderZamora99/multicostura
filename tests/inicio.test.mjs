@@ -1,7 +1,7 @@
 // Home extras: trust strip after the hero and the "complete the look" section with hotspots.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { render } from "./render.mjs";
@@ -41,6 +41,17 @@ test("trust strip is a light strip using the redesign palette, not a dark band",
   assert.ok(rule, ".trust rule exists");
   assert.doesNotMatch(rule, /var\(--ink\)|#000|#111/);
   assert.match(rule, /var\(--(bg|card)/);
+});
+
+test("client showcase renders the four redesign cards with available media", () => {
+  assert.deepEqual(N.clientas.map(c => c.texto), ["Odontóloga", "Enfermera jefe", "Esteticista", "Psicología"]);
+  assert.equal((section("clientas").match(/<figure(?:\s|>)/g) || []).length, N.clientas.length);
+  N.clientas.forEach(c => {
+    const assets = c.video
+      ? [`${c.video}-poster.webp`, `${c.video}.webm`, `${c.video}.mp4`]
+      : [c.foto];
+    assets.forEach(asset => assert.ok(existsSync(join(ROOT, asset)), `Missing client media: ${asset}`));
+  });
 });
 
 test("how-it-works steps sit right after the trust strip, before the models", () => {
