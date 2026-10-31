@@ -88,3 +88,26 @@ test("T2 catalogo.html has its own og title and description", () => {
   assert.match(meta(catalogo, "property", "og:title"), /cat[aá]logo/i);
   assert.match(meta(catalogo, "property", "og:description"), /uniformes médicos/i);
 });
+
+// ---- T3: branded 404 ----
+import { existsSync } from "node:fs";
+test("T3 404.html exists, is noindex and links home, catalog and WhatsApp", () => {
+  assert.ok(existsSync(join(ROOT, "404.html")), "404.html exists");
+  const h = read("404.html");
+  assert.match(h, /<html lang="es">/);
+  assert.match(h, /<meta name="robots" content="noindex">/);
+  assert.match(h, /<title>[^<]+<\/title>/);
+  assert.match(h, /<link rel="stylesheet" href="\/css\/estilos\.css">/, "root-absolute asset paths so it renders at any missing URL");
+  assert.match(h, /rel="icon"/);
+  assert.match(h, /href="\/index\.html"/);
+  assert.match(h, /href="\/catalogo\.html"/);
+  assert.ok(h.includes(`href="https://wa.me/${N.whatsapp}`), "WhatsApp link uses NEGOCIO.whatsapp");
+});
+
+test("T3 wrangler serves 404.html and .assetsignore does not exclude it", () => {
+  const cfg = JSON.parse(read("wrangler.jsonc").replace(/^\s*\/\/.*$/gm, ""));
+  assert.equal(cfg.assets.not_found_handling, "404-page");
+  assert.equal(cfg.assets.directory, ".");
+  const ignored = read(".assetsignore").split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
+  assert.ok(!ignored.some(p => p === "404.html" || p === "*.html"));
+});
