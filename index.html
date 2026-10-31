@@ -3,11 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Multicostura · Uniformes médicos en Tuluá</title>
-  <meta name="description" content="Uniformes médicos en antifluido: listos para entrega, bajo pedido o hechos a tu medida. Catálogo 2026, agenda tu toma de medidas y recíbelo en cualquier ciudad de Colombia.">
+  <title>Uniformes médicos en Tuluá · Multicostura</title>
+  <meta name="description" content="Uniformes médicos en antifluido en Tuluá: listos para entrega, bajo pedido o a tu medida. Mira el catálogo 2026 y recíbelo en toda Colombia.">
   <meta property="og:title" content="Multicostura · Calidad, comodidad y estilo">
   <meta property="og:description" content="Más de 10 años vistiendo profesionalismo. Mira el catálogo 2026 y agenda tu toma de medidas 💗">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:site_name" content="Multicostura">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Multicostura · Calidad, comodidad y estilo">
+  <meta name="twitter:description" content="Más de 10 años vistiendo profesionalismo. Mira el catálogo 2026 y agenda tu toma de medidas 💗">
   <!-- Vista previa al compartir: con dominio publicado, cambiar a la URL completa (https://.../img/og-image.jpg) -->
   <meta property="og:image" content="img/og-image.jpg">
   <meta property="og:image:width" content="1200">
@@ -19,6 +24,45 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
+  <!-- Datos estructurados (negocio local). Deben coincidir con NEGOCIO en js/datos.js; tests/seo.test.mjs lo verifica.
+       Pendiente con dominio propio: url, @id, image/logo. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "Multicostura Uniformes",
+    "description": "Taller y tienda de uniformes médicos en antifluido en Tuluá, Valle del Cauca. Modelos listos para entrega, bajo pedido o hechos a la medida, con envíos a toda Colombia.",
+    "telephone": "+57 321 783 0050",
+    "email": "multicostura22@gmail.com",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Calle 24 T10-39, barrio Porvenir",
+      "addressLocality": "Tuluá",
+      "addressRegion": "Valle del Cauca",
+      "addressCountry": "CO"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 4.092361,
+      "longitude": -76.20625
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "12:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "14:30", "closes": "18:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00" }
+    ],
+    "areaServed": [
+      { "@type": "City", "name": "Tuluá" },
+      { "@type": "Country", "name": "Colombia" }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/multicostura_uniformes/",
+      "https://www.tiktok.com/@uniformes_multicostura",
+      "https://www.facebook.com/multicosturas2016"
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -73,8 +117,8 @@
         </div>
       </div>
       <div class="hero-show" id="hero-show" role="region" aria-roledescription="carrusel" aria-label="Pasarela de uniformes Multicostura">
-        <img class="hs-img on" id="hs-a" alt="" fetchpriority="high">
-        <img class="hs-img" id="hs-b" alt="">
+        <img class="hs-img on" id="hs-a" width="760" height="950" alt="" fetchpriority="high" decoding="async">
+        <img class="hs-img" id="hs-b" width="760" height="950" alt="" decoding="async">
         <div class="hs-dots" id="hs-dots"></div>
         <button type="button" class="hs-nav prev" id="hs-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
         <button type="button" class="hs-nav next" id="hs-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -325,7 +369,7 @@
   <footer class="site">
     <div class="wrap foot-grid">
       <div class="foot-brand">
-        <img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy">
+        <img class="foot-logo" src="img/logo-claro.webp" width="110" height="83" alt="Multicostura Uniformes" loading="lazy" decoding="async">
         <p>Uniformes médicos para mujer, hechos en nuestro taller de Tuluá. Diseño, comodidad y calidad, con envíos a toda Colombia.</p>
         <b class="foot-h">Síguenos</b>
         <div class="socials">
@@ -463,7 +507,7 @@
   </button>
   <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Asistente de compra Multicostura" hidden>
     <div class="chat-head">
-      <img src="img/logo-m.webp" width="38" height="24" alt="">
+      <img src="img/logo-m.webp" width="38" height="24" alt="" loading="lazy" decoding="async">
       <div><b>Asistente Multicostura</b><small>Te ayudo a elegir y dejar tu pedido listo</small></div>
       <button type="button" id="chat-close" aria-label="Cerrar asistente">×</button>
     </div>
