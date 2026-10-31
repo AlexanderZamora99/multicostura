@@ -111,3 +111,25 @@ test("T3 wrangler serves 404.html and .assetsignore does not exclude it", () => 
   const ignored = read(".assetsignore").split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
   assert.ok(!ignored.some(p => p === "404.html" || p === "*.html"));
 });
+
+// ---- T4: titles and descriptions for local intent ----
+for (const [page, html] of [["index.html", index], ["catalogo.html", catalogo]]) {
+  test(`T4 ${page} title and description target local intent within length limits`, () => {
+    const title = html.match(/<title>([^<]*)<\/title>/)[1];
+    const desc = meta(html, "name", "description");
+    assert.ok(title.length <= 60, `title is ${title.length} chars`);
+    assert.ok(desc.length >= 120 && desc.length <= 160, `description is ${desc.length} chars`);
+    for (const text of [title, desc]) {
+      assert.match(text, /uniformes médicos/i);
+      assert.match(text, /Tuluá/);
+    }
+    assert.match(desc, /antifluido/i);
+    assert.match(desc, /a (tu|la) medida/i);
+    assert.match(desc, /Colombia/);
+  });
+}
+
+test("T4 pages do not share the same title or description", () => {
+  assert.notEqual(index.match(/<title>([^<]*)/)[1], catalogo.match(/<title>([^<]*)/)[1]);
+  assert.notEqual(meta(index, "name", "description"), meta(catalogo, "name", "description"));
+});
