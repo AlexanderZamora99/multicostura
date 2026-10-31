@@ -133,3 +133,55 @@ test("T4 pages do not share the same title or description", () => {
   assert.notEqual(index.match(/<title>([^<]*)/)[1], catalogo.match(/<title>([^<]*)/)[1]);
   assert.notEqual(meta(index, "name", "description"), meta(catalogo, "name", "description"));
 });
+
+// ---- T5: page-experience quick wins on static <img> tags ----
+// Reads the intrinsic size of a lossy/lossless/extended WebP.
+function webpSize(file) {
+  const b = readFileSync(join(ROOT, file));
+  const kind = b.toString("ascii", 12, 16);
+  if (kind === "VP8 ") return [b.readUInt16LE(26) & 0x3fff, b.readUInt16LE(28) & 0x3fff];
+  if (kind === "VP8L") { const v = b.readUInt32LE(21); return [(v & 0x3fff) + 1, ((v >> 14) & 0x3fff) + 1]; }
+  if (kind === "VP8X") return [b.readUIntLE(24, 3) + 1, b.readUIntLE(27, 3) + 1];
+  throw new Error(`Unknown WebP: ${file}`);
+}
+const imgTags = html => [...html.matchAll(/<img\b[^>]*>/g)].map(m => m[0]);
+const attr = (tag, name) => (tag.match(new RegExp(`\\s${name}(?:="([^"]*)")?(?=[\\s>/])`)) || [])[1] ?? (new RegExp(`\\s${name}(?=[\\s>/])`).test(tag) ? "" : undefined);
+// Images whose src is assigned by JS with photos of different sizes: no fixed intrinsic size to declare.
+const dynamic = new Set(["pv-photo", "pd-img"]);
+
+for (const [page, html] of [["index.html", index], ["catalogo.html", catalogo]]) {
+  test(`T5 ${page} static images with a src declare width and height in their intrinsic aspect ratio`, () => {
+    const withSrc = imgTags(html).filter(t => attr(t, "src"));
+    assert.ok(withSrc.length > 0);
+    for (const t of withSrc) {
+      const [w, h] = webpSize(attr(t, "src"));
+      assert.ok(attr(t, "width") && attr(t, "height"), `missing width/height: ${t}`);
+      const ratio = attr(t, "width") / attr(t, "height");
+      assert.ok(Math.abs(ratio - w / h) / (w / h) < 0.02, `aspect ratio ${ratio} vs intrinsic ${w}/${h}: ${t}`);
+    }
+  });
+
+  test(`T5 ${page} below-the-fold static images are lazy and async-decoded`, () => {
+    for (const t of imgTags(html)) {
+      if (!attr(t, "src")) continue;
+      if (attr(t, "class") === "logo-m") { assert.notEqual(attr(t, "loading"), "lazy", "header logo is above the fold"); continue; }
+      assert.equal(attr(t, "loading"), "lazy", t);
+      assert.equal(attr(t, "decoding"), "async", t);
+    }
+  });
+}
+
+test("T5 hero images reserve the carousel aspect ratio; only the LCP one has fetchpriority high and none is lazy", () => {
+  const tags = imgTags(index);
+  const a = tags.find(t => attr(t, "id") === "hs-a"), b = tags.find(t => attr(t, "id") === "hs-b");
+  const [w, h] = webpSize(N.pasarela[0].foto);
+  for (const t of [a, b]) {
+    assert.equal(attr(t, "width"), String(w), t);
+    assert.equal(attr(t, "height"), String(h), t);
+    assert.notEqual(attr(t, "loading"), "lazy", t);
+  }
+  assert.equal(attr(a, "fetchpriority"), "high");
+  assert.equal(attr(b, "fetchpriority"), undefined);
+  assert.equal(imgTags(index).filter(t => attr(t, "fetchpriority") === "high").length, 1);
+  for (const id of dynamic) assert.ok(tags.some(t => attr(t, "id") === id), `${id} still exists (intentionally without fixed size)`);
+});
