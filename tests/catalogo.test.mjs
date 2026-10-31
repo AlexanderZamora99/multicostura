@@ -41,6 +41,31 @@ test("catalogo.html renders every model with no filters", () => {
   assert.match(html, /<a href="catalogo\.html"[^>]*>Catálogo<\/a>/);
 });
 
+test("Esencia matches the redesign description, colors and photos", () => {
+  const esencia = N.modelos.find(m => m.id === "esencia");
+  assert.ok(esencia);
+  assert.equal(esencia.nombre, "Esencia");
+  assert.equal(esencia.desc, "Diseño moderno: blusa sin bolsillos y pantalón jogger con bolsillo de cremallera.");
+  assert.deepEqual(esencia.colores, ["Rosa", "Lila", "Azul cielo", "Verde menta", "Fucsia", "Azul rey", "Verde jade", "Azul noche", "Vinotinto", "Rojo", "Negro", "Café", "Gris"]);
+  assert.deepEqual(esencia.fotos, {
+    "Rosa": "img/color/esencia-rosa.webp",
+    "Lila": "img/color/esencia-lila.webp",
+    "Azul cielo": "img/color/esencia-azul-cielo.webp",
+    "Verde menta": "img/color/esencia-verde-menta.webp",
+    "Fucsia": "img/color/esencia-fucsia.webp",
+    "Azul rey": "img/esencia-azul-rey.webp",
+    "Verde jade": "img/color/esencia-verde-jade.webp",
+    "Azul noche": "img/color/esencia-azul-noche.webp",
+    "Vinotinto": "img/color/esencia-vinotinto.webp",
+    "Rojo": "img/color/esencia-rojo.webp",
+    "Negro": "img/color/esencia-negro.webp",
+    "Café": "img/color/esencia-cafe.webp",
+    "Gris": "img/esencia.webp",
+  });
+  assert.ok(existsSync(join(ROOT, esencia.foto)));
+  Object.values(esencia.fotos).forEach(foto => assert.ok(existsSync(join(ROOT, foto)), `Missing Esencia photo: ${foto}`));
+});
+
 test("?cat= narrows to one category by short name and the count matches", () => {
   const { html } = render({ page: "catalogo.html", query: "?cat=gorros" });
   const esperado = modelosDe(m => m.cat.includes("Gorros quirúrgicos"));
