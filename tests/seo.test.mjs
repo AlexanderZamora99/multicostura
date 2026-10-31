@@ -65,3 +65,26 @@ test("T1 JSON-LD has price range, service area and geo from NEGOCIO.mapa; no dom
   assert.equal(d.geo.longitude, lon);
   for (const k of ["url", "@id", "image", "logo"]) assert.equal(d[k], undefined, `${k} is deferred until the domain exists`);
 });
+
+// ---- T2: Open Graph / Twitter ----
+const catalogo = read("catalogo.html");
+const meta = (html, attr, name) => (html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`)) || [])[1];
+
+for (const [page, html] of [["index.html", index], ["catalogo.html", catalogo]]) {
+  test(`T2 ${page} has locale, site name and twitter card`, () => {
+    assert.equal(meta(html, "property", "og:locale"), "es_CO");
+    assert.equal(meta(html, "property", "og:site_name"), "Multicostura");
+    assert.equal(meta(html, "name", "twitter:card"), "summary_large_image");
+    assert.equal(meta(html, "name", "twitter:title"), meta(html, "property", "og:title"));
+    assert.equal(meta(html, "name", "twitter:description"), meta(html, "property", "og:description"));
+    assert.equal(meta(html, "property", "og:image"), "img/og-image.jpg", "og:image stays relative until the domain exists");
+    assert.ok(!/og:url|rel="canonical"/.test(html), "og:url/canonical are deferred");
+  });
+}
+
+test("T2 catalogo.html has its own og title and description", () => {
+  assert.notEqual(meta(catalogo, "property", "og:title"), meta(index, "property", "og:title"));
+  assert.notEqual(meta(catalogo, "property", "og:description"), meta(index, "property", "og:description"));
+  assert.match(meta(catalogo, "property", "og:title"), /cat[aá]logo/i);
+  assert.match(meta(catalogo, "property", "og:description"), /uniformes médicos/i);
+});
