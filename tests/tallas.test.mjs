@@ -21,7 +21,7 @@ test("measuring section shows the size chart as real tables, tips, the model pho
   assert.match(tablas[0], /<caption[^>]*>Blusa/); assert.match(tablas[1], /<caption[^>]*>Pantal/);
   assert.deepEqual(filas(tablas[0]).slice(0, 2), [["Medida", "S", "M", "L", "XL"], ["Busto", "96", "100", "108", "112"]]);
   assert.deepEqual(filas(tablas[0]).slice(2), [["Cintura", "78", "84", "90", "96"], ["Cadera", "104", "108", "114", "120"], ["Largo de blusa", "68", "69", "70", "72"]]);
-  assert.deepEqual(filas(tablas[1]).slice(1), [["Cintura", "78", "84", "90", "96"], ["Cadera", "104", "108", "114", "120"], ["Largo de pantalón", "102", "104", "106", "106"], ["Largo entrepierna", "80", "81.5", "83", "84.5"], ["Ancho de bota", "22", "23", "24", "25"]]);
+  assert.deepEqual(filas(tablas[1]).slice(1), [["Cintura", "78", "84", "90", "96"], ["Cadera", "104", "108", "114", "120"], ["Largo de pantalón", "102", "104", "106", "108"], ["Largo entrepierna", "80", "81.5", "83", "84.5"], ["Ancho de bota", "22", "23", "24", "25"]]);
   for (const t of ["cinta métrica flexible", "postura natural", "ropa interior o piel", "entre tallas"]) assert.match(medidas, new RegExp(t, "i"));
   assert.match(medidas, /¿Cómo saber tu talla\?/);
   assert.match(medidas, /a tu medida/i, "made-to-measure note next to the sizes");
