@@ -1192,8 +1192,13 @@
     }
     function pedirHilo() {
       espera = null;
-      bot("¿De qué color quieres el hilo del bordado?");
-      chips(Object.entries(NEGOCIO.hilos).map(([h, hex]) => ({ t: h, dot: hex, fn: () => { P.hilo = h; paso(pedirEntrega); } })));
+      bot("¿De qué color quieres el hilo del bordado? Si buscas uno que no aparece, podemos consultar por WhatsApp si se puede encargar.");
+      chips([
+        ...Object.entries(NEGOCIO.hilos).map(([h, hex]) => ({ t: h, dot: hex, fn: () => { P.hilo = h; paso(pedirEntrega); } })),
+        { t: "🎨 Otro color (consultar)", fn: () => pedirTexto("No tenemos ese color entre los disponibles, pero podemos consultar por WhatsApp si se puede encargar. ¿Qué color buscas?", txt => {
+          P.hilo = txt.slice(0, 30); P.hiloEspecial = true; espera = null; paso(pedirEntrega);
+        }, [{ t: "Ver colores disponibles", fn: pedirHilo }]) },
+      ]);
     }
     function pedirEntrega() {
       bot("¿Cómo lo quieres recibir?");
@@ -1226,14 +1231,22 @@
           ["Modelo", P.m.nombre], ["Color", P.color], ["Modalidad", `${t.t} (${NEGOCIO.tiempos[t.id]})`],
           ["Medidas", P.medidas ? P.medidas.t : "—"],
           ["Cantidad", P.qty],
-          ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hilo.toLowerCase()})` : "Sin bordado"]]),
+          ["Bordado", P.bordNombre ? `${[P.bordNombre, P.bordRol].filter(Boolean).join(" / ")} (hilo ${P.hiloEspecial ? `${P.hilo} por encargar` : P.hilo.toLowerCase()})` : "Sin bordado"]]),
         ["Entrega", P.entrega], ["Nombre", P.nombre], ["Celular", P.cel],
       ];
       const precioTxt = [`${pesos(k.base + k.bord)} c/u × ${P.qty}`, k.desc ? `descuento ${k.pct * 100}%: −${pesos(k.desc)}` : "", k.recargo ? `domicilio de medidas: ${pesos(NEGOCIO.recargoDomicilio)} por persona × ${P.qty} = ${pesos(k.recargo)}` : ""].filter(Boolean).join(" · ");
       const totales = sinPrecio(P.m) ? `<span>Precio: <b>te lo confirmamos por WhatsApp</b></span>` : `<span>${precioTxt}</span><span>Total estimado: <b>${pesos(k.total)}</b></span><span>Abono para empezar (50%): <b>${pesos(k.abono)}</b></span>`;
-      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}${totales}</div>\n${P.m.accesorio ? "Te confirmamos la disponibilidad del estampado" : "El precio final se confirma al tomar tus medidas"}${P.envio ? `. ${NEGOCIO.envio}` : ""}.`);
-      const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n` + (sinPrecio(P.m) ? "¿Qué precio tienen y están disponibles?" : `• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})`);
-      const opciones = [{ t: "✅ Enviar mi pedido por WhatsApp", href: waLink(msg), cls: "principal", fn: () => setTimeout(() => bot("¡Gracias! 💗 Te respondemos por WhatsApp para confirmar tu pedido y el abono."), 400) }];
+      const avisos = [
+        P.m.accesorio ? "Te confirmamos la disponibilidad del estampado." : "El precio final se confirma al tomar tus medidas.",
+        P.envio ? NEGOCIO.envio : "",
+        P.hiloEspecial ? `El hilo ${P.hilo} no está disponible actualmente; consultaremos por WhatsApp si se puede encargar.` : "",
+      ].filter(Boolean);
+      bot(`¡Listo! Este es tu pedido 💗<div class="resumen">${lineas.map(([a, b]) => `<span>${a}: <b>${esc(b)}</b></span>`).join("")}${totales}</div>\n${avisos.join(" ")}`);
+      const msg = `Hola Multicostura 💗 quiero hacer este pedido:\n${lineas.map(([a, b]) => `• ${a}: ${b}`).join("\n")}\n` +
+        (sinPrecio(P.m) ? "¿Qué precio tienen y está disponible este estampado?" : `• ${precioTxt}\n• Total estimado: ${pesos(k.total)} (abono 50%: ${pesos(k.abono)})\n• Nota: el precio final se confirma al tomar las medidas.`) +
+        (P.envio ? `\n• ${NEGOCIO.envio}` : "") +
+        (P.hiloEspecial ? `\n• Hilo especial solicitado: ${P.hilo} (confirmar disponibilidad y posibilidad de encargo).` : "");
+      const opciones = [{ t: "✅ Confirmar y enviar pedido por WhatsApp", href: waLink(msg), cls: "principal", fn: () => setTimeout(() => bot("¡Gracias! 💗 Te respondemos por WhatsApp para confirmar tu pedido y el abono."), 400) }];
       if (P.medidas && P.medidas.id !== "casa") opciones.push({ t: "📅 Agendar mis medidas", href: aSeccion("agenda"), fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); irA("agenda"); } });
       if (P.medidas && P.medidas.id === "casa") opciones.push({ t: "📏 Cómo medirme en casa", href: aSeccion("medidas"), fn: () => { if (matchMedia("(max-width: 520px)").matches) cerrarChat(false); irA("medidas"); } });
       opciones.push({ t: "✏️ Empezar de nuevo", fn: () => paso(pedirModelo) });
